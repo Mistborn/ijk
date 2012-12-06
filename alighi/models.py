@@ -1,576 +1,508 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#     * Rearrange models' order
-#     * Make sure each model has one field with primary_key=True
-# Feel free to rename the models, but don't rename db_table values or field names.
-#
-# Also note: You'll have to insert the output of 'django-admin.py sqlcustom [appname]'
-# into your database.
-
+# -*- encoding: utf-8 -*-
 from django.db import models
+from django.contrib.auth.models import User
 
-class IjkAgxkategorioj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    nomo = models.CharField(max_length=60, unique=True)
-    priskribo = models.TextField()
-    sistemoid = models.IntegerField(unique=True, db_column='sistemoID') # Field name made lowercase.
-    limagxo = models.IntegerField()
-    class Meta:
-        db_table = u'ijk_agxkategorioj'
+SEKSOJ = (
+    ('v', 'vira'),
+    ('i', 'ina'),
+    ('a', 'alia'),
+)
 
-class IjkAgxkategorisistemoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    nomo = models.CharField(max_length=60, unique=True)
-    entajpanto = models.IntegerField()
-    priskribo = models.TextField()
-    class Meta:
-        db_table = u'ijk_agxkategorisistemoj'
+# XXX help text for each field
+# XXX check defaults and nulls for ecah field
 
-class IjkAligxkategorioj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    nomo = models.CharField(max_length=60, unique=True)
-    priskribo = models.TextField()
-    sistemoid = models.IntegerField(unique=True, db_column='sistemoID') # Field name made lowercase.
-    limdato = models.IntegerField()
-    nomo_lokalingve = models.CharField(max_length=60)
-    class Meta:
-        db_table = u'ijk_aligxkategorioj'
+#class Respondeculo(models.Model): # XXX should be a user here
+    #nomo = models.CharField(unique=True)
+    #retposhtadreso = models.EmailField()
 
-class IjkAligxkategorisistemoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    nomo = models.CharField(max_length=60, unique=True)
-    entajpanto = models.IntegerField()
-    priskribo = models.TextField()
-    class Meta:
-        db_table = u'ijk_aligxkategorisistemoj'
+class Respondeco(models.Model):
+    rolo = models.CharField(max_length=50)
+    uzanto = models.ForeignKey(User)
+    def __unicode__(self):
+        return self.rolo
 
-class IjkCxambroj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    renkontigxo = models.IntegerField(unique=True)
-    nomo = models.CharField(max_length=60, unique=True)
-    etagxo = models.CharField(max_length=150)
-    litonombro = models.IntegerField()
-    tipo = models.CharField(max_length=3)
-    dulita = models.CharField(max_length=3)
-    rimarkoj = models.CharField(max_length=300)
-    class Meta:
-        db_table = u'ijk_cxambroj'
+class Valuto(models.Model):
+    kodo = models.CharField(max_length=3)
+    nomo = models.CharField(max_length=50, blank=True)
+    def __unicode__(self):
+        return self.kodo
 
-class IjkEntajpantoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    nomo = models.CharField(max_length=150, unique=True)
-    kodvorto = models.CharField(max_length=150)
-    sendanto_nomo = models.CharField(max_length=90)
-    retposxtadreso = models.CharField(max_length=150)
-    partoprenanto_id = models.IntegerField(null=True, blank=True)
-    aligi = models.CharField(max_length=3)
-    vidi = models.CharField(max_length=3)
-    sxangxi = models.CharField(max_length=3)
-    cxambrumi = models.CharField(max_length=3)
-    ekzporti = models.CharField(max_length=3)
-    statistikumi = models.CharField(max_length=3)
-    mono = models.CharField(max_length=3)
-    estingi = models.CharField(max_length=3)
-    retumi = models.CharField(max_length=3)
-    rabati = models.CharField(max_length=3)
-    inviti = models.CharField(max_length=3)
-    administri = models.CharField(max_length=3)
-    akcepti = models.CharField(max_length=3)
-    teknikumi = models.CharField(max_length=3)
-    class Meta:
-        db_table = u'ijk_entajpantoj'
-
-class IjkFikskostoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    nomo = models.CharField(max_length=60, unique=True)
-    kostosistemo = models.IntegerField(unique=True)
-    kosto = models.DecimalField(max_digits=9, decimal_places=2)
-    class Meta:
-        db_table = u'ijk_fikskostoj'
-
-class IjkIndividuajKrompagoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    partoprenoid = models.IntegerField(db_column='partoprenoID') # Field name made lowercase.
-    valuto = models.CharField(max_length=9)
-    kvanto = models.DecimalField(max_digits=8, decimal_places=2)
+class Kurzo(models.Model):
+    valuto = models.ForeignKey(Valuto)
     dato = models.DateField()
-    tipo = models.CharField(max_length=300)
-    entajpantoid = models.IntegerField(db_column='entajpantoID') # Field name made lowercase.
-    class Meta:
-        db_table = u'ijk_individuaj_krompagoj'
-
-class IjkIndividuajRabatoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    partoprenoid = models.IntegerField(db_column='partoprenoID') # Field name made lowercase.
-    valuto = models.CharField(max_length=9)
-    kvanto = models.DecimalField(max_digits=8, decimal_places=2)
-    dato = models.DateField()
-    tipo = models.CharField(max_length=300)
-    entajpantoid = models.IntegerField(db_column='entajpantoID') # Field name made lowercase.
-    class Meta:
-        db_table = u'ijk_individuaj_rabatoj'
-
-class IjkInvitpetoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    pasportnumero = models.CharField(max_length=150)
-    pasporto_valida_de = models.DateField()
-    pasporto_valida_gxis = models.DateField()
-    pasporta_persona_nomo = models.CharField(max_length=150)
-    pasporta_familia_nomo = models.CharField(max_length=150)
-    pasporta_adreso = models.TextField()
-    senda_adreso = models.TextField()
-    senda_faksnumero = models.CharField(max_length=90, blank=True)
-    invitletero_sendenda = models.CharField(max_length=3)
-    invitletero_sendodato = models.DateField()
-    class Meta:
-        db_table = u'ijk_invitpetoj'
-
-class IjkKategoriojDeLandoj(models.Model):
-    sistemoid = models.IntegerField(primary_key=True, db_column='sistemoID') # Field name made lowercase.
-    landoid = models.IntegerField(primary_key=True, db_column='landoID') # Field name made lowercase.
-    kategorioid = models.IntegerField(db_column='kategorioID') # Field name made lowercase.
-    class Meta:
-        db_table = u'ijk_kategorioj_de_landoj'
-
-class IjkKondicxoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    nomo = models.CharField(max_length=60, unique=True)
-    entajpanto = models.IntegerField()
-    priskribo = models.TextField()
-    kondicxoteksto = models.TextField()
-    jxavaskripta_formo = models.TextField()
-    class Meta:
-        db_table = u'ijk_kondicxoj'
-
-class IjkKostosistemoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    nomo = models.CharField(max_length=60, unique=True)
-    priskribo = models.TextField()
-    entajpanto = models.IntegerField()
-    class Meta:
-        db_table = u'ijk_kostosistemoj'
-
-class IjkKotizosistemoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    nomo = models.CharField(max_length=60, unique=True)
-    priskribo = models.TextField()
-    entajpanto = models.IntegerField()
-    aligxkategorisistemo = models.IntegerField()
-    landokategorisistemo = models.IntegerField()
-    agxkategorisistemo = models.IntegerField()
-    logxkategorisistemo = models.IntegerField()
-    parttempdivisoro = models.FloatField()
-    malaligxkondicxsistemo = models.IntegerField()
-    class Meta:
-        db_table = u'ijk_kotizosistemoj'
-
-class IjkKotizotabeleroj(models.Model):
-    kotizosistemo = models.IntegerField(primary_key=True)
-    aligxkategorio = models.IntegerField(primary_key=True)
-    landokategorio = models.IntegerField(primary_key=True)
-    agxkategorio = models.IntegerField(primary_key=True)
-    logxkategorio = models.IntegerField(primary_key=True)
-    kotizo = models.DecimalField(max_digits=8, decimal_places=2)
-    class Meta:
-        db_table = u'ijk_kotizotabeleroj'
-
-class IjkKrompagoreguloj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    nomo = models.CharField(max_length=60, unique=True)
-    mallongigo = models.CharField(max_length=30)
-    entajpanto = models.IntegerField()
-    priskribo = models.TextField()
-    kondicxo = models.IntegerField()
-    uzebla = models.CharField(max_length=3)
-    lauxnokte = models.CharField(max_length=3)
-    class Meta:
-        db_table = u'ijk_krompagoreguloj'
-
-class IjkKurzoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    valuto = models.CharField(max_length=9, unique=True)
-    dato = models.DateField(unique=True)
     kurzo = models.DecimalField(max_digits=12, decimal_places=5)
+    # *** de la donita valuto al EUR
+    def __unicode__(self):
+        return u'Kurzo por {} je {}'.format(self.valuto, self.dato)
     class Meta:
-        db_table = u'ijk_kurzoj'
+        unique_together = ('valuto', 'dato')
+        
+#class AghKategoriSistemo(models.Model):
+    #nomo = models.CharField(max_length=60, unique=True)
+    #priskribo = models.TextField()
 
-class IjkLandoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    nomo = models.CharField(max_length=60)
-    kodo = models.CharField(max_length=6)
-    class Meta:
-        db_table = u'ijk_landoj'
+class AghKategorio(models.Model):
+    nomo = models.CharField(unique=True, max_length=50)
+    priskribo = models.TextField(blank=True)
+    #sistemo = models.ForeignKey(AghKategoriSistemo)
+    limagho = models.IntegerField(
+        help_text='Partoprenanto kun agho ghis tiu chi agho '
+                  'eniras tiun chi kategorion')
+    def __unicode__(self):
+        return u'Aghkategorio ' + self.nomo
 
-class IjkLandokategorioj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    nomo = models.CharField(max_length=60, unique=True)
-    priskribo = models.TextField()
-    sistemoid = models.IntegerField(unique=True, db_column='sistemoID') # Field name made lowercase.
-    class Meta:
-        db_table = u'ijk_landokategorioj'
+#class AlighKategoriSistemo(models.Model):
+    #nomo = models.CharField(max_length=60, unique=True)
+    #priskribo = models.TextField()
 
-class IjkLandokategorisistemoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    nomo = models.CharField(max_length=60, unique=True)
-    entajpanto = models.IntegerField()
-    priskribo = models.TextField()
-    class Meta:
-        db_table = u'ijk_landokategorisistemoj'
+class AlighKategorio(models.Model):
+    nomo = models.CharField(unique=True, max_length=50)
+    priskribo = models.TextField(blank=True)
+    #sistemo = models.ForeignKey(AlighKategoriSistemo)
+    limdato = models.DateField(
+        help_text='Partoprenanto, kiu alighas ghis tiu chi dato '
+                  'eniras tiun chi kategorion')
+    def __unicode__(self):
+        return u'Alighkategorio ' + self.nomo
 
-class IjkLitonoktoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    cxambro = models.IntegerField()
-    litonumero = models.IntegerField()
-    nokto_de = models.IntegerField()
-    nokto_gxis = models.IntegerField()
-    partopreno = models.IntegerField()
-    rezervtipo = models.CharField(max_length=3)
-    class Meta:
-        db_table = u'ijk_litonoktoj'
+class LandoKategorio(models.Model):
+    nomo = models.CharField(unique=True, max_length=50)
+    priskribo = models.TextField(blank=True)
+    #sistemo = models.ForeignKey(LandoKategoriSistemo)
+    def __unicode__(self):
+        return u'Landokategorio ' + self.nomo
 
-class IjkLogxkategorioj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    nomo = models.CharField(max_length=60, unique=True)
-    priskribo = models.TextField()
-    sistemoid = models.IntegerField(unique=True, db_column='sistemoID') # Field name made lowercase.
-    kondicxo = models.IntegerField()
-    class Meta:
-        db_table = u'ijk_logxkategorioj'
+class Lando(models.Model):
+    nomo = models.CharField(max_length=50)
+    kodo = models.CharField(max_length=2)
+    kategorio = models.ForeignKey(LandoKategorio)
+    def __unicode__(self):
+        return self.nomo
 
-class IjkLogxkategorisistemoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    nomo = models.CharField(max_length=60, unique=True)
-    entajpanto = models.IntegerField()
-    priskribo = models.TextField()
-    class Meta:
-        db_table = u'ijk_logxkategorisistemoj'
+#class LandoKategoriSistemo(models.Model):
+    #nomo = models.CharField(max_length=60, unique=True)
+    #priskribo = models.TextField()
 
-class IjkMalaligxkondicxoj(models.Model):
-    sistemo = models.IntegerField(primary_key=True)
-    aligxkategorio = models.IntegerField(primary_key=True)
-    kondicxtipo = models.IntegerField()
-    class Meta:
-        db_table = u'ijk_malaligxkondicxoj'
+#class LandoKategoriLigo(models.Model):
+    #lando = models.ForeignKey(Lando)
+    #kategorio = models.ForeignKey(LandoKategorio)
+    
+#class LoghKategoriSistemo(models.Model):
+    #nomo = models.CharField(max_length=60, unique=True)
+    #priskribo = models.TextField()
+    
+class LoghKategorio(models.Model):
+    nomo = models.CharField(unique=True, max_length=50)
+    priskribo = models.TextField(blank=True)
+    #sistemo = models.ForeignKey(LoghKategoriSistemo)
+    #kondicho = models.IntegerField()
+    plena_kosto = models.DecimalField(max_digits=8, decimal_places=2,
+        help_text='Kosto por logho dum la tuta kongreso')
+    unutaga_kosto = models.DecimalField(max_digits=8, decimal_places=2,
+        help_text='Kosto por logho dum unu nokto')
+    def __unicode__(self):
+        return self.nomo
 
-class IjkMalaligxkondicxotipoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    nomo = models.CharField(max_length=60, unique=True)
-    mallongigo = models.CharField(max_length=30)
-    priskribo = models.TextField()
-    funkcio = models.CharField(max_length=150)
-    parametro = models.DecimalField(null=True, max_digits=8, decimal_places=2, blank=True)
-    uzebla = models.CharField(max_length=3)
-    class Meta:
-        db_table = u'ijk_malaligxkondicxotipoj'
+class ManghoMendo(models.Model):
+    nomo = models.CharField(unique=True, max_length=50)
+    # memzorge/matenmangho/tagmangho/vespermangho
+    def __unicode__(self):
+        return self.nomo
 
-class IjkMalaligxkondicxsistemoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    nomo = models.CharField(max_length=60, unique=True)
-    priskribo = models.TextField()
-    aligxkategorisistemo = models.IntegerField()
-    class Meta:
-        db_table = u'ijk_malaligxkondicxsistemoj'
+class ManghoTipo(models.Model):
+    nomo = models.CharField(unique=True, max_length=50)
+    # vegetare/vegare/ktp
+    def __unicode__(self):
+        return self.nomo
 
-class IjkMinimumajAntauxpagoj(models.Model):
-    kotizosistemo = models.IntegerField(primary_key=True)
-    landokategorio = models.IntegerField(primary_key=True)
-    oficiala_antauxpago = models.DecimalField(max_digits=8, decimal_places=2)
-    interna_antauxpago = models.DecimalField(max_digits=8, decimal_places=2)
-    class Meta:
-        db_table = u'ijk_minimumaj_antauxpagoj'
+#class KotizoSistemo(models.Model):
+    #nomo = models.CharField(max_length=60, unique=True)
+    #priskribo = models.TextField()
+    #alighkategorisistemo = models.ForeignKey(AlighKategoriSistemo)
+    #landokategorisistemo = models.ForeignKey(LandoKategoriSistemo)
+    #aghkategorisistemo = models.ForeignKey(AghKategoriSistemo)
+    #loghkategorisistemo = models.ForeignKey(LoghKategoriSistemo)
+    #parttempdivisoro = models.FloatField()
+    #malalighkondichsistemo = models.IntegerField() # XXX
 
-class IjkMonujo(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    renkontigxo = models.IntegerField()
-    kvanto = models.IntegerField()
-    kauzo = models.CharField(max_length=600)
-    tempo = models.DateTimeField()
-    kvitanconumero = models.IntegerField()
-    alkiu = models.CharField(max_length=60, db_column='alKiu') # Field name made lowercase.
-    kiamonujo = models.CharField(max_length=30, db_column='kiaMonujo') # Field name made lowercase.
-    class Meta:
-        db_table = u'ijk_monujo'
+#class KostoSistemo(models.Model): # XXX what is this for?
+    #nomo = models.CharField(max_length=60, unique=True)
+    #priskribo = models.TextField()
+    
+#class Renkontigho(models.Model):
+    #nomo = models.CharField(max_length=255, unique=True)
+    #mallongigo = models.CharField(max_length=30, unique=True)
+    #temo = models.CharField(max_length=255)
+    #loko = models.CharField(max_length=255)
+    #de = models.DateField()
+    #ghis = models.DateField()
+    #kotizosistemo = models.ForeignKey(KotizoSistemo)
+    #parttemppartoprendivido = models.IntegerField()
 
-class IjkNomsxildoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    titolo_lokalingve = models.CharField(max_length=45)
-    titolo_esperante = models.CharField(max_length=45)
-    nomo = models.CharField(max_length=90)
-    funkcio_lokalingve = models.CharField(max_length=120)
-    funkcio_esperante = models.CharField(max_length=120)
-    renkontigxoid = models.IntegerField(db_column='renkontigxoID') # Field name made lowercase.
-    havasnomsxildon = models.CharField(max_length=3, db_column='havasNomsxildon') # Field name made lowercase.
-    class Meta:
-        db_table = u'ijk_nomsxildoj'
+class Kotizero(models.Model):
+    # ghenerala rabato au krompago au ero de normala kotizo,
+    #   aplikebla al pluraj partoprenantoj lau difinita kondicho
+    nomo = models.CharField(unique=True, max_length=50)
+    priskribo = models.TextField(blank=True)
+    kondicho = models.TextField(
+        help_text='kondicho, kiu difinas, chu tiu chi kotizero aplikighas '
+                  'al specifa partoprenanto')
+        # will be a python expression evaluating to whether this applies
+    kvanto = models.DecimalField(max_digits=8, decimal_places=2,
+        help_text='Povas esti elcento au sumo en EUR')
+    #valuto = models.CharField(max_length=3, blank=True)
+    # devas estis EUR
+    def __unicode__(self):
+        return self.nomo
+    
+class Pagmaniero(models.Model):
+    # maniero transdoni monon, ekz. per peranto, surloke, unuopula rabato, ktp
+    nomo = models.CharField(unique=True, max_length=50)
+    priskribo = models.TextField(blank=True)
+    chu_publika = models.BooleanField(default=False,
+        help_text='Chu tiu chi pagmaniero estu elektebla por indiki, '
+                  'kiel oni intencas pagi la antaupagon')
+    def __unicode__(self):
+        return self.nomo
 
-class IjkNotoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    partoprenantoid = models.IntegerField(db_column='partoprenantoID') # Field name made lowercase.
-    kiu = models.CharField(max_length=300)
-    kunkiu = models.CharField(max_length=300, db_column='kunKiu') # Field name made lowercase.
-    tipo = models.CharField(max_length=30)
-    dato = models.DateTimeField()
-    subjekto = models.CharField(max_length=300)
-    enhavo = models.TextField()
-    prilaborata = models.CharField(max_length=3)
-    revidu = models.DateTimeField()
-    class Meta:
-        db_table = u'ijk_notoj'
+#class Krompago(models.Model):
+    #speco = models.ForeignKey(Kotizero)
+    ##kotizosistemo = models.ForeignKey(KotizoSistemo)
+    #kvanto = models.DecimalField(max_digits=8, decimal_places=2)
+    #valuto = models.CharField(max_length=3, blank=True)
 
-class IjkNotojPorEntajpantoj(models.Model):
-    notoid = models.IntegerField(db_column='notoID') # Field name made lowercase.
-    entajpantoid = models.IntegerField(db_column='entajpantoID') # Field name made lowercase.
-    class Meta:
-        db_table = u'ijk_notoj_por_entajpantoj'
+#class KrompagoRegulo(models.Model):
+    #nomo = models.CharField(max_length=60, unique=True)
+    #mallongigo = models.CharField(max_length=30)
+    #priskribo = models.TextField()
+    #kondicho = models.ForeignKey(Kondicho)
+    #uzebla = models.BooleanField()
+    #launokte = models.BooleanField()
 
-class IjkPagoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    partoprenoid = models.IntegerField(db_column='partoprenoID') # Field name made lowercase.
-    valuto = models.CharField(max_length=9)
-    kvanto = models.DecimalField(max_digits=8, decimal_places=2)
-    dato = models.DateField()
-    tipo = models.CharField(max_length=300)
-    entajpantoid = models.IntegerField(db_column='entajpantoID') # Field name made lowercase.
-    class Meta:
-        db_table = u'ijk_pagoj'
+#class RegulaKrompago(models.Model):
+    #regulo = models.ForeignKey(KrompagoRegulo)
+    ##kotizosistemo = models.ForeignKey(KotizoSistemo)
+    #kvanto = models.DecimalField(max_digits=8, decimal_places=2)
+    #valuto = models.CharField(max_length=9)
 
-class IjkPartoprenantoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    nomo = models.CharField(max_length=150)
-    personanomo = models.CharField(max_length=150)
-    sxildnomo = models.CharField(max_length=150)
-    sekso = models.CharField(max_length=3)
-    naskigxdato = models.DateField()
-    adresaldonajxo = models.CharField(max_length=150)
-    strato = models.CharField(max_length=150)
-    provinco = models.CharField(max_length=150)
-    posxtkodo = models.CharField(max_length=150)
-    urbo = models.CharField(max_length=150)
-    lando = models.IntegerField()
-    sxildlando = models.CharField(max_length=150)
-    telefono = models.CharField(max_length=150)
-    telefakso = models.CharField(max_length=150)
-    retposxto = models.CharField(max_length=150)
-    retposxta_varbado = models.CharField(max_length=3)
-    ueakodo = models.CharField(max_length=18)
-    class Meta:
-        db_table = u'ijk_partoprenantoj'
+#class IndividuaKrompago(models.Model):
+    #partopreno = models.ForeignKey(Partopreno)
+    #valuto = models.CharField(max_length=9)
+    #kvanto = models.DecimalField(max_digits=8, decimal_places=2)
+    #dato = models.DateField()
+    #tipo = models.CharField(max_length=300)
 
-class IjkPartoprenoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    renkontigxoid = models.IntegerField(db_column='renkontigxoID') # Field name made lowercase.
-    partoprenantoid = models.IntegerField(db_column='partoprenantoID') # Field name made lowercase.
-    ordigoid = models.DecimalField(decimal_places=3, max_digits=11, db_column='ordigoID') # Field name made lowercase.
-    agxo = models.IntegerField()
-    nivelo = models.CharField(max_length=3)
-    rimarkoj = models.TextField()
-    retakonfirmilo = models.CharField(max_length=3)
-    germanakonfirmilo = models.CharField(max_length=3)
-    number_1akonfirmilosendata = models.DateField(db_column=u'1akonfirmilosendata') # Field renamed because it wasn't a valid Python identifier.
-    number_2akonfirmilosendata = models.DateField(db_column=u'2akonfirmilosendata') # Field renamed because it wasn't a valid Python identifier.
-    partoprentipo = models.CharField(max_length=3)
-    de = models.DateField()
-    gxis = models.DateField()
-    vegetare = models.CharField(max_length=3)
-    gejmembro = models.CharField(max_length=3, db_column='GEJmembro') # Field name made lowercase.
-    surloka_membrokotizo = models.CharField(max_length=3)
-    membrokotizo = models.DecimalField(max_digits=8, decimal_places=2)
-    tejo_membro_laudire = models.CharField(max_length=3)
-    tejo_membro_kontrolita = models.CharField(max_length=3)
-    tejo_membro_kotizo = models.DecimalField(max_digits=8, decimal_places=2)
-    kkren = models.CharField(max_length=3, db_column='KKRen') # Field name made lowercase.
-    domotipo = models.CharField(max_length=3)
-    kunmangxas = models.CharField(max_length=3)
-    listo = models.CharField(max_length=3)
-    intolisto = models.CharField(max_length=3)
-    pagmaniero = models.CharField(max_length=90)
-    antauxpago_gxis = models.DateField()
-    kunkiu = models.CharField(max_length=150, db_column='kunKiu') # Field name made lowercase.
-    kunkiuid = models.IntegerField(db_column='kunKiuID') # Field name made lowercase.
-    cxambrotipo = models.CharField(max_length=3)
-    dulita = models.CharField(max_length=3)
-    tema = models.TextField()
-    distra = models.TextField()
-    vespera = models.TextField()
-    muzika = models.TextField()
-    nokta = models.TextField()
-    aligxdato = models.DateField()
-    malaligxdato = models.DateField()
-    aligxkategoridato = models.DateField()
-    alvenstato = models.CharField(max_length=3)
-    asekuri = models.CharField(max_length=3)
-    havas_asekuron = models.CharField(max_length=3)
-    kontrolata = models.CharField(max_length=3)
-    havasmangxkuponon = models.CharField(max_length=3, db_column='havasMangxkuponon') # Field name made lowercase.
-    havasnomsxildon = models.CharField(max_length=3, db_column='havasNomsxildon') # Field name made lowercase.
-    class Meta:
-        db_table = u'ijk_partoprenoj'
+#class IndividuaRabato(models.Model):
+    #partopreno = models.ForeignKey(Partopreno)
+    #valuto = models.CharField(max_length=9)
+    #kvanto = models.DecimalField(max_digits=8, decimal_places=2)
+    #dato = models.DateField()
+    #tipo = models.CharField(max_length=300)
 
-class IjkParttempkotizosistemoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    baza_kotizosistemo = models.IntegerField(unique=True)
-    por_noktoj = models.IntegerField(unique=True)
-    kondicxo = models.IntegerField(unique=True)
-    faktoro = models.DecimalField(max_digits=8, decimal_places=2)
-    sub_kotizosistemo = models.IntegerField()
-    class Meta:
-        db_table = u'ijk_parttempkotizosistemoj'
-
-class IjkPersonkostoj(models.Model):
-    tipo = models.IntegerField(primary_key=True)
-    kostosistemo = models.IntegerField(primary_key=True)
-    maks_haveblaj = models.IntegerField()
-    min_uzendaj = models.IntegerField()
-    kosto_uzata = models.DecimalField(max_digits=8, decimal_places=2)
-    kosto_neuzata = models.DecimalField(max_digits=8, decimal_places=2)
-    class Meta:
-        db_table = u'ijk_personkostoj'
-
-class IjkPersonkostotipoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    nomo = models.CharField(max_length=60, unique=True)
-    entajpanto = models.IntegerField()
-    priskribo = models.TextField()
-    kondicxo = models.CharField(max_length=150)
-    uzebla = models.CharField(max_length=3)
-    lauxnokte = models.CharField(max_length=3)
-    class Meta:
-        db_table = u'ijk_personkostotipoj'
-
-class IjkProtokolo(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    deveno = models.CharField(max_length=600)
-    ilo = models.CharField(max_length=600)
-    entajpanto = models.CharField(max_length=60)
-    tempo = models.DateTimeField()
-    ago = models.CharField(max_length=60)
-    class Meta:
-        db_table = u'ijk_protokolo'
-
-class IjkRabatoreguloj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    nomo = models.CharField(max_length=60, unique=True)
-    mallongigo = models.CharField(max_length=30)
-    entajpanto = models.IntegerField()
-    priskribo = models.TextField()
-    kondicxo = models.IntegerField()
-    uzebla = models.CharField(max_length=3)
-    lauxnokte = models.CharField(max_length=3)
-    class Meta:
-        db_table = u'ijk_rabatoreguloj'
-
-class IjkRegulajKrompagoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    regulo = models.IntegerField(unique=True)
-    kotizosistemo = models.IntegerField(unique=True)
-    kvanto = models.DecimalField(max_digits=8, decimal_places=2)
-    valuto = models.CharField(max_length=9)
-    class Meta:
-        db_table = u'ijk_regulaj_krompagoj'
-
-class IjkRegulajRabatoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    regulo = models.IntegerField(unique=True)
-    kotizosistemo = models.IntegerField(unique=True)
-    kvanto = models.DecimalField(max_digits=8, decimal_places=2)
-    valuto = models.CharField(max_length=9)
-    class Meta:
-        db_table = u'ijk_regulaj_rabatoj'
-
-class IjkRenkkonfiguroj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    renkontigxoid = models.IntegerField(unique=True, db_column='renkontigxoID') # Field name made lowercase.
-    opcioid = models.CharField(max_length=90, unique=True, db_column='opcioID') # Field name made lowercase.
-    valoro = models.TextField()
-    class Meta:
-        db_table = u'ijk_renkkonfiguroj'
-
-class IjkRenkontigxajKonfiguroj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    renkontigxoid = models.IntegerField(unique=True, db_column='renkontigxoID') # Field name made lowercase.
-    tipo = models.CharField(max_length=60, unique=True)
-    interna = models.CharField(max_length=60, unique=True)
-    grupo = models.IntegerField()
-    teksto = models.CharField(max_length=300)
-    aldona_komento = models.CharField(max_length=300)
-    class Meta:
-        db_table = u'ijk_renkontigxaj_konfiguroj'
-
-class IjkRenkontigxo(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    nomo = models.CharField(max_length=300, unique=True)
-    mallongigo = models.CharField(max_length=30, unique=True)
-    temo = models.CharField(max_length=300)
-    loko = models.CharField(max_length=300)
-    de = models.DateField()
-    gxis = models.DateField()
-    kotizosistemo = models.IntegerField()
-    plej_frue = models.DateField()
-    meze = models.DateField()
-    malfrue = models.DateField()
-    parttemppartoprendivido = models.IntegerField()
-    juna = models.IntegerField()
-    maljuna = models.IntegerField()
-    adminrespondeculo = models.CharField(max_length=150)
-    adminretadreso = models.CharField(max_length=300)
-    sekurkopiojretadreso = models.CharField(max_length=300)
-    invitleterorespondeculo = models.CharField(max_length=150)
-    invitleteroretadreso = models.CharField(max_length=300)
-    temarespondulo = models.CharField(max_length=150)
-    temaretadreso = models.CharField(max_length=300)
-    distrarespondulo = models.CharField(max_length=150)
-    distraretadreso = models.CharField(max_length=300)
-    vesperarespondulo = models.CharField(max_length=150)
-    vesperaretadreso = models.CharField(max_length=300)
-    muzikarespondulo = models.CharField(max_length=150)
-    muzikaretadreso = models.CharField(max_length=300)
-    noktarespondulo = models.CharField(max_length=150)
-    noktaretadreso = models.CharField(max_length=300)
-    novularespondulo = models.CharField(max_length=150)
-    novularetadreso = models.CharField(max_length=300)
-    class Meta:
-        db_table = u'ijk_renkontigxo'
-
-class IjkRetposxto(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    nomo = models.CharField(max_length=60, unique=True)
-    subjekto = models.CharField(max_length=300)
-    korpo = models.TextField()
-    class Meta:
-        db_table = u'ijk_retposxto'
-
-class IjkSercxoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    nomo = models.CharField(max_length=150, unique=True)
-    priskribo = models.TextField()
-    entajpanto = models.IntegerField()
-    sercxo = models.TextField()
-    class Meta:
-        db_table = u'ijk_sercxoj'
-
-class IjkTekstoj(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='ID') # Field name made lowercase.
-    renkontigxoid = models.IntegerField(unique=True, db_column='renkontigxoID') # Field name made lowercase.
-    mesagxoid = models.CharField(max_length=90, unique=True, db_column='mesagxoID') # Field name made lowercase.
+class Retposhtajho(models.Model):
+    # por amase senditaj retposhtajhoj
+    nomo = models.CharField(unique=True, max_length=50)
+    temo = models.CharField(max_length=100)
     teksto = models.TextField()
-    class Meta:
-        db_table = u'ijk_tekstoj'
+    def __unicode__(self):
+        return self.nomo
 
-class IjkTempTradukoj(models.Model):
-    dosiero = models.CharField(max_length=300, primary_key=True)
-    cheno = models.CharField(max_length=765, primary_key=True)
-    class Meta:
-        db_table = u'ijk_temp_tradukoj'
+class SurlokMembrighaKategorio(models.Model):
+    # por registri surlokajn membrighojn en uea/tejo
+    nomo = models.CharField(unique=True, max_length=50,
+        help_text='Nomo de la kategorio de surloka membrigho en TEJO/UEA')
+    kotizo = models.DecimalField(max_digits=8, decimal_places=2,
+        help_text='Sumo de la kotizo')
+    def __unicode__(self):
+        return self.nomo
 
-class IjkTradukoj(models.Model):
-    dosiero = models.CharField(max_length=300)
-    cheno = models.CharField(max_length=765, primary_key=True)
-    iso2 = models.CharField(max_length=15)
-    traduko = models.TextField()
-    tradukinto = models.CharField(max_length=765, blank=True)
-    komento = models.TextField()
-    stato = models.IntegerField()
-    dato = models.DateTimeField()
-    class Meta:
-        db_table = u'ijk_tradukoj'
+class Chambro(models.Model): # unuopa chambro por disdoni
+    #renkontigho = models.ForeignKey(Renkontigho)
+    nomo = models.CharField(unique=True, max_length=50)
+    #etagho = models.CharField(max_length=150)
+    litonombro = models.IntegerField(help_text='nombro da litoj en la chambro')
+        # maksimuma nombro da homoj kiuj povos loghi en tiu chi chambro
+    loghkategorio = models.ForeignKey(LoghKategorio)
+        # al kiu loghkategorio ghi taugas?
+    #dulita = models.CharField(max_length=3)
+    rimarko = models.CharField(blank=True, max_length=255)
+    def __unicode__(self):
+        return self.nomo
 
+class Partoprenanto(models.Model):
+    persona_nomo = models.CharField(max_length=50)
+    familia_nomo = models.CharField(max_length=50)
+    retposhto = models.EmailField()
+    mesaghiloj = models.TextField(blank=True,
+        help_text='Aliaj mesaghiloj, kiujn vi volas aperigi en la '
+                  'postkongresa listo de partoprenantoj')
+    shildnomo = models.CharField(blank=True, max_length=25)
+    sekso = models.CharField(max_length=1, choices=SEKSOJ)
+    naskighdato = models.DateField()
+    adreso = models.TextField(blank=True)
+    urbo = models.CharField(blank=True, max_length=50)
+    poshtkodo = models.CharField(blank=True, max_length=15)
+    loghlando = models.ForeignKey(Lando)
+    shildlando = models.CharField(blank=True, max_length=50)
+    telefono = models.CharField(blank=True, max_length=50)
+    #fakso = models.CharField(blank=True)
+    pagmaniero = models.ForeignKey(Pagmaniero,
+        help_text='Kiamaniere vi pagos la antaupagon')
+        # el la publikaj pagmanieroj, por la antaupago
+    pagmaniera_komento = models.CharField(blank=True, max_length=50)
+        # ekz por nomo de peranto
+    alvenas_per = models.CharField(blank=True, max_length=255,
+        help_text='Ekz. flugnumero, se vi jam scias ghin')
+    alvenas_je = models.DateField(null=True)
+    foriras_per = models.CharField(blank=True, max_length=255,
+        help_text='Ekz. flugnumero, se vi jam scias ghin')
+    foriras_je = models.DateField(null=True)
+    chu_unua_dua_ijk = models.BooleanField(
+        default=False, help_text='Chu via unua au dua IJK?')
+    interesighas_pri_antaukongreso = models.IntegerField(null=True)
+        # kiom da tagoj
+    interesighas_pri_postkongreso = models.IntegerField(null=True)
+        # kiom da tagoj
+    chu_bezonas_invitleteron = models.BooleanField(
+        'Chu vi bezonas invitleteron?', default=False)
+    chu_invitletero_sendita = models.BooleanField(default=False)
+#class Partopreno(models.Model):
+    #renkontigho = models.ForeignKey(Renkontigho)
+    #partoprenanto = models.ForeignKey(Partoprenanto)
+    ekde = models.DateField('Partoprenos ekde')
+    ghis = models.DateField('Partoprenos ghis')
+    chu_ueamembro = models.BooleanField(
+        default=True, help_text='Mi estas membro de UEA/TEJO')
+    uea_kodo = models.CharField('Mia UEA-kodo', max_length=18, blank=True)
+    loghkategorio = models.ForeignKey(LoghKategorio)
+    chambro = models.ForeignKey(Chambro, blank=True)
+    chu_tuttaga_ekskurso = models.BooleanField(
+        'Mi alighas al tut-taga ekskurso', default=True)
+    manghomendo = models.ForeignKey(ManghoMendo)
+    manghotipo = models.ForeignKey(ManghoTipo)
+    unua_konfirmilo_sendita = models.DateField(null=True)
+    dua_konfirmilo_sendita = models.DateField(null=True)
+    deziras_loghi_kun_nomo = models.CharField(
+        'Mi deziras loghi kun', blank=True, max_length=50)
+    deziras_loghi_kun = models.ForeignKey('Partoprenanto', null=True)
+    # chu mi volas aperi en tiaj listoj:
+    chu_retalisto = models.BooleanField(default=True,
+        help_text='Mi permesas publikigi mian nomon en la reta listo de partoprenantoj')
+    chu_postkongresalisto = models.BooleanField(default=True,
+        help_text='Mi permesas publikigi mian nomon en la postkongresa listo de partoprenantoj')
+    chu_komencanto = models.BooleanField(help_text='Mi estas komencanto', default=True)
+    chu_interesighas_pri_kurso = models.BooleanField(default=True,
+        help_text='Mi interesighas pri Esperanto-kurso')
+    #antaupago_ghis = models.DateField()
+    #dulita = models.CharField(max_length=3)
+    #tema = models.TextField()
+    #distra = models.TextField()
+    #vespera = models.TextField()
+    #muzika = models.TextField()
+    #nokta = models.TextField()
+    programa_kontribuo = models.TextField(blank=True,
+        help_text='Mi shatus kontribui al la programo jene:')
+    organiza_kontribuo = models.TextField(blank=True,
+        help_text='Mi shatus kontribui al organizado jene:')
+    alighdato = models.DateField(auto_now_add=True)
+    malalighdato = models.DateField(null=True)
+    #alighkategoridato = models.DateField()
+    # informoj por surloka kontrolo:
+    chu_alvenis = models.BooleanField(default=False)
+    chu_havasmanghkuponon = models.BooleanField(default=False)
+    chu_havasnomshildon = models.BooleanField(default=False)
+    #rimarkoj = models.TextField()
+    #por rimarkoj, vidu la tabelon Noto
+        # por pagoj
+    chu_surloka_membrigho = models.BooleanField(default=False)
+    surlokmembrigha_kategorio = models.ForeignKey(SurlokMembrighaKategorio)
+    surlokmembrigha_kotizo = models.DecimalField(max_digits=8, decimal_places=2)
+
+    chu_kontrolita = models.BooleanField(default=False)
+
+    #surloka_membrokotizo = models.CharField(max_length=3)
+    #membrokotizo = models.DecimalField(max_digits=8, decimal_places=2)
+    #tejo_membro_laudire = models.CharField(max_length=3)
+    #tejo_membro_kontrolita = models.CharField(max_length=3)
+    #tejo_membro_kotizo = models.DecimalField(max_digits=8, decimal_places=2)
+    # XXX membreco
+    def __unicode__(self):
+        return u'{} {}'.format(self.persona_nomo, self.familia_nomo)
+
+class Pago(models.Model):
+    partoprenanto = models.ForeignKey(Partoprenanto)
+    uzanto = models.ForeignKey(User,
+            help_text='Respondeculo, kiu ricevis/notis la pagon')
+    pagmaniero = models.ForeignKey(Pagmaniero)
+    valuto = models.ForeignKey(Valuto) # XXX default should be EUR
+    sumo = models.DecimalField(max_digits=8, decimal_places=2)
+    dato = models.DateField()
+    rimarko = models.CharField(blank=True, max_length=255) # uzu ekz. por indiki peranton
+    def __unicode__(self):
+        return u'{} {} de {} je {}'.format(
+            self.valuto, self.sumo, self.partoprenanto, self.dato)
+
+#class InvitLetero(models.Model):
+    #pasportnumero = models.CharField(max_length=150)
+    #pasporto_valida_de = models.DateField()
+    #pasporto_valida_ghis = models.DateField()
+    #pasporta_persona_nomo = models.CharField(max_length=150)
+    #pasporta_familia_nomo = models.CharField(max_length=150)
+    #pasporta_adreso = models.TextField()
+    #senda_adreso = models.TextField()
+    #senda_faksnumero = models.CharField(max_length=90, blank=True)
+    #invitletero_sendota = models.BooleanField()
+    #invitletero_sendodato = models.DateField()
+
+#class Fikskostoj(models.Model):
+    ## XXX foreign key to kostosistemo but what is a kostosistemo
+    #nomo = models.CharField(max_length=60, unique=True)
+    #kostosistemo = models.ForeignKey(KostoSistemo)
+    #kosto = models.DecimalField(max_digits=9, decimal_places=2)
+
+#class Kondicho(models.Model):
+    #nomo = models.CharField(max_length=60, unique=True)
+    #priskribo = models.TextField()
+    #kondichoteksto = models.TextField()
+    ## jhavaskripta_formo = models.TextField() # XXX say what?
+
+#class KotizoTabelero(models.Model):
+    #kotizosistemo = models.ForeignKey(KotizoSistemo)
+    #alighkategorio = models.ForeignKey(AlighKategorio)
+    #landokategorio = models.ForeignKey(LandoKategorio)
+    #aghkategorio = models.ForeignKey(AghKategorio)
+    #loghkategorio = models.ForeignKey(LoghKategorio)
+    #kotizo = models.DecimalField(max_digits=8, decimal_places=2)
+
+#class PersonKostoTipo(models.Model):
+    #nomo = models.CharField(max_length=60, unique=True)
+    #priskribo = models.TextField()
+    #kondicho = models.CharField(max_length=150)
+    #uzebla = models.BooleanField() # chu montri en la ghenerala listo
+    #launokte = models.BooleanField() # launokte au unufoje
+
+#class PersonKosto(models.Model):
+    #tipo = models.ForeignKey(PersonKostoTipo)
+    #kostosistemo = models.ForeignKey(KostoSistemo)
+    #maks_haveblaj = models.IntegerField()
+    #min_uzendaj = models.IntegerField()
+    #kosto_uzata = models.DecimalField(max_digits=8, decimal_places=2)
+    #kosto_neuzata = models.DecimalField(max_digits=8, decimal_places=2)
+
+#class Litonokto(models.Model): # XXX how is this supposed to work?
+    #chambro = models.ForeignKey(Chambro)
+    #litonumero = models.IntegerField()
+    #nokto_de = models.IntegerField()
+    #nokto_ghis = models.IntegerField()
+    #partopreno = models.IntegerField()
+    #rezervtipo = models.CharField(max_length=3)
+
+#class MalalighKondichSistemo(models.Model):
+    #nomo = models.CharField(max_length=60, unique=True)
+    #priskribo = models.TextField()
+    #alighkategorisistemo = models.ForeignKey(AlighKategoriSistemo)
+
+#class MalalighKondichoTipo(models.Model):
+    #nomo = models.CharField(max_length=60, unique=True)
+    #mallongigo = models.CharField(max_length=30)
+    #priskribo = models.TextField()
+    #funkcio = models.CharField(max_length=150)
+    #parametro = models.DecimalField(null=True, max_digits=8, decimal_places=2, blank=True)
+    #uzebla = models.BooleanField()
+
+#class MalalighKondicho(models.Model):
+    #sistemo = models.ForeignKey(MalalighKondichSistemo)
+    #alighkategorio = models.ForeignKey(AlighKategorio)
+    #kondichtipo = models.ForeignKey(MalalighKondichoTipo)
+
+class MinimumaAntaupago(models.Model):
+    #kotizosistemo = models.ForeignKey(KotizoSistemo)
+    landokategorio = models.ForeignKey(LandoKategorio)
+    oficiala_antaupago = models.DecimalField(max_digits=8, decimal_places=2)
+    interna_antaupago = models.DecimalField(max_digits=8, decimal_places=2)
+    # Kion ni montras ekstere kaj kion ni uzas por internaj kalkuloj
+    def __unicode__(self):
+        return u'Minimuma antaupago de {} por landkategorio {}'.format(self.oficiala_antaupago, self.landokategorio)
+
+class Nomshildo(models.Model):
+    # specialaj nomshildoj por nepartoprenantoj
+    nomo = models.CharField(max_length=50)
+    titolo_lokalingve = models.CharField(max_length=50)
+    titolo_esperante = models.CharField(max_length=50)
+    #funkcio_lokalingve = models.CharField()
+    #funkcio_esperante = models.CharField()
+    #renkontigho = models.ForeignKey(Renkontigho)
+    chu_havasnomshildon = models.BooleanField(default=False)
+    def __unicode__(self):
+        return u'Nomshildo por ' + self.nomo
+
+class Noto(models.Model):
+    partoprenanto = models.ForeignKey(Partoprenanto, null=True)
+    uzanto = models.ForeignKey(User, null=True)
+    #kiu = models.CharField(max_length=300) # noto de
+    #kunkiu = models.CharField(max_length=300) # pri komunicado kun
+    dato = models.DateTimeField(auto_now_add=True)
+    #temo = models.CharField()
+    enhavo = models.TextField()
+    chu_prilaborita = models.BooleanField(default=False)
+    revidu = models.DateTimeField(help_text='Kiam memorigi pri tio chi', null=True) # kiam memorigi prie
+    def __unicode__(self):
+        return u'{}{}'.format(self.enhavo[:27], '...' if len(self.enhavo) > 27 else '')
+
+#class NotojPorEntajpanto(models.Model): # shajne por ligi notojn kun uzulojn
+    #noto = models.ForeignKey(Noto)
+    #entajpanto = models.IntegerField(db_column='entajpantoID')
+
+#class ParttempKotizoSistemo(models.Model):
+    #baza_kotizosistemo = models.ForeignKey(KotizoSistemo)
+    #por_noktoj = models.IntegerField(unique=True)
+        ## tiom da noktoj oni rajtas resti en tiu tarifo
+    #kondicho = models.IntegerField(unique=True) # XXX what is this?
+        ## Tiu kondicho aldone devas esti plenumita
+        ## XXX Prob should be a foreign key to Kondicho
+    #faktoro = models.DecimalField(max_digits=8, decimal_places=2)
+        ## ni obligas la kotizojn de la elektita sistemo per tiu faktoro.
+    #sub_kotizosistemo = models.ForeignKey(KotizoSistemo)
+        ## la kotizoj de tiu sistemo estos uzataj
+
+#class Protokolo(models.Model):
+    #deveno = models.CharField(max_length=600)
+    #ilo = models.CharField(max_length=600)
+    #entajpanto = models.CharField(max_length=60)
+    #tempo = models.DateTimeField()
+    #ago = models.CharField(max_length=60)
+
+#class Teksto(models.Model):  # XXX temo (ekz. por retposhtajhoj)?
+    ##renkontigho = models.ForeignKey(Renkontigho)
+    #mesagho = models.CharField(max_length=90, unique=True)
+    #teksto = models.TextField()
+
+# -------------------------
+
+#class Monujo(models.Model): # XXX kio estas ties celo?
+    #renkontigho = models.ForeignKey(Renkontigho)
+    #kvanto = models.IntegerField()
+    #kauzo = models.CharField(max_length=600)
+    #tempo = models.DateTimeField()
+    #kvitanconumero = models.IntegerField()
+    #alkiu = models.CharField(max_length=60)
+    #kiamonujo = models.CharField(max_length=30)
+
+#class Renkkonfiguroj(models.Model):
+    #renkontigho = models.ForeignKey(Renkontighoj)
+    #opcioid = models.CharField(max_length=90, unique=True)
+        ## XXX what's an opcio?
+    #valoro = models.TextField()
+
+#class RenkontighaKonfiguro(models.Model): # XXX what for?
+    #renkontigho = models.ForeignKey(Renkontigho)
+    #tipo = models.CharField(max_length=60, unique=True)
+    #interna = models.CharField(max_length=60, unique=True)
+    #grupo = models.IntegerField()
+    #teksto = models.CharField(max_length=300)
+    #aldona_komento = models.CharField(max_length=300)
+
+#class Sercho(models.Model):
+    #nomo = models.CharField(max_length=150, unique=True)
+    #priskribo = models.TextField()
+    #sercho = models.TextField()
