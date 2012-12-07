@@ -20,13 +20,17 @@ class Respondeco(models.Model):
     uzanto = models.ForeignKey(User)
     def __unicode__(self):
         return self.rolo
+    class Meta:
+        verbose_name_plural = 'Respondecoj'
 
 class Valuto(models.Model):
     kodo = models.CharField(max_length=3)
     nomo = models.CharField(max_length=50, blank=True)
     def __unicode__(self):
         return self.kodo
-
+    class Meta:
+        verbose_name_plural = 'Valutoj'
+        
 class Kurzo(models.Model):
     valuto = models.ForeignKey(Valuto)
     dato = models.DateField()
@@ -36,6 +40,7 @@ class Kurzo(models.Model):
         return u'Kurzo por {} je {}'.format(self.valuto, self.dato)
     class Meta:
         unique_together = ('valuto', 'dato')
+        verbose_name_plural = 'Kurzoj'
         
 #class AghKategoriSistemo(models.Model):
     #nomo = models.CharField(max_length=60, unique=True)
@@ -50,6 +55,8 @@ class AghKategorio(models.Model):
                   'eniras tiun chi kategorion')
     def __unicode__(self):
         return u'Aghkategorio ' + self.nomo
+    class Meta:
+        verbose_name_plural = 'Aghkategorioj'
 
 #class AlighKategoriSistemo(models.Model):
     #nomo = models.CharField(max_length=60, unique=True)
@@ -64,6 +71,8 @@ class AlighKategorio(models.Model):
                   'eniras tiun chi kategorion')
     def __unicode__(self):
         return u'Alighkategorio ' + self.nomo
+    class Meta:
+        verbose_name_plural = 'Alighkategorioj'
 
 class LandoKategorio(models.Model):
     nomo = models.CharField(unique=True, max_length=50)
@@ -71,6 +80,8 @@ class LandoKategorio(models.Model):
     #sistemo = models.ForeignKey(LandoKategoriSistemo)
     def __unicode__(self):
         return u'Landokategorio ' + self.nomo
+    class Meta:
+        verbose_name_plural = 'Landokategorioj'
 
 class Lando(models.Model):
     nomo = models.CharField(max_length=50)
@@ -78,6 +89,8 @@ class Lando(models.Model):
     kategorio = models.ForeignKey(LandoKategorio)
     def __unicode__(self):
         return self.nomo
+    class Meta:
+        verbose_name_plural = 'Landoj'
 
 #class LandoKategoriSistemo(models.Model):
     #nomo = models.CharField(max_length=60, unique=True)
@@ -102,18 +115,24 @@ class LoghKategorio(models.Model):
         help_text='Kosto por logho dum unu nokto')
     def __unicode__(self):
         return self.nomo
+    class Meta:
+        verbose_name_plural = 'Loghkategorioj'
 
 class ManghoMendo(models.Model):
     nomo = models.CharField(unique=True, max_length=50)
     # memzorge/matenmangho/tagmangho/vespermangho
     def __unicode__(self):
         return self.nomo
+    class Meta:
+        verbose_name_plural = 'Manghomendoj'
 
 class ManghoTipo(models.Model):
     nomo = models.CharField(unique=True, max_length=50)
     # vegetare/vegare/ktp
     def __unicode__(self):
         return self.nomo
+    class Meta:
+        verbose_name_plural = 'Manghotipoj'
 
 #class KotizoSistemo(models.Model):
     #nomo = models.CharField(max_length=60, unique=True)
@@ -154,6 +173,8 @@ class Kotizero(models.Model):
     # devas estis EUR
     def __unicode__(self):
         return self.nomo
+    class Meta:
+        verbose_name_plural = 'Kotizeroj'
     
 class Pagmaniero(models.Model):
     # maniero transdoni monon, ekz. per peranto, surloke, unuopula rabato, ktp
@@ -164,6 +185,8 @@ class Pagmaniero(models.Model):
                   'kiel oni intencas pagi la antaupagon')
     def __unicode__(self):
         return self.nomo
+    class Meta:
+        verbose_name_plural = 'Pagmanieroj'
 
 #class Krompago(models.Model):
     #speco = models.ForeignKey(Kotizero)
@@ -206,6 +229,8 @@ class Retposhtajho(models.Model):
     teksto = models.TextField()
     def __unicode__(self):
         return self.nomo
+    class Meta:
+        verbose_name_plural = 'Retposhtajhoj'
 
 class SurlokMembrighaKategorio(models.Model):
     # por registri surlokajn membrighojn en uea/tejo
@@ -215,6 +240,9 @@ class SurlokMembrighaKategorio(models.Model):
         help_text='Sumo de la kotizo')
     def __unicode__(self):
         return self.nomo
+    class Meta:
+        verbose_name = 'Surlokmembrigha Kategorio'
+        verbose_name_plural = 'Surlokmembrighaj Kategorioj'
 
 class Chambro(models.Model): # unuopa chambro por disdoni
     #renkontigho = models.ForeignKey(Renkontigho)
@@ -228,6 +256,8 @@ class Chambro(models.Model): # unuopa chambro por disdoni
     rimarko = models.CharField(blank=True, max_length=255)
     def __unicode__(self):
         return self.nomo
+    class Meta:
+        verbose_name_plural = 'Chambroj'
 
 class Partoprenanto(models.Model):
     persona_nomo = models.CharField(max_length=50)
@@ -328,6 +358,8 @@ class Partoprenanto(models.Model):
     # XXX membreco
     def __unicode__(self):
         return u'{} {}'.format(self.persona_nomo, self.familia_nomo)
+    class Meta:
+        verbose_name_plural = 'Partoprenantoj'
 
 class Pago(models.Model):
     partoprenanto = models.ForeignKey(Partoprenanto)
@@ -341,6 +373,8 @@ class Pago(models.Model):
     def __unicode__(self):
         return u'{} {} de {} je {}'.format(
             self.valuto, self.sumo, self.partoprenanto, self.dato)
+    class Meta:
+        verbose_name_plural = 'Pagoj'
 
 #class InvitLetero(models.Model):
     #pasportnumero = models.CharField(max_length=150)
@@ -423,6 +457,8 @@ class MinimumaAntaupago(models.Model):
     # Kion ni montras ekstere kaj kion ni uzas por internaj kalkuloj
     def __unicode__(self):
         return u'Minimuma antaupago de {} por landkategorio {}'.format(self.oficiala_antaupago, self.landokategorio)
+    class Meta:
+        verbose_name_plural = 'Minimumaj Antaupagoj'
 
 class Nomshildo(models.Model):
     # specialaj nomshildoj por nepartoprenantoj
@@ -435,6 +471,8 @@ class Nomshildo(models.Model):
     chu_havasnomshildon = models.BooleanField(default=False)
     def __unicode__(self):
         return u'Nomshildo por ' + self.nomo
+    class Meta:
+        verbose_name_plural = 'Nomshildoj'
 
 class Noto(models.Model):
     partoprenanto = models.ForeignKey(Partoprenanto, null=True)
@@ -448,6 +486,8 @@ class Noto(models.Model):
     revidu = models.DateTimeField(help_text='Kiam memorigi pri tio chi', null=True) # kiam memorigi prie
     def __unicode__(self):
         return u'{}{}'.format(self.enhavo[:27], '...' if len(self.enhavo) > 27 else '')
+    class Meta:
+        verbose_name_plural = 'Notoj'
 
 #class NotojPorEntajpanto(models.Model): # shajne por ligi notojn kun uzulojn
     #noto = models.ForeignKey(Noto)
