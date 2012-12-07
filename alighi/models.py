@@ -287,7 +287,7 @@ class Partoprenanto(models.Model):
     mesaghiloj = models.TextField(blank=True,
         help_text=eo('Aliaj mesagxiloj, kiujn vi volas aperigi en la '
                      'postkongresa listo de partoprenantoj'))
-    shildnomo = models.CharField(blank=True, max_length=25)
+    shildnomo = models.CharField(blank=True, max_length=50)
     sekso = models.CharField(max_length=1, choices=SEKSOJ)
     naskighdato = models.DateField()
     adreso = models.TextField(blank=True)

@@ -15,7 +15,7 @@ admin.site.register(Kotizero)
 admin.site.register(Pagmaniero)
 admin.site.register(Retposhtajho)
 admin.site.register(SurlokMembrighaKategorio)
-admin.site.register(Chambro) # unuopa chambro por disdoni
+admin.site.register(Chambro)
 admin.site.register(Partoprenanto)
 admin.site.register(Pago)
 admin.site.register(MinimumaAntaupago)
