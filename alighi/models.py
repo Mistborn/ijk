@@ -326,6 +326,7 @@ class Partoprenanto(models.Model):
         default=True, help_text=eo('Mi estas membro de UEA/TEJO'))
     uea_kodo = models.CharField(eo('Mia UEA-kodo'), max_length=18, blank=True)
     loghkategorio = models.ForeignKey(LoghKategorio)
+    chu_preferas_unuseksan_chambron = models.BooleanField(default=False)
     chambro = models.ForeignKey(Chambro, blank=True)
     chu_tuttaga_ekskurso = models.BooleanField(
         'Mi alighas al tut-taga ekskurso', default=True)
