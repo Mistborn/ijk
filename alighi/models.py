@@ -1,6 +1,9 @@
 # -*- encoding: utf-8 -*-
+import re
+
 from django.db import models
 from django.contrib.auth.models import User
+
 from utils import eo
 
 SEKSOJ = (
@@ -172,12 +175,23 @@ class Kotizero(models.Model):
     priskribo = models.TextField(blank=True)
     kondicho = models.TextField(
         help_text=eo('kondicxo, kiu difinas, cxu tiu cxi kotizero aplikigxas '
-                  'al specifa partoprenanto'))
+                     'al specifa partoprenanto'))
         # will be a python expression evaluating to whether this applies
     kvanto = models.DecimalField(max_digits=8, decimal_places=2,
         help_text=eo('Povas esti elcento aux sumo en EUR'))
     #valuto = models.CharField(max_length=3, blank=True)
     # devas estis EUR
+    def chu_aplikighas(self, partoprenanto):
+        '''kontrolu chu tiu chi kotizero aplikighas al
+        la donita partoprenanto'''
+        return eval(self.kondicho, {'partoprenanto': partoprenanto})
+    def javascript(self):
+        '''revenigi jhavaskriptajhon por kontroli, chu la kondicho aplikighas
+        al specifa homo (por enkrozila kontrolo)'''
+        subs = {'and': '&&', 'or': '||'}
+        k = re.sub(r'\b(?:and|or)\b',
+                   lambda m: subs[m.group(0)], self.kondicho)
+        return 'function (partoprenanto) {\n    return (' + k + ')\n}'
     def __unicode__(self):
         return self.nomo
     class Meta:
@@ -357,11 +371,13 @@ class Partoprenanto(models.Model):
     chu_havasnomshildon = models.BooleanField(default=False) #*
     #rimarkoj = models.TextField()
     #por rimarkoj, vidu la tabelon Noto
-    chu_surloka_membrigho = models.BooleanField(default=False) #*
-    surlokmembrigha_kategorio = models.ForeignKey(
-        SurlokMembrighaKategorio, null=True)#*
-    surlokmembrigha_kotizo = models.DecimalField(
-        max_digits=8, decimal_places=2, null=True) #*
+
+    # surlokaj membrighoj
+    #chu_surloka_membrigho = models.BooleanField(default=False) #*
+    #surlokmembrigha_kategorio = models.ForeignKey(
+        #SurlokMembrighaKategorio, null=True)#*
+    #surlokmembrigha_kotizo = models.DecimalField(
+        #max_digits=8, decimal_places=2, null=True) #*
 
     chu_kontrolita = models.BooleanField(default=False) #*
 
@@ -376,6 +392,20 @@ class Partoprenanto(models.Model):
     class Meta:
         verbose_name_plural = eo('Partoprenantoj')
 
+class SurlokaMembrigho(models.Model):
+    # alia versio de la supra tabelo,
+    # por registri surlokajn membrighojn en uea/tejo
+    partoprenanto = models.OneToOneField(Partoprenanto)
+    kategorio = models.CharField(max_length=200,
+        help_text=eo('Nomo de la membreco-kategorio en TEJO/UEA + Lando'))
+        # XXX should be foreign key for a dropdown
+    kotizo = models.DecimalField(max_digits=8, decimal_places=2)
+    def __unicode__(self):
+        return eo('Surloka membrigxo de {}'.format(self.partoprenanto))
+    class Meta:
+        verbose_name = eo('Surloka Membrigxo')
+        verbose_name_plural = eo('Surlokaj Membrigxoj')
+        
 class Pago(models.Model):
     partoprenanto = models.ForeignKey(Partoprenanto)
     uzanto = models.ForeignKey(User,

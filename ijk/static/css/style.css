@@ -1,2 +1,21 @@
 #alighformo ul {
-  list-style: none; }
+  list-style: none;
+  margin: 0;
+  padding: 0; }
+#alighformo li label {
+  display: inline-block;
+  width: 300px;
+  margin-left: 16px; }
+#alighformo .required label {
+  font-weight: bold;
+  margin-left: 0;
+  width: 316px; }
+  #alighformo .required label:before {
+    content: "* ";
+    color: red;
+    font-weight: bold;
+    display: inline-block;
+    width: 16px; }
+#alighformo .required-stilo {
+  font-weight: bold;
+  color: red; }

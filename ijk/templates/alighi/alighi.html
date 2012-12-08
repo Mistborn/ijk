@@ -3,10 +3,29 @@
 <head><title></title>
 <meta charset="utf-8">
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/style.css">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+<script type="text/javascript">
+$(function () {
+    $.datepicker.setDefaults({
+        dateFormat: 'yy-dd-mm',
+        dayNames: ['dimancxo', 'lundo', 'mardo', 'merkredo',
+                  'jxauxdo', 'vendredo', 'sabato'],
+        dayNamesMin: ['di', 'lu', 'ma', 'me', 'jx', 've', 'sa'],
+        monthNames:  ["januaro", "februaro", "marto", "aprilo",
+            "majo", "junio", "julio", "auxgusto",
+            "septembro", "octobro", "novembero", "decembro"],
+        monthNamesShort: ["jan", "feb", "mar", "apr", "maj", "jun",
+            "jul", "auxg", "sep", "oct", "nov", "dec"]
+    });
+    $('#id_naskighdato, #id_ekde, #id_ghis').datepicker();
+});
+</script>
 </head>
 <body>
 <h1>Aligxi al IJK 2013 en Afikim, Israelo</h1>
 <form id="alighformo" method="post" action="{% url alighi %}">
+<p>Eroj kun steleto (<span class="required-stilo">*</span>) estas devigaj.</p>
 <ul>
 {{ form.as_ul }}
 </ul>

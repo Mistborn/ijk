@@ -21,22 +21,22 @@ class PartoprenantoForm(ModelForm):
     foriras_per = CharField(required=False, label=eo('Mi foriras per'),
         help_text=eo('Ekz. flugnumero, se vi jam scias gxin'))
     foriras_je = DateField(required=False, label=eo('Mi foriras je'))
-    chu_unua_dua_ijk = BooleanField(initial=False,
+    chu_unua_dua_ijk = BooleanField(initial=False, required=False,
         label=eo('Tiu cxi estas mia unua au dua IJK'))
-    interesighas_pri_antaukongreso = IntegerField(required=False,
+    interesighas_pri_antaukongreso = IntegerField(
         label=eo('Mi interesigxas pri antauxkongreso'))
-    interesighas_pri_postkongreso = IntegerField(required=False,
+    interesighas_pri_postkongreso = IntegerField(
         label=eo('Mi interesigxas pri postkongreso'))
-    chu_bezonas_invitleteron = BooleanField(initial=False,
+    chu_bezonas_invitleteron = BooleanField(initial=False, required=False,
         label=eo('Mi bezonas invitleteron'))
     ekde = DateField(initial='2013-08-19', label=eo('Mi partoprenos ekde'))
     ghis = DateField(initial='2013-08-26', label=eo('Mi partoprenos gxis'))
     chu_ueamembro = BooleanField(
-        initial=True, label=eo('Mi estas membro de UEA/TEJO'))
+        required=True, initial=False, label=eo('Mi estas membro de UEA/TEJO'))
     loghkategorio = ModelChoiceField(models.LoghKategorio.objects,
         label=eo('Mi deziras logxi en'))
     chu_preferas_unuseksan_chambron = BooleanField(initial=False,
-        label=eo('Mi preferas unuseksan cxambron'))
+        required=False, label=eo('Mi preferas unuseksan cxambron'))
     chu_tuttaga_ekskurso = BooleanField(initial=True,
         label=eo('Mi aligxas al la tut-taga ekskurso'))
     manghomendo = ModelChoiceField(models.ManghoMendo.objects,
@@ -45,13 +45,14 @@ class PartoprenantoForm(ModelForm):
         label=eo('Mi mangxas'))
     deziras_loghi_kun_nomo = CharField(
         required=False, label=eo('Mi deziras logxi kun'))
-    chu_retalisto = BooleanField(initial=True,
+    chu_retalisto = BooleanField(initial=True, required=False,
         label=eo('Mi permesas publikigi mian nomon en la reta listo de '
                  'partoprenantoj'))
-    chu_postkongresalisto = BooleanField(initial=True,
+    chu_postkongresalisto = BooleanField(initial=True, required=False,
         label=eo('Mi permesas publikigi mian nomon en '
                  'la postkongresa listo de partoprenantoj'))
-    chu_komencanto = BooleanField(initial=True, label=eo('Mi estas komencanto'))
+    chu_komencanto = BooleanField(initial=True, required=False,
+        label=eo('Mi estas komencanto'))
     chu_interesighas_pri_kurso = BooleanField(initial=True,
         label=eo('Mi interesigxas pri Esperanto-kurso'))
     programa_kontribuo = CharField(required=False,
