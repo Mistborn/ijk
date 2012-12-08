@@ -1,24 +1,13 @@
 # -*- encoding: utf-8 -*-
 from django.db import models
 from django.contrib.auth.models import User
+from utils import eo
 
 SEKSOJ = (
     ('v', 'vira'),
     ('i', 'ina'),
     ('a', 'alia'),
 )
-
-import re
-_eod = {
- 'c': u'ĉ', 'g': u'ĝ', 'h': u'ĥ', 'j': u'ĵ', 's': u'ŝ', 'u': u'ŭ', 'x': u'x',
- 'C': u'Ĉ', 'G': u'Ĝ', 'H': u'Ĥ', 'J': u'Ĵ', 'S': u'Ŝ', 'U': u'Ŭ', 'X': u'X',
-}
-def eo(s):
-    '''Konverti x-kodigitan stringon al unikodo'''
-    # XXX this should be somewhere else
-    #return s
-    return re.sub(
-        r'([cghjsuxCGHJSUX])[xX](?![xX])', lambda m: _eod[m.group(1)], s)
 
 # XXX help text for each field
 # XXX check defaults and nulls for ecah field
@@ -283,70 +272,65 @@ class Chambro(models.Model): # unuopa chambro por disdoni
 class Partoprenanto(models.Model):
     persona_nomo = models.CharField(max_length=50)
     familia_nomo = models.CharField(max_length=50)
-    retposhto = models.EmailField()
-    mesaghiloj = models.TextField(blank=True,
-        help_text=eo('Aliaj mesagxiloj, kiujn vi volas aperigi en la '
-                     'postkongresa listo de partoprenantoj'))
-    shildnomo = models.CharField(blank=True, max_length=50)
+    retposhtadreso = models.EmailField(eo('Retposxtadreso'))
+    mesaghiloj = models.CharField(
+        eo('Aliaj mesagxiloj'), max_length=255, blank=True)
+    shildnomo = models.CharField(eo('Sxildnomo'), blank=True, max_length=50)
     sekso = models.CharField(max_length=1, choices=SEKSOJ)
-    naskighdato = models.DateField()
+    naskighdato = models.DateField(eo('Naskigxdato'))
     adreso = models.TextField(blank=True)
     urbo = models.CharField(blank=True, max_length=50)
-    poshtkodo = models.CharField(blank=True, max_length=15)
-    loghlando = models.ForeignKey(Lando)
-    shildlando = models.CharField(blank=True, max_length=50)
+    poshtkodo = models.CharField(eo('Posxtkodo'), blank=True, max_length=15)
+    loghlando = models.ForeignKey(Lando, verbose_name=eo('Logxlando'))
+    shildlando = models.CharField(eo('Sxildlando'), blank=True, max_length=50)
     telefono = models.CharField(blank=True, max_length=50)
     #fakso = models.CharField(blank=True)
     pagmaniero = models.ForeignKey(Pagmaniero,
-        help_text=eo('Kiamaniere vi pagos la antaupagon'))
+        help_text=eo('Por la antauxpago'))
         # el la publikaj pagmanieroj, por la antaupago
     pagmaniera_komento = models.CharField(blank=True, max_length=50)
         # ekz por nomo de peranto
-    alvenas_per = models.CharField(blank=True, max_length=255,
-        help_text=eo('Ekz. flugnumero, se vi jam scias gxin'))
+    alvenas_per = models.CharField(blank=True, max_length=255)
     alvenas_je = models.DateField(null=True)
-    foriras_per = models.CharField(blank=True, max_length=255,
-        help_text=eo('Ekz. flugnumero, se vi jam scias gxin'))
+    foriras_per = models.CharField(blank=True, max_length=255)
     foriras_je = models.DateField(null=True)
-    chu_unua_dua_ijk = models.BooleanField(
-        default=False, help_text=eo('Cxu via unua au dua IJK?'))
-    interesighas_pri_antaukongreso = models.IntegerField(null=True)
+    chu_unua_dua_ijk = models.BooleanField(eo('Cxu unua au dua IJK'),
+        default=False)
+    interesighas_pri_antaukongreso = models.IntegerField(
+        eo('Interesigxas pri antauxkongreso'), null=True)
         # kiom da tagoj
-    interesighas_pri_postkongreso = models.IntegerField(null=True)
+    interesighas_pri_postkongreso = models.IntegerField(
+        eo('Interesigxas pri postkongreso'), null=True)
         # kiom da tagoj
     chu_bezonas_invitleteron = models.BooleanField(
-        'Chu vi bezonas invitleteron?', default=False)
-    chu_invitletero_sendita = models.BooleanField(default=False)
+        eo('Cxu bezonas invitleteron'), default=False)
 #class Partopreno(models.Model):
     #renkontigho = models.ForeignKey(Renkontigho)
     #partoprenanto = models.ForeignKey(Partoprenanto)
-    ekde = models.DateField(eo('Partoprenos ekde'))
-    ghis = models.DateField(eo('Partoprenos gxis'))
-    chu_ueamembro = models.BooleanField(
-        default=True, help_text=eo('Mi estas membro de UEA/TEJO'))
-    uea_kodo = models.CharField(eo('Mia UEA-kodo'), max_length=18, blank=True)
-    loghkategorio = models.ForeignKey(LoghKategorio)
-    chu_preferas_unuseksan_chambron = models.BooleanField(default=False)
-    chambro = models.ForeignKey(Chambro, blank=True)
+    ekde = models.DateField(default='2013-08-19')
+    ghis = models.DateField(eo('Gxis'), default='2013-08-26')
+    chu_ueamembro = models.BooleanField(eo('Cxu membro de UEA/TEJO'),
+        default=True)
+    uea_kodo = models.CharField(eo('UEA-kodo'), max_length=18, blank=True)
+    loghkategorio = models.ForeignKey(LoghKategorio,
+        verbose_name=eo('Logxkategorio'))
+    chu_preferas_unuseksan_chambron = models.BooleanField(
+        eo('Cxu preferas unuseksan cxambron'), default=False)
     chu_tuttaga_ekskurso = models.BooleanField(
-        'Mi alighas al tut-taga ekskurso', default=True)
-    manghomendo = models.ForeignKey(ManghoMendo)
-    manghotipo = models.ForeignKey(ManghoTipo)
-    unua_konfirmilo_sendita = models.DateField(null=True)
-    dua_konfirmilo_sendita = models.DateField(null=True)
+        eo('Cxu aligxas al la tut-taga ekskurso'), default=True)
+    manghomendo = models.ForeignKey(ManghoMendo, verbose_name=eo('Mangxomendo'))
+    manghotipo = models.ForeignKey(ManghoTipo,
+        verbose_name=eo('Mangxotipo'))
     deziras_loghi_kun_nomo = models.CharField(
-        'Mi deziras loghi kun', blank=True, max_length=50)
-    deziras_loghi_kun = models.ForeignKey('Partoprenanto', null=True)
+        eo('Deziras logxi kun (nomo)'), blank=True, max_length=50)
     # chu mi volas aperi en tiaj listoj:
-    chu_retalisto = models.BooleanField(default=True,
-        help_text=eo('Mi permesas publikigi mian nomon en la reta listo de '
-                     'partoprenantoj'))
-    chu_postkongresalisto = models.BooleanField(default=True,
-        help_text=eo('Mi permesas publikigi mian nomon en '
-                     'la postkongresa listo de partoprenantoj'))
-    chu_komencanto = models.BooleanField(help_text='Mi estas komencanto', default=True)
-    chu_interesighas_pri_kurso = models.BooleanField(default=True,
-        help_text=eo('Mi interesigxas pri Esperanto-kurso'))
+    chu_retalisto = models.BooleanField(
+        eo('Cxu konsentas aperi en la reta listo'), default=True)
+    chu_postkongresalisto = models.BooleanField(
+        eo('Cxu konsentas aperi en la postkongresa listo'), default=True)
+    chu_komencanto = models.BooleanField(eo('Cxu komencanto'), default=True)
+    chu_interesighas_pri_kurso = models.BooleanField(
+        eo('Cxu interesigxas pri kurso'), default=True)
     #antaupago_ghis = models.DateField()
     #dulita = models.CharField(max_length=3)
     #tema = models.TextField()
@@ -354,25 +338,32 @@ class Partoprenanto(models.Model):
     #vespera = models.TextField()
     #muzika = models.TextField()
     #nokta = models.TextField()
-    programa_kontribuo = models.TextField(blank=True,
-        help_text=eo('Mi sxatus kontribui al la programo jene:'))
-    organiza_kontribuo = models.TextField(blank=True,
-        help_text=eo('Mi sxatus kontribui al organizado jene:'))
-    alighdato = models.DateField(auto_now_add=True)
-    malalighdato = models.DateField(null=True)
+    programa_kontribuo = models.TextField(blank=True)
+    organiza_kontribuo = models.TextField(blank=True)
+    # de tie chi estas kampoj por interna uzo
+    chambro = models.ForeignKey(Chambro, verbose_name=eo('Cxambro'), blank=True)
+    chu_invitletero_sendita = models.BooleanField(default=False)
+    deziras_loghi_kun = models.ForeignKey('Partoprenanto', null=True,
+        help_text=eo('Elektu cxi tie la alian partoprenanton indikitan '
+                     'supre, post kiam li-sxi aligxos')) #*
+    unua_konfirmilo_sendita = models.DateField(null=True) #*
+    dua_konfirmilo_sendita = models.DateField(null=True) #*
+    alighdato = models.DateField(auto_now_add=True) #*
+    malalighdato = models.DateField(null=True) #*
     #alighkategoridato = models.DateField()
     # informoj por surloka kontrolo:
-    chu_alvenis = models.BooleanField(default=False)
-    chu_havasmanghkuponon = models.BooleanField(default=False)
-    chu_havasnomshildon = models.BooleanField(default=False)
+    chu_alvenis = models.BooleanField(default=False) #*
+    chu_havasmanghkuponon = models.BooleanField(default=False) #*
+    chu_havasnomshildon = models.BooleanField(default=False) #*
     #rimarkoj = models.TextField()
     #por rimarkoj, vidu la tabelon Noto
-        # por pagoj
-    chu_surloka_membrigho = models.BooleanField(default=False)
-    surlokmembrigha_kategorio = models.ForeignKey(SurlokMembrighaKategorio)
-    surlokmembrigha_kotizo = models.DecimalField(max_digits=8, decimal_places=2)
+    chu_surloka_membrigho = models.BooleanField(default=False) #*
+    surlokmembrigha_kategorio = models.ForeignKey(
+        SurlokMembrighaKategorio, null=True)#*
+    surlokmembrigha_kotizo = models.DecimalField(
+        max_digits=8, decimal_places=2, null=True) #*
 
-    chu_kontrolita = models.BooleanField(default=False)
+    chu_kontrolita = models.BooleanField(default=False) #*
 
     #surloka_membrokotizo = models.CharField(max_length=3)
     #membrokotizo = models.DecimalField(max_digits=8, decimal_places=2)
