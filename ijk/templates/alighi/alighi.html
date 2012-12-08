@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+<head><title></title>
+<meta charset="utf-8">
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/style.css">
+</head>
+<body>
+<h1>Aligxi al IJK 2013 en Afikim, Israelo</h1>
+<form id="alighformo" method="post" action="{% url alighi %}">
+<ul>
+{{ form.as_ul }}
+</ul>
+<input type="submit" value="Aligxi!">
+</form>
+</body>
+</html>
