@@ -4,7 +4,6 @@ from django.conf import settings
 if settings.DEBUG:
     from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
-# Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
 
@@ -20,6 +19,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^alighi/', include('alighi.urls')),
+    url('^paghoj/', include('django.contrib.flatpages.urls')),
 )
 
 if settings.DEBUG:

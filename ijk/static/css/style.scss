@@ -2,17 +2,34 @@ $left: 16px;
 $li-width: 300px;
 
 #alighformo {
-    ul {
-       list-style: none;
-       margin: 0;
-       padding: 0;
+    > ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        > li {
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+            > * {
+                vertical-align: middle;
+            }
+            > label {
+                display: inline-block;
+                width: $li-width;
+                margin-left: $left;
+            }
+            ul {
+                list-style: none;
+                display: inline;
+                margin: 0;
+                padding: 0;
+                li {
+                    display: inline;
+                    margin: 0 1em;
+                }
+            }
+        }
     }
-    li label {
-        display: inline-block;
-        width: $li-width;
-        margin-left: $left;
-    }
-    .required label {
+    .required > label {
         font-weight: bold;
         margin-left: 0; //$left/2;
         width: $li-width + $left;
@@ -27,5 +44,15 @@ $li-width: 300px;
     .required-stilo {
         font-weight: bold;
         color: red;
+    }
+    ul.errorlist {
+        list-style: none;
+        display: block;
+        margin-left: 50px;
+        li {
+            display: inline-block;
+            font-weight: bold;
+            color: red;
+        }
     }
 }

@@ -4,3 +4,5 @@ private_settings.py
 dbsettings.py
 .sass-cache
 static/*
+data.*.json
+data-*.json

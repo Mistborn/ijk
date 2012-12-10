@@ -1,16 +1,29 @@
-#alighformo ul {
+#alighformo > ul {
   list-style: none;
   margin: 0;
   padding: 0; }
-#alighformo li label {
-  display: inline-block;
-  width: 300px;
-  margin-left: 16px; }
-#alighformo .required label {
+  #alighformo > ul > li {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em; }
+    #alighformo > ul > li > * {
+      vertical-align: middle; }
+    #alighformo > ul > li > label {
+      display: inline-block;
+      width: 300px;
+      margin-left: 16px; }
+    #alighformo > ul > li ul {
+      list-style: none;
+      display: inline;
+      margin: 0;
+      padding: 0; }
+      #alighformo > ul > li ul li {
+        display: inline;
+        margin: 0 1em; }
+#alighformo .required > label {
   font-weight: bold;
   margin-left: 0;
   width: 316px; }
-  #alighformo .required label:before {
+  #alighformo .required > label:before {
     content: "* ";
     color: red;
     font-weight: bold;
@@ -19,3 +32,11 @@
 #alighformo .required-stilo {
   font-weight: bold;
   color: red; }
+#alighformo ul.errorlist {
+  list-style: none;
+  display: block;
+  margin-left: 50px; }
+  #alighformo ul.errorlist li {
+    display: inline-block;
+    font-weight: bold;
+    color: red; }

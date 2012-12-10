@@ -1,25 +1,14 @@
 # -*- encoding: utf-8 -*-
-import re
+import datetime
+import time
 
 from django.db import models
 from django.contrib.auth.models import User
 
-from utils import eo
-
-SEKSOJ = (
-    ('v', 'vira'),
-    ('i', 'ina'),
-    ('a', 'alia'),
-)
-
-# XXX help text for each field
-# XXX check defaults and nulls for ecah field
-
-#class Respondeculo(models.Model): # XXX should be a user here
-    #nomo = models.CharField(unique=True)
-    #retposhtadreso = models.EmailField()
+from utils import eo, KOMENCA_DATO, FINIGHA_DATO, SEKSOJ
 
 class Respondeco(models.Model):
+    '''Respondeculo por iu afero, por automataj informigoj'''
     rolo = models.CharField(max_length=50)
     uzanto = models.ForeignKey(User)
     def __unicode__(self):
@@ -38,7 +27,8 @@ class Valuto(models.Model):
 class Kurzo(models.Model):
     valuto = models.ForeignKey(Valuto)
     dato = models.DateField()
-    kurzo = models.DecimalField(max_digits=12, decimal_places=5)
+    kurzo = models.DecimalField(max_digits=12, decimal_places=5,
+        help_text=eo('1 euxro = tiom'))
     # *** de la donita valuto al EUR
     def __unicode__(self):
         return eo(u'Kurzo por {} je {}'.format(self.valuto, self.dato))
@@ -46,46 +36,84 @@ class Kurzo(models.Model):
         unique_together = ('valuto', 'dato')
         verbose_name_plural = eo('Kurzoj')
         
-#class AghKategoriSistemo(models.Model):
-    #nomo = models.CharField(max_length=60, unique=True)
-    #priskribo = models.TextField()
-
 class AghKategorio(models.Model):
+    '''Kategorio de agho por kalkulado de kotizo'''
     nomo = models.CharField(unique=True, max_length=50)
     priskribo = models.TextField(blank=True)
     #sistemo = models.ForeignKey(AghKategoriSistemo)
-    limagho = models.IntegerField(
-        help_text=eo('Partoprenanto kun agxo gxis tiu cxi agxo '
-                  'eniras tiun cxi kategorion'))
+    limagho = models.IntegerField(eo('Limagxo'),
+        help_text=eo('Partoprenanto kun agxo malpli ol tiu cxi agxo '
+                     'eniras tiun cxi kategorion'))
+    aldona_kotizo = models.DecimalField(max_digits=8, decimal_places=2,
+        null=True,
+        help_text=eo('Aldona kotizo por cxiu jaro pli ol la minimuma '
+                     'en tiu cxi kategorio'))
+
+    @staticmethod
+    def liveri_aghon_lau_naskighdato(dato):
+        if isinstance(dato, basestring):
+            dato = datetime.date(*time.strptime(dato, '%Y-%m-%d')[:3])
+        return (KOMENCA_DATO - dato).days / 365.25
+
+    @classmethod
+    def liveri_aldonan_kotizon(self, agho):
+        if not self.aldona_kotizo:
+            return 0
+        if isinstance(agho, (datetime.date, basestring)):
+            agho = cls.liveri_aghon_lau_naskighdato(agho)
+        cls = self.__class__
+        lt = cls.objects.filter(limagho__lt=self.limagho).order_by('limagho')
+        minimuma = lt[-1].limagho if lt else 1
+        return (agho - minimuma + 1) * self.aldona_kotizo
+
+    @classmethod
+    def liveri_kategorion(cls, agho):
+        if isinstance(agho, (datetime.date, basestring)):
+            agho = cls.liveri_aghon_lau_naskighdato(agho)
+        rset = cls.objects.filter(limagho__gt=agho).order_by('limagho')
+        return rset[0] if rset else None
+                  
     def __unicode__(self):
-        return eo(u'Agxkategorio ' + self.nomo)
+        return eo(u'Agxkategorio {}'.format(self.nomo))
+
     class Meta:
         verbose_name = eo('Agxkategorio')
         verbose_name_plural = eo('Agxkategorioj')
 
-#class AlighKategoriSistemo(models.Model):
-    #nomo = models.CharField(max_length=60, unique=True)
-    #priskribo = models.TextField()
-
 class AlighKategorio(models.Model):
+    '''Kategorio de aligho lau dato, por kalkulado de kotizo'''
     nomo = models.CharField(unique=True, max_length=50)
     priskribo = models.TextField(blank=True)
     #sistemo = models.ForeignKey(AlighKategoriSistemo)
-    limdato = models.DateField(
+    limdato = models.DateField(unique=True,
         help_text=eo('Partoprenanto, kiu aligxas gxis tiu cxi dato '
                      'eniras tiun cxi kategorion'))
+
+    @classmethod
+    def liveri_kategorion(cls, dato):
+        rset = cls.objects.filter(limdato__gte=dato).order_by('limdato')
+        return rset[0] if rset else None
+    
     def __unicode__(self):
-        return eo(u'Aligxkategorio ' + self.nomo)
+        return eo(u'Aligxkategorio {} gxis {}'.format(self.nomo, self.limdato))
+    
     class Meta:
         verbose_name = eo('Aligxkategorio')
         verbose_name_plural = eo('Aligxkategorioj')
 
 class LandoKategorio(models.Model):
+    '''Kategorio de lando, por kalkulado de kotizo'''
     nomo = models.CharField(unique=True, max_length=50)
     priskribo = models.TextField(blank=True)
     #sistemo = models.ForeignKey(LandoKategoriSistemo)
+
+    @staticmethod
+    def liveri_kategorion(lando):   # for consistency
+        return lando.kategorio
+    
     def __unicode__(self):
         return eo(u'Landokategorio ' + self.nomo)
+
     class Meta:
         verbose_name = eo('Landokategorio')
         verbose_name_plural = eo('Landokategorioj')
@@ -95,23 +123,12 @@ class Lando(models.Model):
     kodo = models.CharField(max_length=2)
     kategorio = models.ForeignKey(LandoKategorio)
     def __unicode__(self):
-        return self.nomo
+        return u'{} ({})'.format(self.nomo, self.kategorio)
     class Meta:
         verbose_name_plural = eo('Landoj')
 
-#class LandoKategoriSistemo(models.Model):
-    #nomo = models.CharField(max_length=60, unique=True)
-    #priskribo = models.TextField()
-
-#class LandoKategoriLigo(models.Model):
-    #lando = models.ForeignKey(Lando)
-    #kategorio = models.ForeignKey(LandoKategorio)
-    
-#class LoghKategoriSistemo(models.Model):
-    #nomo = models.CharField(max_length=60, unique=True)
-    #priskribo = models.TextField()
-    
 class LoghKategorio(models.Model):
+    '''Elektebla loghkategorio'''
     nomo = models.CharField(unique=True, max_length=50)
     priskribo = models.TextField(blank=True)
     #sistemo = models.ForeignKey(LoghKategoriSistemo)
@@ -120,29 +137,406 @@ class LoghKategorio(models.Model):
         help_text=eo('Kosto por logxo dum la tuta kongreso'))
     unutaga_kosto = models.DecimalField(max_digits=8, decimal_places=2,
         help_text=eo('Kosto por logxo dum unu nokto'))
+        
     def __unicode__(self):
         return self.nomo
+        
     class Meta:
         verbose_name = eo('Logxkategorio')
         verbose_name_plural = eo('Logxkategorioj')
 
-class ManghoMendo(models.Model):
-    nomo = models.CharField(unique=True, max_length=50)
-    # memzorge/matenmangho/tagmangho/vespermangho
-    def __unicode__(self):
-        return self.nomo
-    class Meta:
-        verbose_name = eo('Mangxomendo')
-        verbose_name_plural = eo('Mangxomendoj')
-
 class ManghoTipo(models.Model):
+    '''Tipo de mangho, ekz. vegetare, koshere, ktp'''
     nomo = models.CharField(unique=True, max_length=50)
-    # vegetare/vegare/ktp
+    # vegetare/vegane/ktp
     def __unicode__(self):
         return self.nomo
     class Meta:
         verbose_name = eo('Mangxotipo')
         verbose_name_plural = eo('Mangxotipoj')
+
+class ProgramKotizo(models.Model):
+    '''Kotizo por la programo mem, kalkulita lau agho, lando, kaj alighdato'''
+    aghkategorio = models.ForeignKey(AghKategorio,
+        verbose_name=eo('Agxkategorio'))
+    landokategorio = models.ForeignKey(LandoKategorio,
+        verbose_name=eo('Landokategorio'))
+    alighkategorio = models.ForeignKey(AlighKategorio,
+        verbose_name=eo('Aligxkategorio'))
+    kotizo = models.DecimalField(max_digits=8, decimal_places=2,
+        help_text=eo('Programkotizo en euxroj por tiu cxi grupo'))
+    def __unicode__(self):
+        return eo(u'{}, {}, {} : {} EUR'.format(
+            self.aghkategorio, self.landokategorio, self.alighkategorio,
+            self.kotizo))
+    class Meta:
+        verbose_name = eo('Programkotizo')
+        verbose_name_plural = eo('Programkotizoj')
+        unique_together = ('aghkategorio', 'landokategorio', 'alighkategorio')
+
+class Pagmaniero(models.Model):
+    '''maniero transdoni monon, ekz. per peranto, surloke,
+    unuopula rabato, ktp'''
+    nomo = models.CharField(unique=True, max_length=50)
+    priskribo = models.TextField(blank=True)
+    chu_publika = models.BooleanField(default=False,
+        verbose_name=eo('Cxu publika'),
+        help_text=eo('Cxu tiu cxi pagmaniero estu elektebla por indiki, '
+                     'kiel oni intencas pagi la antauxpagon'))
+    def __unicode__(self):
+        return self.nomo
+    class Meta:
+        verbose_name_plural = eo('Pagmanieroj')
+
+class Retposhtajho(models.Model):
+    '''Retposhta mesagho, por amase senditaj retposhtajhoj'''
+    nomo = models.CharField(unique=True, max_length=50)
+    temo = models.CharField(max_length=100)
+    teksto = models.TextField()
+    def __unicode__(self):
+        return self.nomo
+    class Meta:
+        verbose_name = eo('Retposxtajxo')
+        verbose_name_plural = eo('Retposxtajxoj')
+
+class MembrighaKategorio(models.Model):
+    '''Por krei liston de kategorioj de surlokaj membrighoj en UEA/TEJO'''
+    nomo = models.CharField(unique=True, max_length=50,
+        help_text=eo('Nomo de la kategorio de surloka membrigxo en TEJO/UEA'))
+    #kotizo = models.DecimalField(max_digits=8, decimal_places=2,
+        #help_text=eo('Sumo de la kotizo'))
+    def __unicode__(self):
+        return self.nomo
+    class Meta:
+        verbose_name = eo('Membrigxa Kategorio')
+        verbose_name_plural = eo('Membrigxaj Kategorioj')
+
+class Chambro(models.Model):
+    '''Unuopa chambro por disdoni'''
+    #renkontigho = models.ForeignKey(Renkontigho)
+    nomo = models.CharField(unique=True, max_length=50)
+    #etagho = models.CharField(max_length=150)
+    litonombro = models.IntegerField(
+        help_text=eo('nombro da litoj en la cxambro'))
+        # maksimuma nombro da homoj kiuj povos loghi en tiu chi chambro
+    loghkategorio = models.ForeignKey(LoghKategorio,
+        verbose_name=eo('Logxkategorio'))
+        # al kiu loghkategorio ghi taugas?
+    #dulita = models.CharField(max_length=3)
+    rimarko = models.CharField(blank=True, max_length=255)
+    def __unicode__(self):
+        return u'{} ({}), litoj: {}'.format(
+            self.nomo, self.loghkategorio, self.litonombro)
+    class Meta:
+        verbose_name = eo('Cxambro')
+        verbose_name_plural = eo('Cxambroj')
+
+class UEARabato(models.Model):
+    landokategorio = models.ForeignKey(LandoKategorio, unique=True)
+    sumo = models.DecimalField(max_digits=8, decimal_places=2,
+        help_text=eo('Rabato pro UEA-membreco en tiu cxi landokategorio'))
+
+    @classmethod
+    def liveri_rabaton(cls, lando):
+        rabato = cls.objects.get(landokategorio=lando.kategorio)
+        return rabato.sumo
+        
+    def __unicode__(self):
+        return eo(u'{} EUR por {}'.format(
+                        self.sumo, self.landokategorio))
+    class Meta:
+        verbose_name = eo('UEA-rabato')
+        verbose_name_plural = eo('UEA-rabatoj')
+
+class Partoprenanto(models.Model):
+    '''Partoprenanto en la kongreso'''
+    persona_nomo = models.CharField(max_length=50)
+    familia_nomo = models.CharField(max_length=50)
+    shildnomo = models.CharField(eo('Sxildnomo'), blank=True, max_length=50)
+    sekso = models.CharField(max_length=1, choices=SEKSOJ)
+    naskighdato = models.DateField(eo('Naskigxdato'))
+    retposhtadreso = models.EmailField(eo('Retposxtadreso'))
+    adreso = models.TextField(blank=True)
+    urbo = models.CharField(blank=True, max_length=50)
+    poshtkodo = models.CharField(eo('Posxtkodo'), blank=True, max_length=15)
+    loghlando = models.ForeignKey(Lando, verbose_name=eo('Logxlando'))
+    shildlando = models.CharField(eo('Sxildlando'), blank=True, max_length=50)
+    chu_bezonas_invitleteron = models.BooleanField(
+        eo('Cxu bezonas invitleteron'), default=False)
+    chu_invitletero_sendita = models.BooleanField(
+        eo('Cxu invitletero sendita'), default=False)
+    telefono = models.CharField(blank=True, max_length=50)
+    skype = models.CharField(blank=True, max_length=50)
+    facebook = models.CharField(blank=True, max_length=50)
+    mesaghiloj = models.CharField(
+        eo('Aliaj mesagxiloj'), max_length=255, blank=True)
+    chu_retalisto = models.BooleanField(
+        eo('Cxu konsentas aperi en la reta listo'), default=True)
+    chu_postkongresalisto = models.BooleanField(
+        eo('Cxu konsentas aperi en la postkongresa listo'), default=True)
+    ekde = models.DateField(default=KOMENCA_DATO)
+    ghis = models.DateField(eo('Gxis'), default=FINIGHA_DATO)
+    alvenas_per = models.CharField(blank=True, max_length=255)
+    #alvenas_je = models.DateField(null=True)
+    foriras_per = models.CharField(blank=True, max_length=255)
+    #foriras_je = models.DateField(null=True)
+    interesighas_pri_antaukongreso = models.IntegerField(
+        eo('Interesigxas pri antauxkongreso'), null=True,
+        help_text='kiom da tagoj')
+    interesighas_pri_postkongreso = models.IntegerField(
+        eo('Interesigxas pri postkongreso'), null=True,
+        help_text='kiom da tagoj')
+    chu_tuttaga_ekskurso = models.BooleanField(
+        eo('Cxu aligxas al la tut-taga ekskurso'), default=True)
+    chu_unua_dua_ijk = models.BooleanField(eo('Cxu unua aux dua IJK'),
+        default=False)
+    chu_komencanto = models.BooleanField(eo('Cxu komencanto'), default=True)
+    chu_interesighas_pri_kurso = models.BooleanField(
+        eo('Cxu interesigxas pri E-kurso'), default=True)
+    programa_kontribuo = models.TextField(blank=True)
+    organiza_kontribuo = models.TextField(blank=True)
+    loghkategorio = models.ForeignKey(LoghKategorio,
+        verbose_name=eo('Logxkategorio'))
+    deziras_loghi_kun_nomo = models.CharField(
+        eo('Deziras logxi kun (nomo)'), blank=True, max_length=50)
+    deziras_loghi_kun = models.ForeignKey('Partoprenanto', null=True,
+        verbose_name=eo('Deziras logxi kun'),
+        help_text=eo('Elektu cxi tie la alian partoprenanton indikitan '
+                     'supre, post kiam li-sxi aligxos')) #*
+    chu_preferas_unuseksan_chambron = models.BooleanField(
+        eo('Cxu preferas unuseksan cxambron'), default=False)
+    chambro = models.ForeignKey(Chambro,
+        verbose_name=eo('Cxambro'), blank=True)
+    manghotipo = models.ForeignKey(ManghoTipo, verbose_name=eo('Mangxotipo'),
+        help_text=eo('Tipo de mangxo, ekz. vegetare, viande, ktp'))
+    pagmaniero = models.ForeignKey(Pagmaniero,
+        help_text=eo('Por la antauxpago'))
+        # el la publikaj pagmanieroj, por la antaupago
+    pagmaniera_komento = models.CharField(blank=True, max_length=50)
+        # ekz por nomo de peranto
+    #antaupago_ghis = models.DateField()
+    chu_ueamembro = models.BooleanField(eo('Cxu membro de UEA/TEJO'),
+        default=False)
+    uea_kodo = models.CharField(eo('UEA-kodo'), max_length=18, blank=True)
+    chu_kontrolita = models.BooleanField(
+        eo('Cxu kontrolita'), default=False) #*
+    unua_konfirmilo_sendita = models.DateField(null=True) #*
+    dua_konfirmilo_sendita = models.DateField(null=True) #*
+    alighdato = models.DateField(eo('Aligxdato'), auto_now_add=True) #*
+    malalighdato = models.DateField(eo('Malaligxdato'), null=True,
+        help_text=eo('Se la partoprenanto malaligxis')) #*
+    chu_alvenis = models.BooleanField(eo('Cxu alvenis'), default=False) #*
+    chu_havasmanghkuponon = models.BooleanField(
+        eo('Cxu havas mangxkuponon'), default=False) #*
+    chu_havasnomshildon = models.BooleanField(
+        eo('Cxu havas nomsxildon'), default=False) #*
+    #rimarkoj = models.TextField()
+    # ******************** pri la programo
+#class Partopreno(models.Model):
+    #renkontigho = models.ForeignKey(Renkontigho)
+    #partoprenanto = models.ForeignKey(Partoprenanto)
+    # ******************** pri loghado
+    # manghado
+    # povas esti pluraj manghomendoj, do por tio vidu tiun tabelon
+    # chu mi volas aperi en tiaj listoj:
+    #dulita = models.CharField(max_length=3)
+    #tema = models.TextField()
+    #distra = models.TextField()
+    #vespera = models.TextField()
+    #muzika = models.TextField()
+    #nokta = models.TextField()
+    # ******************* kontribuo
+    # ******************* de tie chi estas kampoj por interna uzo
+    #alighkategoridato = models.DateField()
+    # informoj por surloka kontrolo:
+    #por rimarkoj, vidu la tabelon Noto
+
+    def liveri_manghomendojn(self):
+        return ManghoMendo.objects.filter(partoprenanto=self)
+
+    def chu_plentempa(self):
+        return self.ekde == KOMENCA_DATO and self.ghis == FINIGHA_DATO
+
+    def liveri_tagojn(self):
+        '''suma numbro da tagoj de tiu chi partoprenanto'''
+        return (self.ghis - self.ekde).days
+
+    def liveri_programkotizon(self):
+        aghkategorio = AghKategorio.liveri_kategorion(self.naskighdato)
+        landokategorio = self.loghlando.kategorio
+        alighkategorio = AlighKategorio.liveri_kategorion(self.alighdato)
+            # XXX vershajne devas esti la dato de la antaupago
+        programkotizo = ProgramKotizo.objects.get(
+            aghkategorio=aghkategorio,
+            landokategorio=landokategorio,
+            alighkategorio=alighkategorio)
+        return programkotizo.kotizo
+
+    def liveri_uearabaton(self):
+        if not self.chu_ueamembro():
+            return 0
+        return UEARabato.liveri_rabaton(self.loghlando)
+        
+    # methods
+    def liveri_kotizon(self):
+        '''Liveri la bazan kotizon de tiu cxi partoprenanto
+        Formulo por kotizo:
+            [manghokosto lau la elekto] +
+            [loghkosto lau elekto kaj lau kvanto de tagoj] -
+            [rabato pro UEA-membreco] + [program-kotizo]'''
+        manghomenda_kosto = sum(item.tipo.kosto
+                    for item in self.liveri_manghomendojn())
+        if self.chu_plentempa:
+            loghkosto = self.loghkategorio.plena_kosto
+        else:
+            loghkosto = (self.liveri_tagojn() *
+                                self.loghkategorio.unutaga_kosto)
+        uearabato = self.liveri_uearabaton()
+        programkotizo = self.liveri_programkotizon()
+
+        return manghomenda_kosto + loghkosto + programkotizo - uearabato
+    
+    def __unicode__(self):
+        return u'{} {}'.format(self.persona_nomo, self.familia_nomo)
+
+    class Meta:
+        verbose_name_plural = eo('Partoprenantoj')
+
+class ManghoMendoTipo(models.Model):
+    '''Tipo de mangho kiun oni povas mendi (matenmangho, tagmangho, ktp)'''
+    nomo = models.CharField(unique=True, max_length=50)
+    priskribo = models.TextField(blank=True)
+    kosto = models.DecimalField(max_digits=8, decimal_places=2)
+    # memzorge/matenmangho/tagmangho/vespermangho
+    def __unicode__(self):
+        return eo(u'{} je {} EUR'.format(self.nomo, self.kosto))
+    class Meta:
+        verbose_name = eo('Mangxomendotipo')
+        verbose_name_plural = eo('Mangxomendotipoj')
+
+class ManghoMendo(models.Model):
+    '''Manghomendo de unuopa partoprenanto'''
+    partoprenanto = models.ForeignKey(Partoprenanto)
+    tipo = models.ForeignKey(ManghoMendoTipo)
+    def __unicode__(self):
+        return eo(u'Mangxomendo de {} por {}'.format(
+                  self.partoprenanto, self.tipo.nomo))
+    class Meta:
+        verbose_name = eo('Mangxomendo')
+        verbose_name_plural = eo('Mangxomendoj')
+        unique_together = ('partoprenanto', 'tipo')
+
+class SurlokaMembrigho(models.Model):
+    '''Por registri surlokajn membrighojn en UEA/TEJO'''
+    partoprenanto = models.OneToOneField(Partoprenanto)
+    kategorio = models.ForeignKey(MembrighaKategorio,
+        help_text=eo('Nomo de la membreco-kategorio en TEJO/UEA'))
+    kotizo = models.DecimalField(max_digits=8, decimal_places=2,
+        help_text=eo(u'Laŭ la loĝlando de la partoprenanto'))
+    valuto = models.ForeignKey(Valuto)
+    def __unicode__(self):
+        return eo(u'Surloka membrigxo de {}'.format(self.partoprenanto))
+    class Meta:
+        verbose_name = eo('Surloka Membrigxo')
+        verbose_name_plural = eo('Surlokaj Membrigxoj')
+
+class Pagtipo(models.Model):
+    '''Tipo de pago, ekz. subvencio, antauxpago, ktp'''
+    nomo = models.CharField(max_length=200)
+    def __unicode__(self):
+        return self.nomo
+    class Meta:
+        verbose_name_plural = eo('Pagtipoj')
+        
+class Pago(models.Model):
+    '''Unuopa pago de unuopa partoprenanto'''
+    partoprenanto = models.ForeignKey(Partoprenanto)
+    uzanto = models.ForeignKey(User,
+        help_text=eo('Respondeculo, kiu ricevis/notis la pagon'))
+    pagmaniero = models.ForeignKey(Pagmaniero,
+        help_text=eo('Kiamaniere ni ricevis la pagon'))
+    pagtipo = models.ForeignKey(Pagtipo,
+        help_text=eo(u'Tipo de pago, ekz. subvencio, antauxpago, ktp'))
+    valuto = models.ForeignKey(Valuto) # XXX default should be EUR
+    sumo = models.DecimalField(max_digits=8, decimal_places=2)
+    dato = models.DateField()
+    rimarko = models.CharField(blank=True, max_length=255) # uzu ekz. por indiki peranton
+    def __unicode__(self):
+        return eo(u'{} {} de {} je {}'.format(
+            self.valuto, self.sumo, self.partoprenanto, self.dato))
+    class Meta:
+        verbose_name_plural = eo('Pagoj')
+
+class MinimumaAntaupago(models.Model):
+    '''Minimuma antaupago por partopreni'''
+    #kotizosistemo = models.ForeignKey(KotizoSistemo)
+    landokategorio = models.ForeignKey(LandoKategorio)
+    oficiala_antaupago = models.DecimalField(eo('Oficiala antauxpago'),
+        max_digits=8, decimal_places=2,
+        help_text=eo('La sumon, kiun ni montras oficiale'))
+    interna_antaupago = models.DecimalField(eo('Interna antauxpago'),
+        max_digits=8, decimal_places=2, null=True,
+        help_text=eo('La sumon, kiun ni uzas por internaj kalkuloj, se alia'))
+    # Kion ni montras ekstere kaj kion ni uzas por internaj kalkuloj
+    def __unicode__(self):
+        return eo(u'{} EUR por {}'.format(
+                  self.oficiala_antaupago, self.landokategorio))
+    class Meta:
+        verbose_name = eo('Minimuma Antauxpago')
+        verbose_name_plural = eo('Minimumaj Antauxpagoj')
+
+class Nomshildo(models.Model):
+    '''Specialaj nomshildoj por nepartoprenantoj'''
+    nomo = models.CharField(max_length=50)
+    titolo_lokalingve = models.CharField(max_length=50)
+    titolo_esperante = models.CharField(max_length=50)
+    #funkcio_lokalingve = models.CharField()
+    #funkcio_esperante = models.CharField()
+    #renkontigho = models.ForeignKey(Renkontigho)
+    chu_havasnomshildon = models.BooleanField(eo('Cxu havas nomsxildon'),
+        default=False)
+    def __unicode__(self):
+        return eo(u'Nomsxildo por ' + self.nomo)
+    class Meta:
+        verbose_name = eo('Nomsxildo')
+        verbose_name_plural = eo('Nomsxildoj')
+
+class Noto(models.Model):
+    '''Memorigo por pritraktado'''
+    partoprenanto = models.ForeignKey(Partoprenanto, null=True)
+    uzanto = models.ForeignKey(User, null=True)
+    #kiu = models.CharField(max_length=300) # noto de
+    #kunkiu = models.CharField(max_length=300) # pri komunicado kun
+    dato = models.DateTimeField(auto_now_add=True)
+    #temo = models.CharField()
+    enhavo = models.TextField()
+    chu_prilaborita = models.BooleanField(eo('Cxu prilaborita'), default=False)
+    revidu = models.DateTimeField(null=True,
+        help_text=eo('Kiam memorigi pri tio cxi'))
+    def __unicode__(self):
+        return u'{}{}'.format(eo(self.enhavo[:27]), '...' if len(self.enhavo) > 27 else '')
+    class Meta:
+        verbose_name_plural = eo('Notoj')
+
+#class AghKategoriSistemo(models.Model):
+    #nomo = models.CharField(max_length=60, unique=True)
+    #priskribo = models.TextField()
+
+#class AlighKategoriSistemo(models.Model):
+    #nomo = models.CharField(max_length=60, unique=True)
+    #priskribo = models.TextField()
+
+#class LandoKategoriSistemo(models.Model):
+    #nomo = models.CharField(max_length=60, unique=True)
+    #priskribo = models.TextField()
+
+#class LandoKategoriLigo(models.Model):
+    #lando = models.ForeignKey(Lando)
+    #kategorio = models.ForeignKey(LandoKategorio)
+
+#class LoghKategoriSistemo(models.Model):
+    #nomo = models.CharField(max_length=60, unique=True)
+    #priskribo = models.TextField()
 
 #class KotizoSistemo(models.Model):
     #nomo = models.CharField(max_length=60, unique=True)
@@ -157,7 +551,7 @@ class ManghoTipo(models.Model):
 #class KostoSistemo(models.Model): # XXX what is this for?
     #nomo = models.CharField(max_length=60, unique=True)
     #priskribo = models.TextField()
-    
+
 #class Renkontigho(models.Model):
     #nomo = models.CharField(max_length=255, unique=True)
     #mallongigo = models.CharField(max_length=30, unique=True)
@@ -168,46 +562,34 @@ class ManghoTipo(models.Model):
     #kotizosistemo = models.ForeignKey(KotizoSistemo)
     #parttemppartoprendivido = models.IntegerField()
 
-class Kotizero(models.Model):
-    # ghenerala rabato au krompago au ero de normala kotizo,
-    #   aplikebla al pluraj partoprenantoj lau difinita kondicho
-    nomo = models.CharField(unique=True, max_length=50)
-    priskribo = models.TextField(blank=True)
-    kondicho = models.TextField(
-        help_text=eo('kondicxo, kiu difinas, cxu tiu cxi kotizero aplikigxas '
-                     'al specifa partoprenanto'))
-        # will be a python expression evaluating to whether this applies
-    kvanto = models.DecimalField(max_digits=8, decimal_places=2,
-        help_text=eo('Povas esti elcento aux sumo en EUR'))
-    #valuto = models.CharField(max_length=3, blank=True)
-    # devas estis EUR
-    def chu_aplikighas(self, partoprenanto):
-        '''kontrolu chu tiu chi kotizero aplikighas al
-        la donita partoprenanto'''
-        return eval(self.kondicho, {'partoprenanto': partoprenanto})
-    def javascript(self):
-        '''revenigi jhavaskriptajhon por kontroli, chu la kondicho aplikighas
-        al specifa homo (por enkrozila kontrolo)'''
-        subs = {'and': '&&', 'or': '||'}
-        k = re.sub(r'\b(?:and|or)\b',
-                   lambda m: subs[m.group(0)], self.kondicho)
-        return 'function (partoprenanto) {\n    return (' + k + ')\n}'
-    def __unicode__(self):
-        return self.nomo
-    class Meta:
-        verbose_name_plural = eo('Kotizeroj')
-    
-class Pagmaniero(models.Model):
-    # maniero transdoni monon, ekz. per peranto, surloke, unuopula rabato, ktp
-    nomo = models.CharField(unique=True, max_length=50)
-    priskribo = models.TextField(blank=True)
-    chu_publika = models.BooleanField(default=False,
-        help_text=eo('Cxu tiu cxi pagmaniero estu elektebla por indiki, '
-                     'kiel oni intencas pagi la antauxpagon'))
-    def __unicode__(self):
-        return self.nomo
-    class Meta:
-        verbose_name_plural = eo('Pagmanieroj')
+#class Kotizero(models.Model):
+    ## ghenerala rabato au krompago au ero de normala kotizo,
+    ##   aplikebla al pluraj partoprenantoj lau difinita kondicho
+    #nomo = models.CharField(unique=True, max_length=50)
+    #priskribo = models.TextField(blank=True)
+    #kondicho = models.TextField(
+        #help_text=eo('kondicxo, kiu difinas, cxu tiu cxi kotizero aplikigxas '
+                     #'al specifa partoprenanto'))
+        ## will be a python expression evaluating to whether this applies
+    #kvanto = models.DecimalField(max_digits=8, decimal_places=2,
+        #help_text=eo('Povas esti elcento aux sumo en EUR'))
+    ##valuto = models.CharField(max_length=3, blank=True)
+    ## devas estis EUR
+    #def chu_aplikighas(self, partoprenanto):
+        #'''kontrolu chu tiu chi kotizero aplikighas al
+        #la donita partoprenanto'''
+        #return eval(self.kondicho, {'partoprenanto': partoprenanto})
+    #def javascript(self):
+        #'''revenigi jhavaskriptajhon por kontroli, chu la kondicho aplikighas
+        #al specifa homo (por enkrozila kontrolo)'''
+        #subs = {'and': '&&', 'or': '||'}
+        #k = re.sub(r'\b(?:and|or)\b',
+                   #lambda m: subs[m.group(0)], self.kondicho)
+        #return 'function (partoprenanto) {\n    return (' + k + ')\n}'
+    #def __unicode__(self):
+        #return self.nomo
+    #class Meta:
+        #verbose_name_plural = eo('Kotizeroj')
 
 #class Krompago(models.Model):
     #speco = models.ForeignKey(Kotizero)
@@ -242,184 +624,6 @@ class Pagmaniero(models.Model):
     #kvanto = models.DecimalField(max_digits=8, decimal_places=2)
     #dato = models.DateField()
     #tipo = models.CharField(max_length=300)
-
-class Retposhtajho(models.Model):
-    # por amase senditaj retposhtajhoj
-    nomo = models.CharField(unique=True, max_length=50)
-    temo = models.CharField(max_length=100)
-    teksto = models.TextField()
-    def __unicode__(self):
-        return self.nomo
-    class Meta:
-        verbose_name = eo('Retposxtajxo')
-        verbose_name_plural = eo('Retposxtajxoj')
-
-class SurlokMembrighaKategorio(models.Model):
-    # por registri surlokajn membrighojn en uea/tejo
-    nomo = models.CharField(unique=True, max_length=50,
-        help_text=eo('Nomo de la kategorio de surloka membrigxo en TEJO/UEA'))
-    kotizo = models.DecimalField(max_digits=8, decimal_places=2,
-        help_text=eo('Sumo de la kotizo'))
-    def __unicode__(self):
-        return self.nomo
-    class Meta:
-        verbose_name = eo('Surlokmembrigxa Kategorio')
-        verbose_name_plural = eo('Surlokmembrigxaj Kategorioj')
-
-class Chambro(models.Model): # unuopa chambro por disdoni
-    #renkontigho = models.ForeignKey(Renkontigho)
-    nomo = models.CharField(unique=True, max_length=50)
-    #etagho = models.CharField(max_length=150)
-    litonombro = models.IntegerField(
-        help_text=eo('nombro da litoj en la cxambro'))
-        # maksimuma nombro da homoj kiuj povos loghi en tiu chi chambro
-    loghkategorio = models.ForeignKey(LoghKategorio)
-        # al kiu loghkategorio ghi taugas?
-    #dulita = models.CharField(max_length=3)
-    rimarko = models.CharField(blank=True, max_length=255)
-    def __unicode__(self):
-        return self.nomo
-    class Meta:
-        verbose_name = eo('Cxambro')
-        verbose_name_plural = eo('Cxambroj')
-
-class Partoprenanto(models.Model):
-    persona_nomo = models.CharField(max_length=50)
-    familia_nomo = models.CharField(max_length=50)
-    retposhtadreso = models.EmailField(eo('Retposxtadreso'))
-    mesaghiloj = models.CharField(
-        eo('Aliaj mesagxiloj'), max_length=255, blank=True)
-    shildnomo = models.CharField(eo('Sxildnomo'), blank=True, max_length=50)
-    sekso = models.CharField(max_length=1, choices=SEKSOJ)
-    naskighdato = models.DateField(eo('Naskigxdato'))
-    adreso = models.TextField(blank=True)
-    urbo = models.CharField(blank=True, max_length=50)
-    poshtkodo = models.CharField(eo('Posxtkodo'), blank=True, max_length=15)
-    loghlando = models.ForeignKey(Lando, verbose_name=eo('Logxlando'))
-    shildlando = models.CharField(eo('Sxildlando'), blank=True, max_length=50)
-    telefono = models.CharField(blank=True, max_length=50)
-    #fakso = models.CharField(blank=True)
-    pagmaniero = models.ForeignKey(Pagmaniero,
-        help_text=eo('Por la antauxpago'))
-        # el la publikaj pagmanieroj, por la antaupago
-    pagmaniera_komento = models.CharField(blank=True, max_length=50)
-        # ekz por nomo de peranto
-    alvenas_per = models.CharField(blank=True, max_length=255)
-    alvenas_je = models.DateField(null=True)
-    foriras_per = models.CharField(blank=True, max_length=255)
-    foriras_je = models.DateField(null=True)
-    chu_unua_dua_ijk = models.BooleanField(eo('Cxu unua au dua IJK'),
-        default=False)
-    interesighas_pri_antaukongreso = models.IntegerField(
-        eo('Interesigxas pri antauxkongreso'), null=True)
-        # kiom da tagoj
-    interesighas_pri_postkongreso = models.IntegerField(
-        eo('Interesigxas pri postkongreso'), null=True)
-        # kiom da tagoj
-    chu_bezonas_invitleteron = models.BooleanField(
-        eo('Cxu bezonas invitleteron'), default=False)
-#class Partopreno(models.Model):
-    #renkontigho = models.ForeignKey(Renkontigho)
-    #partoprenanto = models.ForeignKey(Partoprenanto)
-    ekde = models.DateField(default='2013-08-19')
-    ghis = models.DateField(eo('Gxis'), default='2013-08-26')
-    chu_ueamembro = models.BooleanField(eo('Cxu membro de UEA/TEJO'),
-        default=True)
-    uea_kodo = models.CharField(eo('UEA-kodo'), max_length=18, blank=True)
-    loghkategorio = models.ForeignKey(LoghKategorio,
-        verbose_name=eo('Logxkategorio'))
-    chu_preferas_unuseksan_chambron = models.BooleanField(
-        eo('Cxu preferas unuseksan cxambron'), default=False)
-    chu_tuttaga_ekskurso = models.BooleanField(
-        eo('Cxu aligxas al la tut-taga ekskurso'), default=True)
-    manghomendo = models.ForeignKey(ManghoMendo, verbose_name=eo('Mangxomendo'))
-    manghotipo = models.ForeignKey(ManghoTipo,
-        verbose_name=eo('Mangxotipo'))
-    deziras_loghi_kun_nomo = models.CharField(
-        eo('Deziras logxi kun (nomo)'), blank=True, max_length=50)
-    # chu mi volas aperi en tiaj listoj:
-    chu_retalisto = models.BooleanField(
-        eo('Cxu konsentas aperi en la reta listo'), default=True)
-    chu_postkongresalisto = models.BooleanField(
-        eo('Cxu konsentas aperi en la postkongresa listo'), default=True)
-    chu_komencanto = models.BooleanField(eo('Cxu komencanto'), default=True)
-    chu_interesighas_pri_kurso = models.BooleanField(
-        eo('Cxu interesigxas pri kurso'), default=True)
-    #antaupago_ghis = models.DateField()
-    #dulita = models.CharField(max_length=3)
-    #tema = models.TextField()
-    #distra = models.TextField()
-    #vespera = models.TextField()
-    #muzika = models.TextField()
-    #nokta = models.TextField()
-    programa_kontribuo = models.TextField(blank=True)
-    organiza_kontribuo = models.TextField(blank=True)
-    # de tie chi estas kampoj por interna uzo
-    chambro = models.ForeignKey(Chambro, verbose_name=eo('Cxambro'), blank=True)
-    chu_invitletero_sendita = models.BooleanField(default=False)
-    deziras_loghi_kun = models.ForeignKey('Partoprenanto', null=True,
-        help_text=eo('Elektu cxi tie la alian partoprenanton indikitan '
-                     'supre, post kiam li-sxi aligxos')) #*
-    unua_konfirmilo_sendita = models.DateField(null=True) #*
-    dua_konfirmilo_sendita = models.DateField(null=True) #*
-    alighdato = models.DateField(auto_now_add=True) #*
-    malalighdato = models.DateField(null=True) #*
-    #alighkategoridato = models.DateField()
-    # informoj por surloka kontrolo:
-    chu_alvenis = models.BooleanField(default=False) #*
-    chu_havasmanghkuponon = models.BooleanField(default=False) #*
-    chu_havasnomshildon = models.BooleanField(default=False) #*
-    #rimarkoj = models.TextField()
-    #por rimarkoj, vidu la tabelon Noto
-
-    # surlokaj membrighoj
-    #chu_surloka_membrigho = models.BooleanField(default=False) #*
-    #surlokmembrigha_kategorio = models.ForeignKey(
-        #SurlokMembrighaKategorio, null=True)#*
-    #surlokmembrigha_kotizo = models.DecimalField(
-        #max_digits=8, decimal_places=2, null=True) #*
-
-    chu_kontrolita = models.BooleanField(default=False) #*
-
-    #surloka_membrokotizo = models.CharField(max_length=3)
-    #membrokotizo = models.DecimalField(max_digits=8, decimal_places=2)
-    #tejo_membro_laudire = models.CharField(max_length=3)
-    #tejo_membro_kontrolita = models.CharField(max_length=3)
-    #tejo_membro_kotizo = models.DecimalField(max_digits=8, decimal_places=2)
-    # XXX membreco
-    def __unicode__(self):
-        return u'{} {}'.format(self.persona_nomo, self.familia_nomo)
-    class Meta:
-        verbose_name_plural = eo('Partoprenantoj')
-
-class SurlokaMembrigho(models.Model):
-    # alia versio de la supra tabelo,
-    # por registri surlokajn membrighojn en uea/tejo
-    partoprenanto = models.OneToOneField(Partoprenanto)
-    kategorio = models.CharField(max_length=200,
-        help_text=eo('Nomo de la membreco-kategorio en TEJO/UEA + Lando'))
-        # XXX should be foreign key for a dropdown
-    kotizo = models.DecimalField(max_digits=8, decimal_places=2)
-    def __unicode__(self):
-        return eo('Surloka membrigxo de {}'.format(self.partoprenanto))
-    class Meta:
-        verbose_name = eo('Surloka Membrigxo')
-        verbose_name_plural = eo('Surlokaj Membrigxoj')
-        
-class Pago(models.Model):
-    partoprenanto = models.ForeignKey(Partoprenanto)
-    uzanto = models.ForeignKey(User,
-            help_text=eo('Respondeculo, kiu ricevis/notis la pagon'))
-    pagmaniero = models.ForeignKey(Pagmaniero)
-    valuto = models.ForeignKey(Valuto) # XXX default should be EUR
-    sumo = models.DecimalField(max_digits=8, decimal_places=2)
-    dato = models.DateField()
-    rimarko = models.CharField(blank=True, max_length=255) # uzu ekz. por indiki peranton
-    def __unicode__(self):
-        return eo(u'{} {} de {} je {}'.format(
-            self.valuto, self.sumo, self.partoprenanto, self.dato))
-    class Meta:
-        verbose_name_plural = eo('Pagoj')
 
 #class InvitLetero(models.Model):
     #pasportnumero = models.CharField(max_length=150)
@@ -494,49 +698,7 @@ class Pago(models.Model):
     #alighkategorio = models.ForeignKey(AlighKategorio)
     #kondichtipo = models.ForeignKey(MalalighKondichoTipo)
 
-class MinimumaAntaupago(models.Model):
-    #kotizosistemo = models.ForeignKey(KotizoSistemo)
-    landokategorio = models.ForeignKey(LandoKategorio)
-    oficiala_antaupago = models.DecimalField(max_digits=8, decimal_places=2)
-    interna_antaupago = models.DecimalField(max_digits=8, decimal_places=2)
-    # Kion ni montras ekstere kaj kion ni uzas por internaj kalkuloj
-    def __unicode__(self):
-        return eo(u'Minimuma antauxpago de {} por landokategorio {}'.format(self.oficiala_antaupago, self.landokategorio))
-    class Meta:
-        verbose_name = eo('Minimuma Antauxpago')
-        verbose_name_plural = eo('Minimumaj Antauxpagoj')
-
-class Nomshildo(models.Model):
-    # specialaj nomshildoj por nepartoprenantoj
-    nomo = models.CharField(max_length=50)
-    titolo_lokalingve = models.CharField(max_length=50)
-    titolo_esperante = models.CharField(max_length=50)
-    #funkcio_lokalingve = models.CharField()
-    #funkcio_esperante = models.CharField()
-    #renkontigho = models.ForeignKey(Renkontigho)
-    chu_havasnomshildon = models.BooleanField(default=False)
-    def __unicode__(self):
-        return eo(u'Nomsxildo por ' + self.nomo)
-    class Meta:
-        verbose_name = eo('Nomsxildo')
-        verbose_name_plural = eo('Nomsxildoj')
-
-class Noto(models.Model):
-    partoprenanto = models.ForeignKey(Partoprenanto, null=True)
-    uzanto = models.ForeignKey(User, null=True)
-    #kiu = models.CharField(max_length=300) # noto de
-    #kunkiu = models.CharField(max_length=300) # pri komunicado kun
-    dato = models.DateTimeField(auto_now_add=True)
-    #temo = models.CharField()
-    enhavo = models.TextField()
-    chu_prilaborita = models.BooleanField(default=False)
-    revidu = models.DateTimeField(null=True,
-        help_text=eo('Kiam memorigi pri tio chi')) # kiam memorigi prie
-    def __unicode__(self):
-        return u'{}{}'.format(eo(self.enhavo[:27]), '...' if len(self.enhavo) > 27 else '')
-    class Meta:
-        verbose_name_plural = eo('Notoj')
-
+    
 #class NotojPorEntajpanto(models.Model): # shajne por ligi notojn kun uzulojn
     #noto = models.ForeignKey(Noto)
     #entajpanto = models.IntegerField(db_column='entajpantoID')

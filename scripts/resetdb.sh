@@ -1,6 +1,6 @@
 #!/bin/bash
 
-python manage.py dumpdata --indent=4 > data.txt
+scripts/dumpdata.sh
 
 cat scripts/resetdb.sql | mysql -uroot -p
 python manage.py syncdb
