@@ -1,5 +1,14 @@
-$left: 16px;
-$li-width: 300px;
+$root-em: 14px;
+$left: $root-em;
+$li-width: 450px;
+
+html, body {
+    font-size: $root-em;
+}
+
+textarea {
+    height: 5em;
+}
 
 #alighformo {
     > ul {
@@ -18,13 +27,14 @@ $li-width: 300px;
                 margin-left: $left;
             }
             ul {
+                white-space: nowrap;
                 list-style: none;
                 display: inline;
                 margin: 0;
                 padding: 0;
                 li {
                     display: inline;
-                    margin: 0 1em;
+                    margin: 0 1em 0 0;
                 }
             }
         }
@@ -40,6 +50,10 @@ $li-width: 300px;
             display: inline-block;
             width: $left;
         }
+    }
+    .error {
+        border: 1px solid black;
+        //padding: $root-em/2;
     }
     .required-stilo {
         font-weight: bold;

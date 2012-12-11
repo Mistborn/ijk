@@ -4,11 +4,12 @@ import time
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 from utils import eo, KOMENCA_DATO, FINIGHA_DATO, SEKSOJ
 
 class Respondeco(models.Model):
-    '''Respondeculo por iu afero, por automataj informigoj'''
+    '''Respondeculo por iu afero, por aŭtomataj sciigoj'''
     rolo = models.CharField(max_length=50)
     uzanto = models.ForeignKey(User)
     def __unicode__(self):
@@ -37,7 +38,7 @@ class Kurzo(models.Model):
         verbose_name_plural = eo('Kurzoj')
         
 class AghKategorio(models.Model):
-    '''Kategorio de agho por kalkulado de kotizo'''
+    '''Kategorio de aĝo por kalkulado de kotizo'''
     nomo = models.CharField(unique=True, max_length=50)
     priskribo = models.TextField(blank=True)
     #sistemo = models.ForeignKey(AghKategoriSistemo)
@@ -56,7 +57,7 @@ class AghKategorio(models.Model):
         return (KOMENCA_DATO - dato).days / 365.25
 
     @classmethod
-    def liveri_aldonan_kotizon(self, agho):
+    def kalkuli_aldonan_kotizon(self, agho):
         if not self.aldona_kotizo:
             return 0
         if isinstance(agho, (datetime.date, basestring)):
@@ -81,7 +82,7 @@ class AghKategorio(models.Model):
         verbose_name_plural = eo('Agxkategorioj')
 
 class AlighKategorio(models.Model):
-    '''Kategorio de aligho lau dato, por kalkulado de kotizo'''
+    '''Kategorio de aliĝo laŭ dato, por kalkulado de kotizo'''
     nomo = models.CharField(unique=True, max_length=50)
     priskribo = models.TextField(blank=True)
     #sistemo = models.ForeignKey(AlighKategoriSistemo)
@@ -119,6 +120,7 @@ class LandoKategorio(models.Model):
         verbose_name_plural = eo('Landokategorioj')
 
 class Lando(models.Model):
+    '''Loĝlando de partoprenanto'''
     nomo = models.CharField(max_length=50)
     kodo = models.CharField(max_length=2)
     kategorio = models.ForeignKey(LandoKategorio)
@@ -128,7 +130,7 @@ class Lando(models.Model):
         verbose_name_plural = eo('Landoj')
 
 class LoghKategorio(models.Model):
-    '''Elektebla loghkategorio'''
+    '''Elektebla loĝkategorio'''
     nomo = models.CharField(unique=True, max_length=50)
     priskribo = models.TextField(blank=True)
     #sistemo = models.ForeignKey(LoghKategoriSistemo)
@@ -146,7 +148,7 @@ class LoghKategorio(models.Model):
         verbose_name_plural = eo('Logxkategorioj')
 
 class ManghoTipo(models.Model):
-    '''Tipo de mangho, ekz. vegetare, koshere, ktp'''
+    '''Tipo de manĝo, ekz. vegetare, koŝere, ktp'''
     nomo = models.CharField(unique=True, max_length=50)
     # vegetare/vegane/ktp
     def __unicode__(self):
@@ -156,7 +158,7 @@ class ManghoTipo(models.Model):
         verbose_name_plural = eo('Mangxotipoj')
 
 class ProgramKotizo(models.Model):
-    '''Kotizo por la programo mem, kalkulita lau agho, lando, kaj alighdato'''
+    '''Kotizo por la programo mem, kalkulita lau aĝo, lando, kaj aliĝdato'''
     aghkategorio = models.ForeignKey(AghKategorio,
         verbose_name=eo('Agxkategorio'))
     landokategorio = models.ForeignKey(LandoKategorio,
@@ -165,6 +167,11 @@ class ProgramKotizo(models.Model):
         verbose_name=eo('Aligxkategorio'))
     kotizo = models.DecimalField(max_digits=8, decimal_places=2,
         help_text=eo('Programkotizo en euxroj por tiu cxi grupo'))
+        
+    def kalkuli_finan_kotizon(self, agho):
+        aldono = self.aghkategorio.kalkuli_aldonan_kotizon(agho)
+        return self.kotizo + aldono
+        
     def __unicode__(self):
         return eo(u'{}, {}, {} : {} EUR'.format(
             self.aghkategorio, self.landokategorio, self.alighkategorio,
@@ -175,11 +182,11 @@ class ProgramKotizo(models.Model):
         unique_together = ('aghkategorio', 'landokategorio', 'alighkategorio')
 
 class Pagmaniero(models.Model):
-    '''maniero transdoni monon, ekz. per peranto, surloke,
-    unuopula rabato, ktp'''
+    '''maniero transdoni monon,
+    ekz. per peranto, surloke, unuopula rabato, ktp'''
     nomo = models.CharField(unique=True, max_length=50)
     priskribo = models.TextField(blank=True)
-    chu_publika = models.BooleanField(default=False,
+    chu_publika = models.BooleanField(default=True,
         verbose_name=eo('Cxu publika'),
         help_text=eo('Cxu tiu cxi pagmaniero estu elektebla por indiki, '
                      'kiel oni intencas pagi la antauxpagon'))
@@ -189,7 +196,7 @@ class Pagmaniero(models.Model):
         verbose_name_plural = eo('Pagmanieroj')
 
 class Retposhtajho(models.Model):
-    '''Retposhta mesagho, por amase senditaj retposhtajhoj'''
+    '''Retpoŝta mesaĝo, por amase senditaj retposhtaĵoj'''
     nomo = models.CharField(unique=True, max_length=50)
     temo = models.CharField(max_length=100)
     teksto = models.TextField()
@@ -200,7 +207,7 @@ class Retposhtajho(models.Model):
         verbose_name_plural = eo('Retposxtajxoj')
 
 class MembrighaKategorio(models.Model):
-    '''Por krei liston de kategorioj de surlokaj membrighoj en UEA/TEJO'''
+    '''Por krei liston de kategorioj de surlokaj membriĝoj en UEA/TEJO'''
     nomo = models.CharField(unique=True, max_length=50,
         help_text=eo('Nomo de la kategorio de surloka membrigxo en TEJO/UEA'))
     #kotizo = models.DecimalField(max_digits=8, decimal_places=2,
@@ -212,7 +219,7 @@ class MembrighaKategorio(models.Model):
         verbose_name_plural = eo('Membrigxaj Kategorioj')
 
 class Chambro(models.Model):
-    '''Unuopa chambro por disdoni'''
+    '''Unuopa ĉambro por disdoni'''
     #renkontigho = models.ForeignKey(Renkontigho)
     nomo = models.CharField(unique=True, max_length=50)
     #etagho = models.CharField(max_length=150)
@@ -276,9 +283,9 @@ class Partoprenanto(models.Model):
         eo('Cxu konsentas aperi en la postkongresa listo'), default=True)
     ekde = models.DateField(default=KOMENCA_DATO)
     ghis = models.DateField(eo('Gxis'), default=FINIGHA_DATO)
-    alvenas_per = models.CharField(blank=True, max_length=255)
+    alveno = models.CharField(blank=True, max_length=255)
     #alvenas_je = models.DateField(null=True, blank=True)
-    foriras_per = models.CharField(blank=True, max_length=255)
+    foriro = models.CharField(blank=True, max_length=255)
     #foriras_je = models.DateField(null=True, blank=True)
     interesighas_pri_antaukongreso = models.IntegerField(
         eo('Interesigxas pri antauxkongreso'), null=True, blank=True,
@@ -351,17 +358,17 @@ class Partoprenanto(models.Model):
     # informoj por surloka kontrolo:
     #por rimarkoj, vidu la tabelon Noto
 
-    def liveri_manghomendojn(self):
+    def manghomendoj(self):
         return ManghoMendo.objects.filter(partoprenanto=self)
 
     def chu_plentempa(self):
         return self.ekde == KOMENCA_DATO and self.ghis == FINIGHA_DATO
 
-    def liveri_tagojn(self):
+    def tagoj(self):
         '''suma numbro da tagoj de tiu chi partoprenanto'''
         return (self.ghis - self.ekde).days
 
-    def liveri_programkotizon(self):
+    def programkotizo(self):
         aghkategorio = AghKategorio.liveri_kategorion(self.naskighdato)
         landokategorio = self.loghlando.kategorio
         alighkategorio = AlighKategorio.liveri_kategorion(self.alighdato)
@@ -370,29 +377,29 @@ class Partoprenanto(models.Model):
             aghkategorio=aghkategorio,
             landokategorio=landokategorio,
             alighkategorio=alighkategorio)
-        return programkotizo.kotizo
+        return programkotizo.kalkuli_finan_kotizon(self.naskighdato)
 
-    def liveri_uearabaton(self):
-        if not self.chu_ueamembro():
+    def uearabato(self):
+        if not self.chu_ueamembro:
             return 0
         return UEARabato.liveri_rabaton(self.loghlando)
         
     # methods
-    def liveri_kotizon(self):
-        '''Liveri la bazan kotizon de tiu cxi partoprenanto
+    def kotizo(self):
+        '''Liveri la bazan kotizon de tiu ĉi partoprenanto
         Formulo por kotizo:
-            [manghokosto lau la elekto] +
-            [loghkosto lau elekto kaj lau kvanto de tagoj] -
+            [manĝokosto lau la elekto] +
+            [loĝkosto lau elekto kaj lau kvanto de tagoj] -
             [rabato pro UEA-membreco] + [program-kotizo]'''
         manghomenda_kosto = sum(item.tipo.kosto
-                    for item in self.liveri_manghomendojn())
+                    for item in self.manghomendoj())
         if self.chu_plentempa:
             loghkosto = self.loghkategorio.plena_kosto
         else:
-            loghkosto = (self.liveri_tagojn() *
+            loghkosto = (self.tagoj() *
                                 self.loghkategorio.unutaga_kosto)
-        uearabato = self.liveri_uearabaton()
-        programkotizo = self.liveri_programkotizon()
+        uearabato = self.uearabato()
+        programkotizo = self.programkotizo()
 
         return manghomenda_kosto + loghkosto + programkotizo - uearabato
     
@@ -403,7 +410,7 @@ class Partoprenanto(models.Model):
         verbose_name_plural = eo('Partoprenantoj')
 
 class ManghoMendoTipo(models.Model):
-    '''Tipo de mangho kiun oni povas mendi (matenmangho, tagmangho, ktp)'''
+    '''Tipo de manĝo kiun oni povas mendi (matenmanĝo, tagmanĝo, ktp)'''
     nomo = models.CharField(unique=True, max_length=50)
     priskribo = models.TextField(blank=True)
     kosto = models.DecimalField(max_digits=8, decimal_places=2)
@@ -415,7 +422,7 @@ class ManghoMendoTipo(models.Model):
         verbose_name_plural = eo('Mangxomendotipoj')
 
 class ManghoMendo(models.Model):
-    '''Manghomendo de unuopa partoprenanto'''
+    '''Unuopa manĝomendo de partoprenanto'''
     partoprenanto = models.ForeignKey(Partoprenanto)
     tipo = models.ForeignKey(ManghoMendoTipo)
     def __unicode__(self):
@@ -427,26 +434,39 @@ class ManghoMendo(models.Model):
         unique_together = ('partoprenanto', 'tipo')
 
 class SurlokaMembrigho(models.Model):
-    '''Por registri surlokajn membrighojn en UEA/TEJO'''
+    '''Por registri surlokajn membriĝojn en UEA/TEJO'''
     partoprenanto = models.OneToOneField(Partoprenanto)
     kategorio = models.ForeignKey(MembrighaKategorio,
-        help_text=eo('Nomo de la membreco-kategorio en TEJO/UEA'))
+        help_text=eo(u'Nomo de la membreco-kategorio en TEJO/UEA'))
     kotizo = models.DecimalField(max_digits=8, decimal_places=2,
-        help_text=eo(u'Laŭ la loĝlando de la partoprenanto'))
+        help_text=eo(u'Laux la logxlando de la partoprenanto'))
     valuto = models.ForeignKey(Valuto)
     def __unicode__(self):
-        return eo(u'Surloka membrigxo de {}'.format(self.partoprenanto))
+        return eo(u'{}: {}'.format(self.partoprenanto, self.kategorio))
     class Meta:
         verbose_name = eo('Surloka Membrigxo')
         verbose_name_plural = eo('Surlokaj Membrigxoj')
+        #order_with_respect_to = 'partoprenanto' # XXX this?
 
 class Pagtipo(models.Model):
-    '''Tipo de pago, ekz. subvencio, antauxpago, ktp'''
+    '''Tipo de pago, ekz. subvencio, antaŭpago, ktp'''
     nomo = models.CharField(max_length=200)
     def __unicode__(self):
         return self.nomo
     class Meta:
         verbose_name_plural = eo('Pagtipoj')
+
+class NeEstontecaDato(models.DateField):
+    '''Dato, kiu ne povas esti en la estonteco'''
+    def __init__(self, *args, **kw):
+        super(NeEstontecaDato, self).__init__(*args, **kw)
+        self.error_messages['estonteco'] = self.error_messages.get(
+            u'estonteco', u'La dato ne povas esti en la estonteco.')
+    def validate(self, value, instance):
+        if value and value > datetime.date.today():
+            msg = self.error_messages['estonteco']
+            raise ValidationError(msg)
+        return super(NeEstontecaDato, self).validate(value, instance)
         
 class Pago(models.Model):
     '''Unuopa pago de unuopa partoprenanto'''
@@ -458,17 +478,23 @@ class Pago(models.Model):
     pagtipo = models.ForeignKey(Pagtipo,
         help_text=eo(u'Tipo de pago, ekz. subvencio, antauxpago, ktp'))
     valuto = models.ForeignKey(Valuto) # XXX default should be EUR
-    sumo = models.DecimalField(max_digits=8, decimal_places=2)
-    dato = models.DateField()
-    rimarko = models.CharField(blank=True, max_length=255) # uzu ekz. por indiki peranton
+    sumo = models.DecimalField(max_digits=8, decimal_places=2,
+        help_text=eo(u'Rabaton enigu kiel normalan pagon, krompagon '
+                     u'enigu kun minusan sumon'))
+    dato = NeEstontecaDato(error_messages={'estonteco':
+        u'Pago ne povas esti en la estonteco.'})
+    rimarko = models.CharField(blank=True, max_length=255)
+        # uzu ekz. por indiki peranton
+
     def __unicode__(self):
-        return eo(u'{} {} de {} je {}'.format(
-            self.valuto, self.sumo, self.partoprenanto, self.dato))
+        return eo(u'{} {} ({}) de {} je {}'.format(
+            self.sumo, self.valuto, self.pagtipo, self.partoprenanto,
+            self.dato))
     class Meta:
         verbose_name_plural = eo('Pagoj')
 
 class MinimumaAntaupago(models.Model):
-    '''Minimuma antaupago por partopreni'''
+    '''Minimuma antaŭpago por partopreni'''
     #kotizosistemo = models.ForeignKey(KotizoSistemo)
     landokategorio = models.ForeignKey(LandoKategorio)
     oficiala_antaupago = models.DecimalField(eo('Oficiala antauxpago'),
@@ -486,7 +512,7 @@ class MinimumaAntaupago(models.Model):
         verbose_name_plural = eo('Minimumaj Antauxpagoj')
 
 class Nomshildo(models.Model):
-    '''Specialaj nomshildoj por nepartoprenantoj'''
+    '''Specialaj nomŝildoj por nepartoprenantoj'''
     nomo = models.CharField(max_length=50)
     titolo_lokalingve = models.CharField(max_length=50)
     titolo_esperante = models.CharField(max_length=50)
@@ -514,7 +540,11 @@ class Noto(models.Model):
     revidu = models.DateTimeField(null=True, blank=True,
         help_text=eo('Kiam memorigi pri tio cxi'))
     def __unicode__(self):
-        return u'{}{}'.format(eo(self.enhavo[:27]), '...' if len(self.enhavo) > 27 else '')
+        tondajho = u'{}{}'.format(eo(self.enhavo[:47]), u'...' if len(self.enhavo) > 47 else u'')
+        signo = u'\u2714 ' if self.chu_prilaborita else u''
+        nomo = (u'{} :'.format(self.partoprenanto)
+                        if self.partoprenanto else '')
+        return u'{}{} {}'.format(signo, nomo, tondajho)
     class Meta:
         verbose_name_plural = eo('Notoj')
 

@@ -1,3 +1,9 @@
+html, body {
+  font-size: 14px; }
+
+textarea {
+  height: 5em; }
+
 #alighformo > ul {
   list-style: none;
   margin: 0;
@@ -9,26 +15,29 @@
       vertical-align: middle; }
     #alighformo > ul > li > label {
       display: inline-block;
-      width: 300px;
-      margin-left: 16px; }
+      width: 450px;
+      margin-left: 14px; }
     #alighformo > ul > li ul {
+      white-space: nowrap;
       list-style: none;
       display: inline;
       margin: 0;
       padding: 0; }
       #alighformo > ul > li ul li {
         display: inline;
-        margin: 0 1em; }
+        margin: 0 1em 0 0; }
 #alighformo .required > label {
   font-weight: bold;
   margin-left: 0;
-  width: 316px; }
+  width: 464px; }
   #alighformo .required > label:before {
     content: "* ";
     color: red;
     font-weight: bold;
     display: inline-block;
-    width: 16px; }
+    width: 14px; }
+#alighformo .error {
+  border: 1px solid black; }
 #alighformo .required-stilo {
   font-weight: bold;
   color: red; }

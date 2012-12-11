@@ -5,6 +5,12 @@ import datetime
 KOMENCA_DATO = datetime.date(2013, 8, 19)
 FINIGHA_DATO = datetime.date(2013, 8, 26)
 
+DATE_JAVASCRIPT = '''
+    window.KOMENCA_DATO = new Date({}, {}, {});
+    window.FINIGHA_DATO = new Date({}, {}, {});'''.format(
+    KOMENCA_DATO.year, KOMENCA_DATO.month-1, KOMENCA_DATO.day,
+    FINIGHA_DATO.year, FINIGHA_DATO.month-1, FINIGHA_DATO.day)
+
 SEKSOJ = (
     ('v', 'vira'),
     ('i', 'ina'),
