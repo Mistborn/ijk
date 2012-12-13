@@ -1,24 +1,31 @@
 $root-em: 14px;
 $left: $root-em;
 $li-width: 450px;
+$large-indent: 50px;
 
 html, body {
     font-size: $root-em;
 }
 
 textarea {
-    height: 5em;
+    height: 3em;
 }
 
 #alighformo {
-    > ul {
+    .helptext { display: inline-block; width: 400px; }
+    .fieldset-label { font-weight: bold; }
+    > ul, .fieldset > ul {
         list-style: none;
         margin: 0;
         padding: 0;
+        .info { margin-left: $large-indent; }
         > li {
+            white-space: nowrap;
             margin-top: 0.5em;
             margin-bottom: 0.5em;
+            display: block;
             > * {
+                white-space: normal;
                 vertical-align: middle;
             }
             > label {
@@ -27,9 +34,8 @@ textarea {
                 margin-left: $left;
             }
             ul {
-                white-space: nowrap;
                 list-style: none;
-                display: inline;
+                display: inline-block;
                 margin: 0;
                 padding: 0;
                 li {
@@ -37,11 +43,30 @@ textarea {
                     margin: 0 1em 0 0;
                 }
             }
+            .vertical-display {
+                display: inline-block;
+                li {
+                    display: block;
+                }
+                ul { display: block; }
+            }
+            ul.infolist {
+                list-style: disc;
+//margin-left: 0em;
+li {margin-left: 0;}
+li:before { content: " \25CF "; font-weight: bold; display: inline-block;
+text-align: center; width: 2 *18px * $root-em / 18px; font-size: 18px; }
+            }
+        }
+        label + * {
+            display: inline-block; width: 300px;
+            //white-space: normal;
+            //ul { white-space: inherit; }
         }
     }
     .required > label {
         font-weight: bold;
-        margin-left: 0; //$left/2;
+        margin-left: 0;
         width: $li-width + $left;
         &:before {
             content: "* ";
@@ -53,7 +78,6 @@ textarea {
     }
     .error {
         border: 1px solid black;
-        //padding: $root-em/2;
     }
     .required-stilo {
         font-weight: bold;
@@ -62,7 +86,7 @@ textarea {
     ul.errorlist {
         list-style: none;
         display: block;
-        margin-left: 50px;
+        margin-left: $large-indent;
         li {
             display: inline-block;
             font-weight: bold;

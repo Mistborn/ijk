@@ -1,28 +1,30 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head><title>Aliĝi al IJK 2013 en Afikim, Israelo</title>
+<head>
 <meta charset="utf-8">
+<title>Aliĝi al IJK 2013 en Afikim, Israelo</title>
+<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/redmond/jquery-ui.css">
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/style.css">
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
 <script type="text/javascript">
-{{ JAVASCRIPT }}
+{% autoescape off %}{{ JAVASCRIPT }}{% endautoescape %}
 </script>
 <script src="{{ STATIC_URL }}js/alighi.js" type="text/javascript"></script>
 </head>
 <body>
 <h1>Aliĝi al IJK 2013 en Afikim, Israelo</h1>
+<div id="informoj">Kotizo: </div>
 <form id="alighformo" method="post" action="{% url alighi %}">
 {% csrf_token %}
-<p>Eroj kun steleto (<span class="required-stilo">*</span>) estas devigaj.</p>
+<p>La kampoj markitaj per steleto (<span class="required-stilo">*</span>) estas plenigendaj.</p>
 {% for div in formdivs %}
-    <ul style="border: 1px black solid; margin: 1em; padding: 1em;">
-    {% for form in div %}
-        {{ form.as_ul }}
-    {% endfor %}
-    </ul>
+<ul style="border: 1px black solid; margin: 1em; padding: 1em;">
+    {% for form in div %}{{ form.as_ul }}{% endfor %}
+</ul>
 {% endfor %}
-<input type="submit" value="Aliĝi!">
+<p><strong>Grave</strong>: La kotizoj enhavas nenian asekuron.</p>
+<input type="submit" value="Mi aliĝas al IJK!">
 </form>
 </body>
 </html>

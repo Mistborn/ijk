@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from alighi.models import *
 
 admin.site.register(Respondeco)
@@ -7,7 +8,9 @@ admin.site.register(Kurzo)
 admin.site.register(AghKategorio)
 admin.site.register(AlighKategorio)
 admin.site.register(LandoKategorio)
-admin.site.register(Lando)
+class LandoAdmin(admin.ModelAdmin):
+    list_display = ('nomo', 'kodo', 'kategorio')
+admin.site.register(Lando, LandoAdmin)
 admin.site.register(LoghKategorio)
 admin.site.register(ManghoMendoTipo)
 admin.site.register(ManghoMendo)

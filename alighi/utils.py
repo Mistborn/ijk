@@ -1,15 +1,10 @@
 # -*- encoding: utf-8 -*-
 import re
 import datetime
+from decimal import Decimal
 
 KOMENCA_DATO = datetime.date(2013, 8, 19)
 FINIGHA_DATO = datetime.date(2013, 8, 26)
-
-DATE_JAVASCRIPT = '''
-    window.KOMENCA_DATO = new Date({}, {}, {});
-    window.FINIGHA_DATO = new Date({}, {}, {});'''.format(
-    KOMENCA_DATO.year, KOMENCA_DATO.month-1, KOMENCA_DATO.day,
-    FINIGHA_DATO.year, FINIGHA_DATO.month-1, FINIGHA_DATO.day)
 
 SEKSOJ = (
     ('v', 'vira'),
@@ -23,7 +18,21 @@ _eod = {
 }
 
 def eo(s):
-    '''Konverti x-kodigitan stringon al unikodo'''
+    '''Konverti x-kodigitan ĉenon al unikodo'''
     #return s
     return unicode(re.sub(
         u'([cghjsuxCGHJSUX])[xX](?![xX])', lambda m: _eod[m.group(1)], s))
+
+def json_default(obj):
+    if isinstance(obj, Decimal):
+        return float(obj)
+    raise TypeError
+
+MONATOJ = (u'januaro februaro marto aprilo majo junio '
+           u'julio aŭgusto septembro oktobro novembro decembro'.split())
+    
+def esperanteca_dato(dato):
+    jaro = dato.year
+    monato = dato.month - 1
+    tago = dato.day
+    return 'la {}-a de {}, {}'.format(tago, MONATOJ[monato], jaro)

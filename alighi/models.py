@@ -1,12 +1,13 @@
 # -*- encoding: utf-8 -*-
 import datetime
 import time
+import json
 
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
-from utils import eo, KOMENCA_DATO, FINIGHA_DATO, SEKSOJ
+from utils import eo, KOMENCA_DATO, FINIGHA_DATO, SEKSOJ, json_default, esperanteca_dato
 
 class Respondeco(models.Model):
     '''Respondeculo por iu afero, por aŭtomataj sciigoj'''
@@ -50,6 +51,13 @@ class AghKategorio(models.Model):
         help_text=eo('Aldona kotizo por cxiu jaro pli ol la minimuma '
                      'en tiu cxi kategorio'))
 
+    @classmethod
+    def javascript(cls):
+        obj = {item.limagho: [item.id, item.aldona_kotizo]
+                    for item in cls.objects.all()}
+        return 'window.limaghoj = {}'.format(
+                    json.dumps(obj, default=json_default))
+
     @staticmethod
     def liveri_aghon_lau_naskighdato(dato):
         if isinstance(dato, basestring):
@@ -91,6 +99,17 @@ class AlighKategorio(models.Model):
                      'eniras tiun cxi kategorion'))
 
     @classmethod
+    def infolist(cls):
+        return [u'{} ĝis {}'.format(o.nomo, esperanteca_dato(o.limdato))
+                for o in cls.objects.order_by('limdato')]
+                     
+    @classmethod
+    def javascript(cls):
+        obj = {o.limdato.isoformat(): o.id for o in cls.objects.all()}
+        return 'window.limdatoj = {}'.format(
+                    json.dumps(obj, default=json_default))
+
+    @classmethod
     def liveri_kategorion(cls, dato):
         rset = cls.objects.filter(limdato__gte=dato).order_by('limdato')
         return rset[0] if rset else None
@@ -124,7 +143,15 @@ class Lando(models.Model):
     nomo = models.CharField(max_length=50)
     kodo = models.CharField(max_length=2)
     kategorio = models.ForeignKey(LandoKategorio)
+
+    @classmethod
+    def javascript(cls):
+        obj = {item.id: item.kategorio.id for item in cls.objects.all()}
+        return 'window.landoj = {}'.format(
+                    json.dumps(obj, default=json_default))
+    
     def __unicode__(self):
+        #return self.nomo
         return u'{} ({})'.format(self.nomo, self.kategorio)
     class Meta:
         verbose_name_plural = eo('Landoj')
@@ -139,9 +166,17 @@ class LoghKategorio(models.Model):
         help_text=eo('Kosto por logxo dum la tuta kongreso'))
     unutaga_kosto = models.DecimalField(max_digits=8, decimal_places=2,
         help_text=eo('Kosto por logxo dum unu nokto'))
+
+    @classmethod
+    def javascript(cls):
+        obj = {item.id: [item.plena_kosto, item.unutaga_kosto]
+                    for item in cls.objects.all()}
+        return 'window.loghkategorioj = {}'.format(
+                    json.dumps(obj, default=json_default))
         
     def __unicode__(self):
-        return self.nomo
+        return u'{} - plentempe: {} EUR, partatempe: {} EUR por tago'.format(
+            self.nomo, self.plena_kosto, self.unutaga_kosto)
         
     class Meta:
         verbose_name = eo('Logxkategorio')
@@ -151,8 +186,10 @@ class ManghoTipo(models.Model):
     '''Tipo de manĝo, ekz. vegetare, koŝere, ktp'''
     nomo = models.CharField(unique=True, max_length=50)
     # vegetare/vegane/ktp
+
     def __unicode__(self):
         return self.nomo
+    
     class Meta:
         verbose_name = eo('Mangxotipo')
         verbose_name_plural = eo('Mangxotipoj')
@@ -171,6 +208,23 @@ class ProgramKotizo(models.Model):
     def kalkuli_finan_kotizon(self, agho):
         aldono = self.aghkategorio.kalkuli_aldonan_kotizon(agho)
         return self.kotizo + aldono
+
+    @classmethod
+    def javascript(cls):
+        aghokeys = [o.aghkategorio.id for o in cls.objects.all()]
+        obj = {}
+        for aghk in AghKategorio.objects.all():
+            obj[aghk.id] = {}
+            for landok in LandoKategorio.objects.all():
+                obj[aghk.id][landok.id] = {}
+                for alighk in AlighKategorio.objects.all():
+                    k = cls.objects.filter(
+                            aghkategorio=aghk, landokategorio=landok,
+                                alighkategorio=alighk)
+                    obj[aghk.id][landok.id][alighk.id] = (k[0].kotizo
+                                if k else None)
+        return 'window.programkotizoj = {}'.format(
+                    json.dumps(obj, default=json_default))
         
     def __unicode__(self):
         return eo(u'{}, {}, {} : {} EUR'.format(
@@ -185,13 +239,24 @@ class Pagmaniero(models.Model):
     '''maniero transdoni monon,
     ekz. per peranto, surloke, unuopula rabato, ktp'''
     nomo = models.CharField(unique=True, max_length=50)
-    priskribo = models.TextField(blank=True)
+    priskribo = models.TextField(blank=True,
+        verbose_name=eo('Publika priskribo'))
     chu_publika = models.BooleanField(default=True,
         verbose_name=eo('Cxu publika'),
         help_text=eo('Cxu tiu cxi pagmaniero estu elektebla por indiki, '
                      'kiel oni intencas pagi la antauxpagon'))
+    chu_nurisraela = models.BooleanField(default=False,
+        verbose_name=eo('Cxu nur-israela'),
+        help_text=eo('Cxu tiu cxi pagmaniero estas ebla nur en Israelo'))
+
+    @classmethod
+    def javascript(cls):
+        return u''
+        
+        
     def __unicode__(self):
-        return self.nomo
+        return self.nomo + (u' (nur en Israelo)' if self.chu_nurisraela
+                                                else u'')
     class Meta:
         verbose_name_plural = eo('Pagmanieroj')
 
@@ -244,9 +309,20 @@ class UEARabato(models.Model):
         help_text=eo('Rabato pro UEA-membreco en tiu cxi landokategorio'))
 
     @classmethod
-    def liveri_rabaton(cls, lando):
-        rabato = cls.objects.get(landokategorio=lando.kategorio)
-        return rabato.sumo
+    def infoline(cls):
+        return ', '.join('{}: {} EUR'.format(o.landokategorio, o.sumo)
+            for o in cls.objects.order_by('landokategorio'))
+
+    @classmethod
+    def javascript(cls):
+        obj = {o.landokategorio.id: o.sumo for o in cls.objects.all()}
+        return 'window.uearabatoj = {}'.format(
+                    json.dumps(obj, default=json_default))
+
+    @classmethod
+    def rabato(cls, lando):
+        r = cls.objects.get(landokategorio=lando.kategorio)
+        return r.sumo
         
     def __unicode__(self):
         return eo(u'{} EUR por {}'.format(
@@ -312,6 +388,8 @@ class Partoprenanto(models.Model):
                      'supre, post kiam li-sxi aligxos')) #*
     chu_preferas_unuseksan_chambron = models.BooleanField(
         eo('Cxu preferas unuseksan cxambron'), default=False)
+    chu_malnoktemulo = models.BooleanField(
+        eo('Cxu malnoktemulo'), default=False)
     chambro = models.ForeignKey(Chambro,
         verbose_name=eo('Cxambro'), null=True, blank=True)
     manghotipo = models.ForeignKey(ManghoTipo, verbose_name=eo('Mangxotipo'),
@@ -338,7 +416,6 @@ class Partoprenanto(models.Model):
     chu_havasnomshildon = models.BooleanField(
         eo('Cxu havas nomsxildon'), default=False) #*
     #rimarkoj = models.TextField()
-    # ******************** pri la programo
 #class Partopreno(models.Model):
     #renkontigho = models.ForeignKey(Renkontigho)
     #partoprenanto = models.ForeignKey(Partoprenanto)
@@ -352,9 +429,6 @@ class Partoprenanto(models.Model):
     #vespera = models.TextField()
     #muzika = models.TextField()
     #nokta = models.TextField()
-    # ******************* kontribuo
-    # ******************* de tie chi estas kampoj por interna uzo
-    #alighkategoridato = models.DateField()
     # informoj por surloka kontrolo:
     #por rimarkoj, vidu la tabelon Noto
 
@@ -382,9 +456,8 @@ class Partoprenanto(models.Model):
     def uearabato(self):
         if not self.chu_ueamembro:
             return 0
-        return UEARabato.liveri_rabaton(self.loghlando)
+        return UEARabato.rabato(self.loghlando)
         
-    # methods
     def kotizo(self):
         '''Liveri la bazan kotizon de tiu ĉi partoprenanto
         Formulo por kotizo:
@@ -396,8 +469,7 @@ class Partoprenanto(models.Model):
         if self.chu_plentempa:
             loghkosto = self.loghkategorio.plena_kosto
         else:
-            loghkosto = (self.tagoj() *
-                                self.loghkategorio.unutaga_kosto)
+            loghkosto = self.tagoj() * self.loghkategorio.unutaga_kosto
         uearabato = self.uearabato()
         programkotizo = self.programkotizo()
 
@@ -415,8 +487,16 @@ class ManghoMendoTipo(models.Model):
     priskribo = models.TextField(blank=True)
     kosto = models.DecimalField(max_digits=8, decimal_places=2)
     # memzorge/matenmangho/tagmangho/vespermangho
+
+    @classmethod
+    def javascript(cls):
+        d = {obj.id: obj.kosto for obj in cls.objects.all()}
+        return '''window.manghomendotipoj = {}'''.format(json.dumps(d,
+            default=json_default))
+    
     def __unicode__(self):
         return eo(u'{} je {} EUR'.format(self.nomo, self.kosto))
+        
     class Meta:
         verbose_name = eo('Mangxomendotipo')
         verbose_name_plural = eo('Mangxomendotipoj')
@@ -480,11 +560,11 @@ class Pago(models.Model):
     valuto = models.ForeignKey(Valuto) # XXX default should be EUR
     sumo = models.DecimalField(max_digits=8, decimal_places=2,
         help_text=eo(u'Rabaton enigu kiel normalan pagon, krompagon '
-                     u'enigu kun minusan sumon'))
+                     u'enigu kiel minusan sumon'))
     dato = NeEstontecaDato(error_messages={'estonteco':
         u'Pago ne povas esti en la estonteco.'})
-    rimarko = models.CharField(blank=True, max_length=255)
-        # uzu ekz. por indiki peranton
+    rimarko = models.CharField(blank=True, max_length=255,
+        help_text=eo('Ekz. por indiki peranton, konto por UEA gxiro, ktp'))
 
     def __unicode__(self):
         return eo(u'{} {} ({}) de {} je {}'.format(
@@ -499,11 +579,19 @@ class MinimumaAntaupago(models.Model):
     landokategorio = models.ForeignKey(LandoKategorio)
     oficiala_antaupago = models.DecimalField(eo('Oficiala antauxpago'),
         max_digits=8, decimal_places=2,
-        help_text=eo('La sumon, kiun ni montras oficiale'))
+        help_text=eo('La sumo, kiun ni montras oficiale'))
     interna_antaupago = models.DecimalField(eo('Interna antauxpago'),
         max_digits=8, decimal_places=2, null=True, blank=True,
-        help_text=eo('La sumon, kiun ni uzas por internaj kalkuloj, se alia'))
+        help_text=eo('La sumo, kiun ni uzas por internaj kalkuloj, se alia'))
     # Kion ni montras ekstere kaj kion ni uzas por internaj kalkuloj
+
+    @classmethod
+    def javascript(cls):
+        obj = {o.landokategorio.id: o.oficiala_antaupago
+                        for o in cls.objects.all()}
+        return 'window.minimumaj_antaupagoj = {}'.format(
+                        json.dumps(obj, default=json_default))
+    
     def __unicode__(self):
         return eo(u'{} EUR por {}'.format(
                   self.oficiala_antaupago, self.landokategorio))

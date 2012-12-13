@@ -1,51 +1,104 @@
 html, body {
-  font-size: 14px; }
+  font-size: 14px;
+}
 
 textarea {
-  height: 5em; }
+  height: 3em;
+}
 
-#alighformo > ul {
+#alighformo .helptext {
+  display: inline-block;
+  width: 400px;
+}
+#alighformo .fieldset-label {
+  font-weight: bold;
+}
+#alighformo > ul, #alighformo .fieldset > ul {
   list-style: none;
   margin: 0;
-  padding: 0; }
-  #alighformo > ul > li {
-    margin-top: 0.5em;
-    margin-bottom: 0.5em; }
-    #alighformo > ul > li > * {
-      vertical-align: middle; }
-    #alighformo > ul > li > label {
-      display: inline-block;
-      width: 450px;
-      margin-left: 14px; }
-    #alighformo > ul > li ul {
-      white-space: nowrap;
-      list-style: none;
-      display: inline;
-      margin: 0;
-      padding: 0; }
-      #alighformo > ul > li ul li {
-        display: inline;
-        margin: 0 1em 0 0; }
+  padding: 0;
+}
+#alighformo > ul .info, #alighformo .fieldset > ul .info {
+  margin-left: 50px;
+}
+#alighformo > ul > li, #alighformo .fieldset > ul > li {
+  white-space: nowrap;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  display: block;
+}
+#alighformo > ul > li > *, #alighformo .fieldset > ul > li > * {
+  white-space: normal;
+  vertical-align: middle;
+}
+#alighformo > ul > li > label, #alighformo .fieldset > ul > li > label {
+  display: inline-block;
+  width: 450px;
+  margin-left: 14px;
+}
+#alighformo > ul > li ul, #alighformo .fieldset > ul > li ul {
+  list-style: none;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+#alighformo > ul > li ul li, #alighformo .fieldset > ul > li ul li {
+  display: inline;
+  margin: 0 1em 0 0;
+}
+#alighformo > ul > li .vertical-display, #alighformo .fieldset > ul > li .vertical-display {
+  display: inline-block;
+}
+#alighformo > ul > li .vertical-display li, #alighformo .fieldset > ul > li .vertical-display li {
+  display: block;
+}
+#alighformo > ul > li .vertical-display ul, #alighformo .fieldset > ul > li .vertical-display ul {
+  display: block;
+}
+#alighformo > ul > li ul.infolist, #alighformo .fieldset > ul > li ul.infolist {
+  list-style: disc;
+}
+#alighformo > ul > li ul.infolist li, #alighformo .fieldset > ul > li ul.infolist li {
+  margin-left: 0;
+}
+#alighformo > ul > li ul.infolist li:before, #alighformo .fieldset > ul > li ul.infolist li:before {
+  content: " \25CF ";
+  font-weight: bold;
+  display: inline-block;
+  text-align: center;
+  width: 28px;
+  font-size: 18px;
+}
+#alighformo > ul label + *, #alighformo .fieldset > ul label + * {
+  display: inline-block;
+  width: 300px;
+}
 #alighformo .required > label {
   font-weight: bold;
   margin-left: 0;
-  width: 464px; }
-  #alighformo .required > label:before {
-    content: "* ";
-    color: red;
-    font-weight: bold;
-    display: inline-block;
-    width: 14px; }
+  width: 464px;
+}
+#alighformo .required > label:before {
+  content: "* ";
+  color: red;
+  font-weight: bold;
+  display: inline-block;
+  width: 14px;
+}
 #alighformo .error {
-  border: 1px solid black; }
+  border: 1px solid black;
+}
 #alighformo .required-stilo {
   font-weight: bold;
-  color: red; }
+  color: red;
+}
 #alighformo ul.errorlist {
   list-style: none;
   display: block;
-  margin-left: 50px; }
-  #alighformo ul.errorlist li {
-    display: inline-block;
-    font-weight: bold;
-    color: red; }
+  margin-left: 50px;
+}
+#alighformo ul.errorlist li {
+  display: inline-block;
+  font-weight: bold;
+  color: red;
+}
