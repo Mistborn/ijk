@@ -1,10 +1,12 @@
 import models
 from utils import KOMENCA_DATO, FINIGHA_DATO
 
-DATE_JAVASCRIPT = ('window.KOMENCA_DATO = new Date({}, {}, {});\n'
+DATE_JAVASCRIPT = ((
+    'window.KOMENCA_DATO = new Date({}, {}, {});\n'
     'window.FINIGHA_DATO = new Date({}, {}, {});\n').format(
     KOMENCA_DATO.year, KOMENCA_DATO.month-1, KOMENCA_DATO.day,
-    FINIGHA_DATO.year, FINIGHA_DATO.month-1, FINIGHA_DATO.day)
+    FINIGHA_DATO.year, FINIGHA_DATO.month-1, FINIGHA_DATO.day) +
+    'window.KOMENCJARO = window.KOMENCA_DATO.getFullYear();\n')
 
 def all_javascript():
     result = []

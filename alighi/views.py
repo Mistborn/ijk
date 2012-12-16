@@ -10,15 +10,31 @@ from django.utils.encoding import force_unicode
 import models
 from utils import eo, KOMENCA_DATO, FINIGHA_DATO, SEKSOJ
 from javascript import all_javascript
+from validators import *
+
+import datetime
+
+NEVALIDA_DATO = u'Enigu validan valoron (en formato jjjj-mm-tt).'
+INVALID_MODEL_CHOICE = eo(u'Faru elekton el la listo de haveblaj opcioj. '
+        u'La valoro de vi provizita (%(value)s) ne validas.')
+INVALID_CHOICE = eo(u'Faru elekton el la listo de haveblaj opcioj. '
+        u'La valoro de vi provizita ne validas.')
+INVALID_PK_CHOICE = eo(u'Faru elekton el la listo de haveblaj opcioj. '
+        u'La valoro de vi provizita (%s) ne validas.')
 
 default_error_messages = {
     'required': eo(u'Cxi tiu kampo estas deviga.'),
-    'invalid': eo(u'Enigu validan valoron.'),
+    'invalid': eo(u'Faru elekton el la listo de haveblaj opcioj. '
+                  u'La valoro de vi provizita ne validas.'),
     'min_length': eo(u'Certigu, ke tiu cxi valoro havas almenaux %(limit_value)d signojn (gxi havas %(show_value)d).'),
     'max_length': eo(u'Certigu, ke tiu cxi valoro havas maksimume %(limit_value)d signojn (gxi havas %(show_value)d).'),
     #'max_value': eo(u'Certigu, ke tiu cxi valoro estas malpli ol aux egala al %(limit_value)s.'),
     #'min_value': eo(u'Certigu, ke tiu cxi valoro estas pli ol aux egala al  %(limit_value)s.'),
+    'invalid_choice': INVALID_CHOICE,
 }
+
+default_error_messages['invalid_pk_value'] = INVALID_PK_CHOICE
+    # default_error_messages['invalid_choice']
 
 def em(**kw):
     '''error message dict'''
@@ -177,8 +193,7 @@ class RadioFieldWithCommentRenderer(forms.widgets.RadioFieldRenderer):
             # all its subwidgets
         if not self.value:
             self.value = [None, u'']
-        print 'done initing the renderer, my dict is {}'.format(
-            self.__dict__)
+        #print 'done initing the renderer, my dict is {}'.format(self.__dict__)
     def render(self):
         info = u'<ul class="infolist">{}</ul>'.format(
             u'\n'.join(u'<li>{}</li>'.format(i) for i in self.infolist))
@@ -243,36 +258,47 @@ class PagmanieroChoiceField(forms.ModelChoiceField):
     def to_python(self, value):
         self.comment = value[1]
         return super(PagmanieroChoiceField, self).to_python(value[0])
-        
+
 partoprenanto_fields_dict = dict(
     persona_nomo = forms.CharField(max_length=50,
-        error_messages=em(required='Enigu vian personan nomon')),
+        error_messages=em(required='Enigu vian personan nomon'),
+        validators=[nomo_validator]),
     familia_nomo = forms.CharField(max_length=50,
-        error_messages=em(required='Enigu vian familian nomon')),
+        error_messages=em(required='Enigu vian familian nomon'),
+        validators=[nomo_validator]),
     shildnomo = forms.CharField(required=False,
-        label=eo('Kromnomo'), help_text='Por la ŝildo'),
+        label=eo('Kromnomo'), help_text='Por la ŝildo',
+        validators=[kromnomo_validator]),
     sekso = forms.ChoiceField(widget=forms.RadioSelect, choices=SEKSOJ,
         error_messages=em(required='Elektu vian sekson')),
     naskighdato = forms.DateField(label=eo('Naskigxdato'),
-        error_messages=em(required='Elektu vian naskiĝdaton')),
+        validators=[naskighdato],
+        error_messages=em(
+            required='Elektu vian naskiĝdaton', invalid=NEVALIDA_DATO,
+            estonteco=u'Aliĝanto ne povas naskiĝi en la estonteco.')),
     retposhtadreso = forms.EmailField(label=eo('Retposxtadreso'),
         error_messages=em(required='Enigu vian retpoŝtadreson',
                           invalid='Enigu validan retpoŝtadreson')),
     adreso = forms.CharField(required=False, widget=forms.Textarea),
     urbo = forms.CharField(max_length=50, required=False),
     poshtkodo = forms.CharField(
-        max_length=15, label=eo('Posxtkodo'), required=False),
+        max_length=15, label=eo('Posxtkodo'), required=False,
+        validators=[poshtkodo_validator]),
     loghlando = forms.ModelChoiceField(
         models.Lando.objects, label=eo('Logxlando'),
         error_messages=em(required='Elektu vian loĝlandon')),
     shildlando = forms.CharField(required=False,
-        label=eo('Mi volas, ke mia lando aperu sur mia sxildo jene:')),
+        label=eo('Mi volas, ke mia lando aperu sur mia sxildo jene:'),
+        validators=[shildlando_validator]),
     chu_bezonas_invitleteron = forms.BooleanField(initial=False, required=False,
         label=eo('Mi bezonas invitleteron')),
     telefono = forms.CharField(max_length=50, required=False,
-        label='Poŝtelefon-numero', help_text='Se vi indikos ĝin, '
-            'ni povos sendi al vi SMS-on okaze de lastmomentaj sciigoj.'),
-    skype = forms.CharField(max_length=50, required=False),
+        label='Poŝtelefon-numero', help_text='Enigu numeron en formato '
+            '+[lando-kodo]-[prefikso]-[numero]. Se vi indikos ĝin, '
+            'ni povos sendi al vi SMS-on okaze de lastmomentaj sciigoj.',
+        validators=[telefono_validator]),
+    skype = forms.CharField(max_length=50, required=False,
+        validators=[skype_validator]),
     facebook = forms.CharField(max_length=50, required=False),
     mesaghiloj = forms.CharField(required=False,
         label=eo('Aliaj mesagxiloj, kiujn vi volas aperigi en la '
@@ -284,10 +310,12 @@ partoprenanto_fields_dict = dict(
         help_text=eo('Haveble nur por tiuj, kiuj efektive partoprenis')),
     ekde = forms.DateField(
         initial=KOMENCA_DATO, label=eo('Mi partoprenos ekde'),
-        error_messages=em(required='Elektu la daton, kiam vi alvenos')),
+        error_messages=em(required='Elektu la daton, kiam vi alvenos',
+                          invalid=NEVALIDA_DATO)),
     ghis = forms.DateField(
         initial=FINIGHA_DATO, label=eo('Mi partoprenos gxis'),
-        error_messages=em(required='Elektu la daton, kiam vi forlasos')),
+        error_messages=em(required='Elektu la daton, kiam vi forlasos',
+                          invalid=NEVALIDA_DATO)),
     alveno = forms.CharField(required=False, label=eo('Mi alvenas per/je'),
         help_text=eo('Ekz. flugnumero kaj horo, se vi jam scias gxin')),
     #alvenas_je = forms.DateField(required=False, label=eo('Mi alvenas je'))
@@ -347,7 +375,8 @@ partoprenanto_fields_dict = dict(
         #choices=[([o.id, u''], o.nomo) for o in models.Pagmaniero.objects.filter(chu_publika=True)],
         label=eo('Mi antauxpagos per'),
         widget=RadioSelectPagmanieroj, empty_label=None,
-        help_text=paginfo, error_messages=em(
+        help_text=paginfo,
+        error_messages=em(
             required=eo('Elektu kiel vi pagos la antauxpagon'))),
     #pagmaniero = forms.ModelChoiceField(
         #models.Pagmaniero.objects.filter(chu_publika=True),
@@ -361,15 +390,16 @@ partoprenanto_fields_dict = dict(
         label=eo('Mi estas/estos membro de UEA/TEJO en 2013'),
         help_text=u'Individuaj membroj de TEJO/UEA ricevas rabaton ĉe IJK '
                   u'(kategorio MG ne validas por la rabato).'),
-    uea_kodo = forms.CharField(max_length=18, required=False,
-        label=eo('UEA-kodo'))
+    uea_kodo = forms.CharField(max_length=6, min_length=6, required=False,
+        label=eo('UEA-kodo'), validators=[ueakodo_validator])
 )
 
 class ManghoMendoForm(forms.Form):
     manghomendoj = forms.ModelMultipleChoiceField(label=eo('Mi volas mendi'),
         required=False, widget=forms.CheckboxSelectMultiple,
         queryset=models.ManghoMendoTipo.objects,
-        initial=models.ManghoMendoTipo.objects.all())
+        initial=models.ManghoMendoTipo.objects.all(),
+        error_messages=em(invalid_choice='Ne, ne, ne: %r'))
         #choices=[(tipo.id, unicode(tipo))
                     #for tipo in models.ManghoMendoTipo.objects.all()])
 
@@ -474,7 +504,8 @@ for (i, division) in enumerate(formdivisions):
         else:
             cur.append(subdiv)
     form_class_list.append(cur)
-
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt
 def alighi(request):
     if request.method == 'POST':
         mmform = ManghoMendoForm(request.POST)

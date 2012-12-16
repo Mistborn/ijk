@@ -1,17 +1,39 @@
 (function() {
 
   $(function() {
-    var aghkategorio, alighkategorio, chu_plentempa, date_to_iso, ekdato, ghisdato, iso_to_date, kotizo, kotizo_selectors, landokategorio, liveri_aghon_lau_naskightago, liveri_loghkoston, liveri_programkotizon, loghkategorio, loghlando, naskighdato;
+    var YEAR, aghkategorio, alighkategorio, chu_plentempa, date_to_iso, ekdato, ghisdato, iso_to_date, kotizo, kotizo_selectors, landokategorio, liveri_aghon_lau_naskightago, liveri_loghkoston, liveri_programkotizon, loghkategorio, loghlando, naskighdato;
+    YEAR = 1000 * 60 * 60 * 24 * 365.25;
     $.datepicker.setDefaults({
-      dateFormat: 'yy-dd-mm',
+      dateFormat: 'yy-mm-dd',
+      autoSize: true,
+      currentText: 'hodiaŭ',
+      gotoCurrent: true,
+      hideIfNoPrevNextType: true,
+      showOtherMonths: true,
+      selectOtherMonths: true,
+      showButtonPanel: false,
+      yearRange: "" + window.KOMENCJARO + ":" + window.KOMENCJARO,
       dayNames: ['dimanĉo', 'lundo', 'mardo', 'merkredo', 'ĵaŭdo', 'vendredo', 'sabato'],
       dayNamesMin: ['di', 'lu', 'ma', 'me', 'ĵa', 've', 'sa'],
-      monthNames: ["januaro", "februaro", "marto", "aprilo", "majo", "junio", "julio", "aŭgusto", "septembro", "octobro", "novembero", "decembro"],
-      monthNamesShort: ["jan", "feb", "mar", "apr", "maj", "jun", "jul", "aŭg", "sep", "oct", "nov", "dec"]
+      monthNames: ["januaro", "februaro", "marto", "aprilo", "majo", "junio", "julio", "aŭgusto", "septembro", "oktobro", "novembro", "decembro"],
+      monthNamesShort: ["jan", "feb", "mar", "apr", "maj", "jun", "jul", "aŭg", "sep", "okt", "nov", "dec"]
     });
-    $('#id_naskighdato, #id_ekde, #id_ghis').datepicker();
+    $('#id_ekde').datepicker({
+      defaultDate: window.KOMENCA_DATO,
+      maxDate: window.FINIGHA_DATO
+    });
+    $('#id_ghis').datepicker({
+      defaultDate: window.FINIGHA_DATO,
+      minDate: window.KOMENCA_DATO
+    });
+    $('#id_naskighdato').datepicker({
+      changeMonth: true,
+      changeYear: true,
+      defaultDate: new Date(window.KOMENCA_DATO - YEAR * 25),
+      yearRange: "c-74:c+19"
+    });
     liveri_aghon_lau_naskightago = function(dato) {
-      return (window.KOMENCA_DATO - dato) / (1000 * 60 * 60 * 24 * 365.25);
+      return (window.KOMENCA_DATO - dato) / YEAR;
     };
     iso_to_date = function(s) {
       var day, month, year;
