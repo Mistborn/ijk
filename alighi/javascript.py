@@ -13,3 +13,4 @@ def all_javascript():
         if hasattr(cls, 'javascript'):
             result.append(cls.javascript())
     return DATE_JAVASCRIPT + '\n'.join(result)
+

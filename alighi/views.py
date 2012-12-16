@@ -2,10 +2,8 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django import forms
-#from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
-#from django.forms.widgets import RadioSelect
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_unicode
 
@@ -66,19 +64,186 @@ paginfo = mark_safe(
     <a href="mailto:ijk@tejo.org">ijk@tejo.org</a>.</p>'''
 )
     
-class RadioFieldInfoListRenderer(forms.widgets.RadioFieldRenderer):
+#class RadioFieldInfoListRenderer(forms.widgets.RadioFieldRenderer):
+    #infolist = models.AlighKategorio.infolist()
+    #def render(self):
+        #info = u'<ul class="infolist">{}</ul>'.format(
+            #'\n'.join(u'<li>{}</li>'.format(i) for i in self.infolist))
+        #return mark_safe(
+            #u'<div class="vertical-display">{}<ul>\n{}\n</ul></div>'.format(
+                #info, u'\n'.join(
+                    #[u'<li>%s</li>' % force_unicode(w) for w in self])))
+
+#class RadioSelectPagmanieroj(forms.RadioSelect):
+    #renderer = RadioFieldInfoListRenderer
+
+### okay let's try this a bit differently
+
+#class TextFieldRenderer(forms.widgets.RadioFieldRenderer):
+    ##def __init__(self, *args):
+        ##super(TextFieldRenderer, self).__init__(*args)
+    #def render(self):
+        ## need to pass name, value attrs=None
+        #lis = u'\n'.join([u'<li>%s</li>' % force_unicode(w.render())
+                    #for w in self])
+        #print 'lis is {}'.format(lis)
+        #return mark_safe(u'<ul>\n%s\n</ul>' % lis)
+    #def _get_attrs(self, idx, choice):
+        #attrs = self.attrs.copy()
+        #attrs['name'] = u'{}_{}'.format(self.name, idx)
+        #attrs['value'] = choice[0]
+        #return attrs
+    #def __iter__(self):
+        #print 'in here'
+        #for i, choice in enumerate(self.choices):
+            #attrs = self._get_attrs(i, choice)
+            #yield forms.TextInput(attrs=attrs)
+    #def __getitem__(self, idx):
+        #print 'in there'
+        #choice = self.choices[idx]
+        #attrs = self._get_attrs(idx, choice)
+        #return forms.TextInput(attrs=attrs)
+        
+#class TextSelect(forms.RadioSelect):
+    #renderer = TextFieldRenderer
+
+#class RadioAndTextInput(forms.widgets.RadioInput):
+    #def tag(self):
+        #radiotag = super(RadioAndTextInput, self).tag()
+        #final_attrs = dict(self.attrs, type='text',
+            #name=self.name+u'_comment', value=u'')
+            ## XXX this isn't going to save the value when the form is submitted
+        #return mark_safe(
+            #radiotag + u' <input{} />'.format(
+                #forms.util.flatatt(final_attrs)))
+
+#class RadioAndTextInput(forms.widgets.MultiWidget):
+    #def __init__(self, name, value, attrs, choice, idx, **kw):
+        #if not isinstance(value, list):
+            #value = [value, u'']
+        #radio = forms.widgets.RadioInput(name, value, attrs, choice, idx)
+        #tattrs = attrs.copy()
+        #tattrs['value'] = value[1] if radio.is_checked() else u''
+        #for attr in ('id', 'name'):
+            #if attr in tattrs:
+                #tattrs[attr] = '{}_comment_{}'.format(tattrs[attr], idx)
+        #widgets = [radio, forms.widgets.TextInput(tattrs)]
+        #super(RadioAndTextInput, self).__init__(widgets, attrs, **kw)
+    #def decompresss(self, value):
+        #return value
+    #def is_checked(self):
+        #return self.widgets[0].is_checked()
+
+class RadioAndTextInput(forms.widgets.RadioInput):
+    def render(self, name=None, value=None, attrs=None, choices=()):
+        #print '**** my dict: {}\n\tmy args: {}'.format(self.__dict__,
+            #dict(name=name, value=value, attrs=attrs, choices=choices))
+        textval = self.comment_value if self.is_checked() else u''
+        textid = '{}_comment_{}'.format(
+            self.attrs['id'], self.choice_value)
+        textname = '{}_comment_{}'.format(self.name, self.choice_value)
+        text = forms.TextInput().render(textname, textval, {'id': textid})
+        return mark_safe(
+            super(RadioAndTextInput, self).render(
+                name, value[0], attrs, choices) + text)
+    #def is_checked(self):
+        #print 'am i checked? my dict looks like this: {}'.format(
+            #self.__dict__)
+        #r = super(RadioAndTextInput, self).is_checked()
+        #print 'and the answer is: {}'.format(r)
+        #return r
+        #return self.value[0] == self.choice_value[0]
+    def __init__(self, name, value, attrs, choice, index):
+        #print 'initing {}, args are {}'.format(
+            #self.__class__.__name__,
+            #dict(name=name, value=value, attrs=attrs,
+                 #choice=choice, index=index))
+        super(RadioAndTextInput, self).__init__(
+            name, value, attrs, choice, index)
+        self.choice_value = force_unicode(choice[0][0])
+        self.value = force_unicode(value[0])
+        self.comment_choice_value = force_unicode(choice[0][1])
+        self.comment_value = force_unicode(value[1])
+        #print '&&& all done, my dict is {}'.format(self.__dict__)
+        
+class RadioFieldWithCommentRenderer(forms.widgets.RadioFieldRenderer):
     infolist = models.AlighKategorio.infolist()
+    def __init__(self, name, value, attrs, choices, *args, **kw):
+        #print 'initing {}, vals are {}'.format(
+            #self.__class__.__name__, dict(name=name, value=value, attrs=attrs, choices=choices, args=args, kw=kw))
+        super(RadioFieldWithCommentRenderer, self).__init__(
+            name, value, attrs, choices, *args, **kw)
+            # name, value are the name/value of the entire widget with
+            # all its subwidgets
+        if not self.value:
+            self.value = [None, u'']
+        print 'done initing the renderer, my dict is {}'.format(
+            self.__dict__)
     def render(self):
         info = u'<ul class="infolist">{}</ul>'.format(
-            '\n'.join(u'<li>{}</li>'.format(i) for i in self.infolist))
+            u'\n'.join(u'<li>{}</li>'.format(i) for i in self.infolist))
+        lis = [force_unicode(w.render(self.name, self.value, self.attrs))
+                        for w in self]
+        lis = u'\n'.join(u'<li>{}</li>'.format(li) for li in lis)
+        ul = u'<ul>\n{}\n</ul>'.format(lis)
         return mark_safe(
-            u'<div class="vertical-display">{}<ul>\n{}\n</ul></div>'.format(
-                info, u'\n'.join(
-                    [u'<li>%s</li>' % force_unicode(w) for w in self])))
+            u'<div class="vertical-display">{}{}</div>'.format(info, ul))
+    def _get_widget(self, choice, idx):
+        return RadioAndTextInput(
+            self.name, self.value, self.attrs.copy(), choice, idx)
+    def __iter__(self):
+        for i, choice in enumerate(self.choices):
+            yield self._get_widget(choice, i)
+    def __getitem__(self, idx):
+        choice = self.choices[idx]
+        return self._get_widget(choice, idx)
+class RadioSelectPagmanieroj(forms.RadioSelect):
+    renderer = RadioFieldWithCommentRenderer
+    def value_from_datadict(self, data, files, name):
+        radioval = super(RadioSelectPagmanieroj, self).value_from_datadict(
+            data, files, name)
+        if radioval is None:
+            textval = u''
+        else:
+            textval = data.get('{}_comment_{}'.format(name, radioval), u'')
+        #self.comment_value = textval
+        return [radioval, textval]
+    def get_renderer(self, name, value, attrs=None, choices=()):
+        #print 'getting renderer, vals are {}, and my dict is {}'.format(
+            #dict(name=name, value=value, attrs=attrs, choices=choices),
+            #self.__dict__)
+        #print 'self.choices is {}'.format(list(self.choices))
+        if value is None: value = u''
+        #str_value = force_unicode(value) # Normalize to string.
+        final_attrs = self.build_attrs(attrs)
+        choices = list(self.choices) # list(chain(self.choices, choices))
+        return self.renderer(name, value, final_attrs, choices)
+    #def comment_value(self, data, name):
+        #radioval = self.value_from_datadict(data, None, name)
+        #if radioval is None:
+            #textval = u''
+        #else:
+            #textval = data.get('{}_comment_{}'.format(name, radioval), None)
+        #return textval
 
-class RadioSelectInfoList(forms.RadioSelect):
-    renderer = RadioFieldInfoListRenderer
-                    
+class PagmanieroChoiceField(forms.ModelChoiceField):
+    widget = RadioSelectPagmanieroj
+    def __init__(self, queryset, **kw):
+        super(PagmanieroChoiceField, self).__init__(queryset, **kw)
+    def prepare_value(self, value):
+        #print '&&&& value is {}'.format(repr(value))
+        if not value:
+            value = [None, u'']
+        if not isinstance(value, list):
+            value = [value, u'']
+        r = [super(PagmanieroChoiceField, self).prepare_value(value[0]),
+                value[1]]
+        return r
+        #print '=== ended up with {}'.format(r)
+    def to_python(self, value):
+        self.comment = value[1]
+        return super(PagmanieroChoiceField, self).to_python(value[0])
+        
 partoprenanto_fields_dict = dict(
     persona_nomo = forms.CharField(max_length=50,
         error_messages=em(required='Enigu vian personan nomon')),
@@ -176,13 +341,21 @@ partoprenanto_fields_dict = dict(
         empty_label=None,
         #initial=models.ManghoTipo.objects.get(nomo='Viande'),
         error_messages=em(required='Elektu kian manĝon vi volas')),
-    pagmaniero = forms.ModelChoiceField(
+    pagmaniero = PagmanieroChoiceField(
         models.Pagmaniero.objects.filter(chu_publika=True),
+    #paginformoj = forms.ChoiceField(
+        #choices=[([o.id, u''], o.nomo) for o in models.Pagmaniero.objects.filter(chu_publika=True)],
         label=eo('Mi antauxpagos per'),
-        widget=RadioSelectInfoList, empty_label=None,
+        widget=RadioSelectPagmanieroj, empty_label=None,
         help_text=paginfo, error_messages=em(
             required=eo('Elektu kiel vi pagos la antauxpagon'))),
-    pagmaniera_komento = forms.CharField(max_length=50, required=False),
+    #pagmaniero = forms.ModelChoiceField(
+        #models.Pagmaniero.objects.filter(chu_publika=True),
+        #label=eo('Mi antauxpagos per'),
+        #widget=TextSelect, empty_label=None,
+        #help_text=paginfo, error_messages=em(
+            #required=eo('Elektu kiel vi pagos la antauxpagon'))),
+    #pagmaniera_komento = forms.CharField(max_length=50, required=False),
     chu_ueamembro = forms.BooleanField(
         required=False, initial=False,
         label=eo('Mi estas/estos membro de UEA/TEJO en 2013'),
@@ -244,12 +417,21 @@ class FormInfo(object):
     def __init__(self, *args, **kw):
         pass
     def as_ul(self):
-        return mark_safe(u'<li><span class="info">'
-                            u'{}</span></li>'.format(self.value))
+        return mark_safe(
+            u'<li><span class="info">{}</span></li>'.format(self.value))
 
 class MembroKategorioFormInfo(FormInfo):
     value = models.UEARabato.infoline()
-
+    
+class MultiField(forms.Field):
+    widget = forms.MultiWidget
+    def __init__(self, fields, **kw): #required, label, initial, widget, help_text):
+        self.fields = fields
+        if 'widget' not in kw:
+            kw['widget'] = self.widget(
+                widgets=[field.widget for field in fields])
+        super(MultiField, self).__init__(**kw)
+    #def clean(***
 
 #def info_factory(val):
     #class FormInfo(object):
@@ -277,7 +459,8 @@ formdivisions = [
     [
         ['loghkategorio', 'deziras_loghi_kun_nomo',
         'chu_preferas_unuseksan_chambron', 'chu_malnoktemulo', 'manghotipo',], ManghoMendoForm,
-        ['pagmaniero', 'pagmaniera_komento', 'chu_ueamembro'],
+        #['pagmaniero', #'pagmaniera_komento',
+            ['pagmaniero', 'chu_ueamembro'],
         MembroKategorioFormInfo, ['uea_kodo'], NotoForm]
 ]
 
@@ -298,7 +481,14 @@ def alighi(request):
         nform = NotoForm(request.POST)
         ppform = PartoprenantoForm(request.POST)
         if (mmform.is_valid() and nform.is_valid() and ppform.is_valid()):
-            partoprenanto = ppform.save()
+            partoprenanto = ppform.save(commit=False)
+            partoprenanto.pagmaniera_komento = \
+                ppform.fields['pagmaniero'].comment
+            #print 'got a partoprenanto {}, his pagmaniero is {} and i found this in the form: {}'.format(partoprenanto, partoprenanto.pagmaniero, ppform.cleaned_data['pagmaniero'])
+            #print 'i think he commented thusly: {}'.format(ppform.fields['pagmaniero'].comment)
+            #print 'asking him, this is the comment: {}'.format(partoprenanto.pagmaniera_komento)
+            #raise KeyError
+            partoprenanto.save()
             mm = [models.ManghoMendo(partoprenanto=partoprenanto, tipo=tipo)
                     for tipo in mmform.cleaned_data['manghomendoj']]
             for manghomendo in mm:

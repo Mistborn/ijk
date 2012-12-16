@@ -480,6 +480,7 @@ class Partoprenanto(models.Model):
 
     class Meta:
         verbose_name_plural = eo('Partoprenantoj')
+        ordering = ('familia_nomo',)
 
 class ManghoMendoTipo(models.Model):
     '''Tipo de manĝo kiun oni povas mendi (matenmanĝo, tagmanĝo, ktp)'''
@@ -526,7 +527,7 @@ class SurlokaMembrigho(models.Model):
     class Meta:
         verbose_name = eo('Surloka Membrigxo')
         verbose_name_plural = eo('Surlokaj Membrigxoj')
-        #order_with_respect_to = 'partoprenanto' # XXX this?
+        ordering = ('partoprenanto',)
 
 class Pagtipo(models.Model):
     '''Tipo de pago, ekz. subvencio, antaŭpago, ktp'''
@@ -572,6 +573,7 @@ class Pago(models.Model):
             self.dato))
     class Meta:
         verbose_name_plural = eo('Pagoj')
+        ordering = ('partoprenanto',)
 
 class MinimumaAntaupago(models.Model):
     '''Minimuma antaŭpago por partopreni'''
@@ -635,6 +637,7 @@ class Noto(models.Model):
         return u'{}{} {}'.format(signo, nomo, tondajho)
     class Meta:
         verbose_name_plural = eo('Notoj')
+        ordering = ('partoprenanto',)
 
 #class AghKategoriSistemo(models.Model):
     #nomo = models.CharField(max_length=60, unique=True)
