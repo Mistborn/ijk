@@ -1,104 +1,85 @@
 html, body {
-  font-size: 14px;
-}
+  font-size: 14px; }
 
 textarea {
-  height: 3em;
-}
+  height: 3em; }
 
-#alighformo .helptext {
+#form-tabs .form-nav {
+  padding: 0.5em;
+  margin: 0.5em; }
+#form-tabs .tab .helptext {
   display: inline-block;
-  width: 400px;
-}
-#alighformo .fieldset-label {
-  font-weight: bold;
-}
-#alighformo > ul, #alighformo .fieldset > ul {
+  width: 400px; }
+#form-tabs .tab .fieldset-label {
+  font-weight: bold; }
+#form-tabs .tab > ul, #form-tabs .tab .fieldset > ul {
   list-style: none;
   margin: 0;
-  padding: 0;
-}
-#alighformo > ul .info, #alighformo .fieldset > ul .info {
-  margin-left: 50px;
-}
-#alighformo > ul > li, #alighformo .fieldset > ul > li {
-  white-space: nowrap;
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-  display: block;
-}
-#alighformo > ul > li > *, #alighformo .fieldset > ul > li > * {
-  white-space: normal;
-  vertical-align: middle;
-}
-#alighformo > ul > li > label, #alighformo .fieldset > ul > li > label {
-  display: inline-block;
-  width: 450px;
-  margin-left: 14px;
-}
-#alighformo > ul > li ul, #alighformo .fieldset > ul > li ul {
-  list-style: none;
-  display: inline-block;
-  margin: 0;
-  padding: 0;
-}
-#alighformo > ul > li ul li, #alighformo .fieldset > ul > li ul li {
-  display: inline;
-  margin: 0 1em 0 0;
-}
-#alighformo > ul > li .vertical-display, #alighformo .fieldset > ul > li .vertical-display {
-  display: inline-block;
-}
-#alighformo > ul > li .vertical-display li, #alighformo .fieldset > ul > li .vertical-display li {
-  display: block;
-}
-#alighformo > ul > li .vertical-display ul, #alighformo .fieldset > ul > li .vertical-display ul {
-  display: block;
-}
-#alighformo > ul > li ul.infolist, #alighformo .fieldset > ul > li ul.infolist {
-  list-style: disc;
-}
-#alighformo > ul > li ul.infolist li, #alighformo .fieldset > ul > li ul.infolist li {
-  margin-left: 0;
-}
-#alighformo > ul > li ul.infolist li:before, #alighformo .fieldset > ul > li ul.infolist li:before {
-  content: " \25CF ";
-  font-weight: bold;
-  display: inline-block;
-  text-align: center;
-  width: 28px;
-  font-size: 18px;
-}
-#alighformo > ul label + *, #alighformo .fieldset > ul label + * {
-  display: inline-block;
-  width: 300px;
-}
-#alighformo .required > label {
+  padding: 0; }
+  #form-tabs .tab > ul .info, #form-tabs .tab .fieldset > ul .info {
+    margin-left: 50px; }
+  #form-tabs .tab > ul > li, #form-tabs .tab .fieldset > ul > li {
+    white-space: nowrap;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    display: block; }
+    #form-tabs .tab > ul > li > *, #form-tabs .tab .fieldset > ul > li > * {
+      white-space: normal;
+      vertical-align: middle; }
+    #form-tabs .tab > ul > li > label, #form-tabs .tab .fieldset > ul > li > label {
+      display: inline-block;
+      width: 300px;
+      margin-left: 14px; }
+    #form-tabs .tab > ul > li ul, #form-tabs .tab .fieldset > ul > li ul {
+      list-style: none;
+      display: inline-block;
+      margin: 0;
+      padding: 0; }
+      #form-tabs .tab > ul > li ul li, #form-tabs .tab .fieldset > ul > li ul li {
+        display: inline;
+        margin: 0 1em 0 0; }
+    #form-tabs .tab > ul > li .vertical-display, #form-tabs .tab .fieldset > ul > li .vertical-display {
+      display: inline-block; }
+      #form-tabs .tab > ul > li .vertical-display li, #form-tabs .tab .fieldset > ul > li .vertical-display li {
+        display: block; }
+      #form-tabs .tab > ul > li .vertical-display ul, #form-tabs .tab .fieldset > ul > li .vertical-display ul {
+        display: block; }
+    #form-tabs .tab > ul > li ul.infolist, #form-tabs .tab .fieldset > ul > li ul.infolist {
+      list-style: disc; }
+      #form-tabs .tab > ul > li ul.infolist li, #form-tabs .tab .fieldset > ul > li ul.infolist li {
+        margin-left: 0; }
+      #form-tabs .tab > ul > li ul.infolist li:before, #form-tabs .tab .fieldset > ul > li ul.infolist li:before {
+        content: " \25CF ";
+        font-weight: bold;
+        display: inline-block;
+        text-align: center;
+        width: 28px;
+        font-size: 18px; }
+  #form-tabs .tab > ul label + *, #form-tabs .tab .fieldset > ul label + * {
+    display: inline-block;
+    width: 300px; }
+  #form-tabs .tab > ul label + input[type="checkbox"], #form-tabs .tab .fieldset > ul label + input[type="checkbox"] {
+    width: 16px; }
+#form-tabs .tab .required > label {
   font-weight: bold;
   margin-left: 0;
-  width: 464px;
-}
-#alighformo .required > label:before {
-  content: "* ";
-  color: red;
+  width: 314px; }
+  #form-tabs .tab .required > label:before {
+    content: "* ";
+    color: red;
+    font-weight: bold;
+    display: inline-block;
+    width: 14px; }
+#form-tabs .tab .error {
+  border: 1px solid black; }
+#form-tabs .tab .required-stilo {
   font-weight: bold;
-  display: inline-block;
-  width: 14px;
-}
-#alighformo .error {
-  border: 1px solid black;
-}
-#alighformo .required-stilo {
-  font-weight: bold;
-  color: red;
-}
-#alighformo ul.errorlist {
+  color: red; }
+#form-tabs .tab ul.errorlist {
   list-style: none;
   display: block;
-  margin-left: 50px;
-}
-#alighformo ul.errorlist li {
-  display: inline-block;
-  font-weight: bold;
-  color: red;
-}
+  margin-left: 50px; }
+  #form-tabs .tab ul.errorlist li {
+    display: inline-block;
+    font-weight: bold;
+    color: red; }

@@ -28,6 +28,11 @@ admin.site.register(Partoprenanto, PartoprenantoAdmin)
 admin.site.register(Pago)
 admin.site.register(Pagtipo)
 admin.site.register(MinimumaAntaupago)
+admin.site.register(KrompagTipo)
 admin.site.register(Nomshildo)
 admin.site.register(Noto)
 admin.site.register(UEARabato)
+
+#class UEAValidecoAdmin(admin.ModelAdmin):
+    #readonly_fields = ('kodo', 'lando', 'rezulto')
+#admin.site.register(UEAValideco, UEAValidecoAdmin)

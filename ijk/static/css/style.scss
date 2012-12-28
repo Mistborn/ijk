@@ -1,6 +1,6 @@
 $root-em: 14px;
 $left: $root-em;
-$li-width: 450px;
+$li-width: 300px;
 $large-indent: 50px;
 
 html, body {
@@ -11,7 +11,13 @@ textarea {
     height: 3em;
 }
 
-#alighformo {
+//#alighformo {
+#form-tabs {
+  .form-nav {
+    padding: 0.5em;
+    margin: 0.5em;
+  }
+  .tab {
     .helptext { display: inline-block; width: 400px; }
     .fieldset-label { font-weight: bold; }
     > ul, .fieldset > ul {
@@ -63,6 +69,7 @@ text-align: center; width: 2 *18px * $root-em / 18px; font-size: 18px; }
             //white-space: normal;
             //ul { white-space: inherit; }
         }
+        label + input[type="checkbox"] { width: 16px; }
     }
     .required > label {
         font-weight: bold;
@@ -93,4 +100,5 @@ text-align: center; width: 2 *18px * $root-em / 18px; font-size: 18px; }
             color: red;
         }
     }
+  }
 }

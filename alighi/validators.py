@@ -1,8 +1,27 @@
 # -*- encoding: utf-8 -*-
 import datetime
+import urllib
+import json
 
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
+
+#uearezultoj = [
+    #(False, u'Nekonata UEA-kodo aŭ nekongrua lando'),
+    #(True, u'UEA-kodo ekzistas kaj kongruas kun la lando'),
+    #(False, u'Nevalida UEA-kodo'),
+#]
+
+#def ueakonformas(kodo, lando):
+    #if not kodo or not lando:
+        #return
+    #url = 'http://db.uea.org/alighoj/kontr.php?la={}_{}'.format(
+        #kodo.lower(), lando.lower())
+    #try:
+        #r = int(urllib.urlopen(url).read().strip())
+    #except ValueError:
+        #return None
+    #return uearezultoj[r]
 
 def nonfuturedatevalidator(date):
     if date > datetime.date.today():
@@ -31,15 +50,25 @@ telefono_validator = RegexValidator('^\+[1-9]{1}[ -]?([0-9][ -]?){6,12}$',
     u'Bonvolu uzi +[lando-kodo]-[prefikso]-[numero].',
     u'telefono')
 
-skype_validator = RegexValidator(r'^[a-zA-Z][a-zA-Z0-9.,_-]{5,31}$',
-     "Nevalida valoro por skype-nomo.", 'skype')
+skype_regex_validator = RegexValidator(r'^[a-zA-Z][a-zA-Z0-9.,_-]{5,31}$',
+     "Nevalida valoro por skype-nomo.", 'skype_form')
 
-nomo_validator = RegexValidator(r"(?u)^[a-zA-Z '-]+$",
-    "Enigu nur literojn, spacetojn, apostrofo, kaj divido-strekon",
+def skype_validator(value):
+    skype_regex_validator(value)
+    url = ('https://login.skype.com/json/validator?'
+           'new_username={}'.format(value))
+    result = json.loads(urllib.urlopen(url).read())
+    if not (str(result['status']) == '406' and
+            result['data']['markup'] == "Skype Name not available"):
+        raise ValidationError('Tiu Skype-nomo ne ekzistas', code='skype')
+    
+nomo_validator = RegexValidator(r"(?u)^([^\W\d_]|[ '-])+$",
+    "Enigu nur literojn, spacetojn, apostrofon, kaj divido-strekon",
     'nomo')
 
-shildlando_validator = RegexValidator(r"(?u)^[a-zA-Z .,-]+$",
-    "Enigu nur literojn, spacetojn, punkton, komon, kaj divido-strekon",
+shildlando_validator = RegexValidator(r"(?u)^([^\W\d_][ .()'-])+$",
+    "Enigu nur literojn, spacetojn, punkton, krampojn, apostrofon, "
+    "kaj divido-strekon",
     'shildlando')
     
 kromnomo_validator = RegexValidator(u"(?u)^[\w .'_!?-]+$",
@@ -49,4 +78,5 @@ kromnomo_validator = RegexValidator(u"(?u)^[\w .'_!?-]+$",
 
 poshtkodo_validator = RegexValidator(u'^[A-Z0-9 -]+$',
     'Enigu validan valoron. '
-    'Validas literoj, ciferoj, spaceto, kaj divido-streko', 'poshtkodo')
+    'Validas majusklaj literoj, ciferoj, spaceto, kaj divido-streko',
+    'poshtkodo')

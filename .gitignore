@@ -6,3 +6,4 @@ dbsettings.py
 static/*
 data.*.json
 data-*.json
+\#*\#

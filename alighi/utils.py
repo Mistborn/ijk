@@ -7,9 +7,9 @@ KOMENCA_DATO = datetime.date(2013, 8, 19)
 FINIGHA_DATO = datetime.date(2013, 8, 26)
 
 SEKSOJ = (
-    ('v', 'vira'),
-    ('i', 'ina'),
-    ('a', 'alia'),
+    ('v', u"♂ vira"),
+    ('i', u"♀ ina"),
+    ('a', u"☼ alia"),
 )
 
 _eod = {

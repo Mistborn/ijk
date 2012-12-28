@@ -2,6 +2,7 @@
 import datetime
 import time
 import json
+import urllib
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -260,8 +261,33 @@ class Pagmaniero(models.Model):
     class Meta:
         verbose_name_plural = eo('Pagmanieroj')
 
+class KrompagTipo(models.Model):
+    '''Aldonaj pagoj por diversaj aferoj, kiel ekz. ekskurso, invitletero'''
+    nomo = models.SlugField()
+    sumo = models.DecimalField(max_digits=8, decimal_places=2,
+        help_text=eo('Plusa por krompago (aldona kosto), '
+                     'minusa por rabato'))
+    @classmethod
+    def javascript(cls):
+        d = {o.nomo: o.sumo for o in cls.objects.all()}
+        return 'window.krompagtipoj = {}'.format(
+                    json.dumps(d, default=json_default))
+
+    @classmethod
+    def liveri_koston(cls, key):
+        try:
+            return cls.objects.get(nomo=key).sumo
+        except cls.DoesNotExist:
+            return u''
+                    
+    def __unicode__(self):
+        return self.nomo
+    class Meta:
+        verbose_name = eo('KrompagTipo')
+        verbose_name_plural = eo('KrompagTipoj')
+        
 class Retposhtajho(models.Model):
-    '''Retpoŝta mesaĝo, por amase senditaj retposhtaĵoj'''
+    '''Retpoŝta mesaĝo, por amasa/aŭtomata sendo'''
     nomo = models.CharField(unique=True, max_length=50)
     temo = models.CharField(max_length=100)
     teksto = models.TextField()
@@ -639,6 +665,44 @@ class Noto(models.Model):
         verbose_name_plural = eo('Notoj')
         ordering = ('partoprenanto',)
 
+class UEAValideco(models.Model):
+    CHOICES = list(enumerate((
+        u'Nekonata UEA-kodo aŭ nekongrua lando',
+        u'UEA-kodo ekzistas kaj kongruas kun la lando',
+        u'Nevalida UEA-kodo')))
+
+    kodo = models.CharField(max_length=6, editable=False)
+    lando = models.CharField(max_length=2, editable=False)
+    rezulto = models.IntegerField(null=True, editable=False, choices=CHOICES)
+
+    def __unicode__(self):
+        return u'{}_{}: {}'.format(self.kodo, self.lando, self.rezulto)
+
+    @classmethod
+    def chu_valida(cls, kodo, lando):
+        kodo = kodo.lower()
+        lando = lando.lower()
+        try:
+            x = cls.objects.get(kodo=kodo, lando=lando)
+        except cls.DoesNotExist:
+            pass
+        else:
+            return (x.rezulto == 1,
+                    cls.CHOICES[x.rezulto][1]
+                        if x.rezulto is not None else u'')
+        url = 'http://db.uea.org/alighoj/kontr.php?la={}_{}'.format(
+            kodo.lower(), lando.lower())
+        try:
+            r = int(urllib.urlopen(url).read().strip())
+        except ValueError:
+            r = None
+        cls(kodo=kodo, lando=lando, rezulto=r).save()
+        return (r == 1, cls.CHOICES[r][1] if r is not None else u'')
+
+    class Meta:
+        unique_together = ('kodo', 'lando')
+        
+        
 #class AghKategoriSistemo(models.Model):
     #nomo = models.CharField(max_length=60, unique=True)
     #priskribo = models.TextField()

@@ -267,7 +267,7 @@ partoprenanto_fields_dict = dict(
         error_messages=em(required='Enigu vian familian nomon'),
         validators=[nomo_validator]),
     shildnomo = forms.CharField(required=False,
-        label=eo('Kromnomo'), help_text='Por la ŝildo',
+        label=eo('Kromnomo'), help_text='Por la nomŝildo',
         validators=[kromnomo_validator]),
     sekso = forms.ChoiceField(widget=forms.RadioSelect, choices=SEKSOJ,
         error_messages=em(required='Elektu vian sekson')),
@@ -290,8 +290,10 @@ partoprenanto_fields_dict = dict(
     shildlando = forms.CharField(required=False,
         label=eo('Mi volas, ke mia lando aperu sur mia sxildo jene:'),
         validators=[shildlando_validator]),
-    chu_bezonas_invitleteron = forms.BooleanField(initial=False, required=False,
-        label=eo('Mi bezonas invitleteron')),
+    chu_bezonas_invitleteron = forms.BooleanField(
+        initial=False, required=False,
+        label=eo('Mi bezonas invitleteron'),
+        help_text=eo(u'Kromkosto: {} €'.format(models.KrompagTipo.liveri_koston('invitletero')))),
     telefono = forms.CharField(max_length=50, required=False,
         label='Poŝtelefon-numero', help_text='Enigu numeron en formato '
             '+[lando-kodo]-[prefikso]-[numero]. Se vi indikos ĝin, '
@@ -301,12 +303,13 @@ partoprenanto_fields_dict = dict(
         validators=[skype_validator]),
     facebook = forms.CharField(max_length=50, required=False),
     mesaghiloj = forms.CharField(required=False,
-        label=eo('Aliaj mesagxiloj, kiujn vi volas aperigi en la '
-                 'postkongresa listo de partoprenantoj')),
+        label=eo('Aliaj mesagxiloj'),
+        help_text=eo(u'Kiujn vi volas aperigi '
+                     u'en la postkongresa listo de  partoprenantoj')),
     chu_retalisto = forms.BooleanField(initial=True, required=False,
         label=eo(u'Sur la retejo de IJK, en listo de aligxintoj')),
     chu_postkongresalisto = forms.BooleanField(initial=True, required=False,
-        label=eo('Kun kontaktinformoj en la postkongresa adresaro de '              'partoprenintoj'),
+        label=eo(u'Kun kontaktinformoj en la postkongresa adresaro de '              'partoprenintoj'),
         help_text=eo('Haveble nur por tiuj, kiuj efektive partoprenis')),
     ekde = forms.DateField(
         initial=KOMENCA_DATO, label=eo('Mi partoprenos ekde'),
@@ -323,17 +326,17 @@ partoprenanto_fields_dict = dict(
         help_text=eo('Ekz. flugnumero kaj horo, se vi jam scias gxin')),
     #foriras_je = forms.DateField(required=False, label=eo('Mi foriras je'))
     interesighas_pri_antaukongreso = forms.IntegerField(
-        required=False, widget=forms.RadioSelect(
-        choices=[(None, 'ne')] +
+        required=True, widget=forms.RadioSelect(
+        choices=[(0, 'ne')] +
             [(i, '{}-taga'.format(i)) for i in (2, 3, 5)]),
-        max_value=5, min_value=2,
+        #max_value=5, min_value=2,
         label=eo('Mi interesigxas pri antauxkongreso'),
         error_messages=em(invalid='Enigu nombron inter 2 kaj 5')),
     interesighas_pri_postkongreso = forms.IntegerField(
-        required=False, widget=forms.RadioSelect(
-        choices=[(None, 'ne')] +
+        required=True, widget=forms.RadioSelect(
+        choices=[(0, 'ne')] +
             [(i, '{}-taga'.format(i)) for i in (2, 3, 5)]),
-        max_value=5, min_value=2,
+        #max_value=5, min_value=2,
         label=eo('Mi interesigxas pri postkongreso'),
         error_messages=em(invalid='Enigu nombron inter 2 kaj 5')),
     chu_tuttaga_ekskurso = forms.BooleanField(initial=True, required=False,
@@ -391,7 +394,10 @@ partoprenanto_fields_dict = dict(
         help_text=u'Individuaj membroj de TEJO/UEA ricevas rabaton ĉe IJK '
                   u'(kategorio MG ne validas por la rabato).'),
     uea_kodo = forms.CharField(max_length=6, min_length=6, required=False,
-        label=eo('UEA-kodo'), validators=[ueakodo_validator])
+        label=eo('UEA-kodo'), validators=[ueakodo_validator],
+        error_messages=em(
+            min_length=u'Certigu ke ĉi-tiu valoro havas ekzakte 6 signojn',
+            max_length=u'Certigu ke ĉi-tiu valoro havas ekzakte 6 signojn'))
 )
 
 class ManghoMendoForm(forms.Form):
@@ -427,8 +433,20 @@ def partoprenanto_form_factory(name, fieldnames):
     d['Meta'] = Meta
     return meta(name, bases, d)
 
-PartoprenantoForm = partoprenanto_form_factory(
+PartoprenantoFormBase = partoprenanto_form_factory(
             'PartoprenantoForm', partoprenanto_fields_dict.keys())
+class PartoprenantoForm(PartoprenantoFormBase):
+    def clean(self):
+        cleaned_data = super(PartoprenantoForm, self).clean()
+        if 'uea_kodo' not in cleaned_data or 'loghlando' not in cleaned_data:
+            return cleaned_data
+        uea_kodo = cleaned_data['uea_kodo']
+        loghlando = cleaned_data['loghlando'].kodo
+        result, msg = models.UEAValideco.chu_valida(uea_kodo, loghlando)
+        if not result:
+            self._errors['uea_kodo'] = self.error_class([msg])
+            del cleaned_data['uea_kodo']
+        return cleaned_data
 
 def partoprenanto_fieldset_factory(label, fieldlist):
     cls = partoprenanto_form_factory(
@@ -515,10 +533,6 @@ def alighi(request):
             partoprenanto = ppform.save(commit=False)
             partoprenanto.pagmaniera_komento = \
                 ppform.fields['pagmaniero'].comment
-            #print 'got a partoprenanto {}, his pagmaniero is {} and i found this in the form: {}'.format(partoprenanto, partoprenanto.pagmaniero, ppform.cleaned_data['pagmaniero'])
-            #print 'i think he commented thusly: {}'.format(ppform.fields['pagmaniero'].comment)
-            #print 'asking him, this is the comment: {}'.format(partoprenanto.pagmaniera_komento)
-            #raise KeyError
             partoprenanto.save()
             mm = [models.ManghoMendo(partoprenanto=partoprenanto, tipo=tipo)
                     for tipo in mmform.cleaned_data['manghomendoj']]
@@ -531,7 +545,13 @@ def alighi(request):
                 noto.save()
             return HttpResponseRedirect(reverse('gratulon'))
         else:
-            pageforms = [[form(request.POST) for form in div]
+            errors = mmform.errors.copy()
+            errors.update(nform.errors)
+            errors.update(ppform.errors)
+            def adderrors(form):
+                form._errors = errors.copy()
+                return form
+            pageforms = [[adderrors(form(request.POST)) for form in div]
                     for div in form_class_list]
     else:
         pageforms = [[form() for form in div] for div in form_class_list]
@@ -541,3 +561,4 @@ def alighi(request):
 
 def gratulon(request):
     return render_to_response('alighi/gratulon.html', {})
+
