@@ -8,7 +8,7 @@ from django.utils.safestring import mark_safe
 from django.utils.encoding import force_unicode
 
 import models
-from utils import eo, KOMENCA_DATO, FINIGHA_DATO, SEKSOJ
+from utils import eo, KOMENCA_DATO, FINIGHA_DATO, SEKSOJ, esperanteca_dato
 from javascript import all_javascript
 from validators import *
 
@@ -79,7 +79,7 @@ paginfo = mark_safe(
     Se vi havas problemon antaŭpagi vi devas sciigi nin pri tio:
     <a href="mailto:ijk@tejo.org">ijk@tejo.org</a>.</p>'''
 )
-    
+
 #class RadioFieldInfoListRenderer(forms.widgets.RadioFieldRenderer):
     #infolist = models.AlighKategorio.infolist()
     #def render(self):
@@ -119,7 +119,7 @@ paginfo = mark_safe(
         #choice = self.choices[idx]
         #attrs = self._get_attrs(idx, choice)
         #return forms.TextInput(attrs=attrs)
-        
+
 #class TextSelect(forms.RadioSelect):
     #renderer = TextFieldRenderer
 
@@ -181,7 +181,7 @@ class RadioAndTextInput(forms.widgets.RadioInput):
         self.comment_choice_value = force_unicode(choice[0][1])
         self.comment_value = force_unicode(value[1])
         #print '&&& all done, my dict is {}'.format(self.__dict__)
-        
+
 class RadioFieldWithCommentRenderer(forms.widgets.RadioFieldRenderer):
     infolist = models.AlighKategorio.infolist()
     def __init__(self, name, value, attrs, choices, *args, **kw):
@@ -258,6 +258,18 @@ class PagmanieroChoiceField(forms.ModelChoiceField):
     def to_python(self, value):
         self.comment = value[1]
         return super(PagmanieroChoiceField, self).to_python(value[0])
+
+class CustomLabelModelChoiceField(forms.ModelChoiceField):
+    def __init__(self, *args, **kw):
+        if 'labelfunc' in kw:
+            self._labelfunc = kw['labelfunc']
+            del kw['labelfunc']
+        super(CustomLabelModelChoiceField, self).__init__(*args, **kw)
+    def label_from_instance(self, obj):
+        if hasattr(self, '_labelfunc'):
+            return self._labelfunc(obj)
+        return super(CustomLabelModelChoiceField,
+                     self).label_from_instance(obj)
 
 partoprenanto_fields_dict = dict(
     persona_nomo = forms.CharField(max_length=50,
@@ -357,6 +369,7 @@ partoprenanto_fields_dict = dict(
     loghkategorio = forms.ModelChoiceField(models.LoghKategorio.objects,
         label=eo('Mi volas logxi en'),
         widget=RadioSelectSpecialClass, empty_label=None,
+        help_text=models.LoghKategorio.helptext(),
         #initial=models.LoghKategorio.objects.all()[0],
         error_messages=em(required='Elektu kie vi volas loĝi')),
     deziras_loghi_kun_nomo = forms.CharField(
@@ -367,11 +380,17 @@ partoprenanto_fields_dict = dict(
         #help_text=u'Se vi ŝatas dormi frue, sciigu nin',
         initial=False, required=False, label=eo('Mi estas malnoktemulo')),
     manghotipo = forms.ModelChoiceField(models.ManghoTipo.objects,
-        label=eo('Mangxotipo'), widget=forms.RadioSelect,
+        label=eo('Mangxotipo'), widget=RadioSelectSpecialClass,
         required=True, initial=None,
         empty_label=None,
         #initial=models.ManghoTipo.objects.get(nomo='Viande'),
         error_messages=em(required='Elektu kian manĝon vi volas')),
+    antaupagos_ghis = CustomLabelModelChoiceField(models.AlighKategorio.objects,
+        label=eo('Mi antauxpagos gxis'), required=True, initial=None,
+        labelfunc=lambda o: esperanteca_dato(o.limdato),
+        widget=RadioSelectSpecialClass, empty_label=None,
+        error_messages=em(
+            required='Elektu gxis kiam vi faros la antauxpagon')),
     pagmaniero = PagmanieroChoiceField(
         models.Pagmaniero.objects.filter(chu_publika=True),
     #paginformoj = forms.ChoiceField(
@@ -470,7 +489,7 @@ class FormInfo(object):
 
 class MembroKategorioFormInfo(FormInfo):
     value = models.UEARabato.infoline()
-    
+
 class MultiField(forms.Field):
     widget = forms.MultiWidget
     def __init__(self, fields, **kw): #required, label, initial, widget, help_text):
@@ -489,27 +508,37 @@ class MultiField(forms.Field):
             #return mark_safe(u'<li><span class="info">'
                              #u'{}</span></li>'.format(val))
     #return FormInfo
-    
+
 formdivisions = [
     [
         ['persona_nomo', 'familia_nomo', 'shildnomo', 'sekso', 'naskighdato',
-        'retposhtadreso', 'adreso', 'urbo', 'poshtkodo', 'loghlando',
-        'shildlando', 'chu_bezonas_invitleteron',]],
+        'adreso', 'urbo', 'poshtkodo', 'loghlando', 'shildlando',
+        'chu_bezonas_invitleteron', 'retposhtadreso',
+        'chu_komencanto', 'chu_interesighas_pri_kurso']
+    ],
     [
         ['telefono', 'skype', 'facebook', 'mesaghiloj'],
         partoprenanto_fieldset_factory(
-            'Mi permesas publikigi mian nomon, urbon kaj landon:', ['chu_retalisto', 'chu_postkongresalisto',])],
+            'Mi permesas publikigi mian nomon, urbon kaj landon:',
+            ['chu_retalisto', 'chu_postkongresalisto',])
+    ],
     [
-        ['ekde', 'ghis', 'alveno', 'foriro', 'interesighas_pri_antaukongreso',
-        'interesighas_pri_postkongreso', 'chu_tuttaga_ekskurso',
-        'chu_unua_dua_ijk', 'chu_komencanto', 'chu_interesighas_pri_kurso',
-        'programa_kontribuo', 'organiza_kontribuo']],
+        ['ekde', 'ghis', 'chu_unua_dua_ijk', 'alveno', 'foriro',
+        'chu_tuttaga_ekskurso',
+        'interesighas_pri_antaukongreso',
+        'interesighas_pri_postkongreso',
+        'programa_kontribuo', 'organiza_kontribuo']
+    ],
     [
-        ['loghkategorio', 'deziras_loghi_kun_nomo',
-        'chu_preferas_unuseksan_chambron', 'chu_malnoktemulo', 'manghotipo',], ManghoMendoForm,
+        ['loghkategorio', 'chu_preferas_unuseksan_chambron',
+        'chu_malnoktemulo', 'deziras_loghi_kun_nomo',]
+    ],
+    [   ManghoMendoForm, ['manghotipo',]    ],
+    [
+        ['chu_ueamembro'], MembroKategorioFormInfo, ['uea_kodo',
         #['pagmaniero', #'pagmaniera_komento',
-            ['pagmaniero', 'chu_ueamembro'],
-        MembroKategorioFormInfo, ['uea_kodo'], NotoForm]
+        'antaupagos_ghis', 'pagmaniero'],  NotoForm
+    ]
 ]
 
 form_class_list = []
@@ -522,8 +551,8 @@ for (i, division) in enumerate(formdivisions):
         else:
             cur.append(subdiv)
     form_class_list.append(cur)
-from django.views.decorators.csrf import csrf_exempt
-@csrf_exempt
+#~ from django.views.decorators.csrf import csrf_exempt
+#~ @csrf_exempt
 def alighi(request):
     if request.method == 'POST':
         mmform = ManghoMendoForm(request.POST)

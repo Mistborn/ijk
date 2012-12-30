@@ -11,7 +11,9 @@ admin.site.register(LandoKategorio)
 class LandoAdmin(admin.ModelAdmin):
     list_display = ('nomo', 'kodo', 'kategorio')
 admin.site.register(Lando, LandoAdmin)
-admin.site.register(LoghKategorio)
+class LoghKategorioAdmin(admin.ModelAdmin):
+    list_display = ('nomo', 'plena_kosto', 'unutaga_kosto')
+admin.site.register(LoghKategorio, LoghKategorioAdmin)
 admin.site.register(ManghoMendoTipo)
 admin.site.register(ManghoMendo)
 admin.site.register(ManghoTipo)

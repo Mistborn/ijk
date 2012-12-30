@@ -9,7 +9,9 @@ textarea {
   margin: 0.5em; }
 #form-tabs .tab .helptext {
   display: inline-block;
-  width: 400px; }
+  width: 400px;
+  color: #707070;
+  font-size: 90%; }
 #form-tabs .tab .fieldset-label {
   font-weight: bold; }
 #form-tabs .tab > ul, #form-tabs .tab .fieldset > ul {
@@ -31,6 +33,7 @@ textarea {
       width: 300px;
       margin-left: 14px; }
     #form-tabs .tab > ul > li ul, #form-tabs .tab .fieldset > ul > li ul {
+      white-space: nowrap;
       list-style: none;
       display: inline-block;
       margin: 0;
@@ -39,6 +42,7 @@ textarea {
         display: inline;
         margin: 0 1em 0 0; }
     #form-tabs .tab > ul > li .vertical-display, #form-tabs .tab .fieldset > ul > li .vertical-display {
+      white-space: normal;
       display: inline-block; }
       #form-tabs .tab > ul > li .vertical-display li, #form-tabs .tab .fieldset > ul > li .vertical-display li {
         display: block; }
@@ -59,7 +63,7 @@ textarea {
     display: inline-block;
     width: 300px; }
   #form-tabs .tab > ul label + input[type="checkbox"], #form-tabs .tab .fieldset > ul label + input[type="checkbox"] {
-    width: 16px; }
+    width: 14px; }
 #form-tabs .tab .required > label {
   font-weight: bold;
   margin-left: 0;

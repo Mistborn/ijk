@@ -19,7 +19,8 @@
 {% csrf_token %}
 <p>La kampoj markitaj per steleto (<span class="required-stilo">*</span>) estas plenigendaj.</p>
 <div id="form-tabs">
-    <ul><li><a href="#tab-0">unu</a></li><li><a href="#tab-1">du</a></li><li><a href="#tab-2">tri</a></li><li><a href="#tab-3">kvar</a></li></ul>
+    <ul><li><a href="#tab-0">unu</a></li><li><a href="#tab-1">du</a></li><li><a href="#tab-2">tri</a></li><li><a href="#tab-3">kvar</a></li>
+    <li><a href="#tab-4">kvin</a></li><li><a href="#tab-5">ses</a></li></ul>
 <div class="form-nav"><a class="reen" href=""> Reen </a><a class="antauen" href=""> Antaŭen </a></div>
 {% for div in formdivs %}
 <div class="tab" id="tab-{{ forloop.counter0 }}">
