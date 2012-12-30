@@ -26,19 +26,19 @@ class Valuto(models.Model):
         return self.kodo
     class Meta:
         verbose_name_plural = eo('Valutoj')
-        
+
 class Kurzo(models.Model):
     valuto = models.ForeignKey(Valuto)
     dato = models.DateField()
     kurzo = models.DecimalField(max_digits=12, decimal_places=5,
         help_text=eo('1 euxro = tiom'))
-    # *** de la donita valuto al EUR
+    # *** de la donita valuto al euroj
     def __unicode__(self):
         return eo(u'Kurzo por {} je {}'.format(self.valuto, self.dato))
     class Meta:
         unique_together = ('valuto', 'dato')
         verbose_name_plural = eo('Kurzoj')
-        
+
 class AghKategorio(models.Model):
     '''Kategorio de aĝo por kalkulado de kotizo'''
     nomo = models.CharField(unique=True, max_length=50)
@@ -82,7 +82,7 @@ class AghKategorio(models.Model):
             agho = cls.liveri_aghon_lau_naskighdato(agho)
         rset = cls.objects.filter(limagho__gt=agho).order_by('limagho')
         return rset[0] if rset else None
-                  
+
     def __unicode__(self):
         return eo(u'Agxkategorio {}'.format(self.nomo))
 
@@ -103,7 +103,7 @@ class AlighKategorio(models.Model):
     def infolist(cls):
         return [u'{} ĝis {}'.format(o.nomo, esperanteca_dato(o.limdato))
                 for o in cls.objects.order_by('limdato')]
-                     
+
     @classmethod
     def javascript(cls):
         obj = {o.limdato.isoformat(): o.id for o in cls.objects.all()}
@@ -114,10 +114,11 @@ class AlighKategorio(models.Model):
     def liveri_kategorion(cls, dato):
         rset = cls.objects.filter(limdato__gte=dato).order_by('limdato')
         return rset[0] if rset else None
-    
+
     def __unicode__(self):
+        #return self.limdato
         return eo(u'Aligxkategorio {} gxis {}'.format(self.nomo, self.limdato))
-    
+
     class Meta:
         verbose_name = eo('Aligxkategorio')
         verbose_name_plural = eo('Aligxkategorioj')
@@ -131,7 +132,7 @@ class LandoKategorio(models.Model):
     @staticmethod
     def liveri_kategorion(lando):   # for consistency
         return lando.kategorio
-    
+
     def __unicode__(self):
         return eo(u'Landokategorio ' + self.nomo)
 
@@ -150,7 +151,7 @@ class Lando(models.Model):
         obj = {item.id: item.kategorio.id for item in cls.objects.all()}
         return 'window.landoj = {}'.format(
                     json.dumps(obj, default=json_default))
-    
+
     def __unicode__(self):
         #return self.nomo
         return u'{} ({})'.format(self.nomo, self.kategorio)
@@ -174,11 +175,24 @@ class LoghKategorio(models.Model):
                     for item in cls.objects.all()}
         return 'window.loghkategorioj = {}'.format(
                     json.dumps(obj, default=json_default))
-        
+
+    @classmethod
+    def helptext(cls):
+        rows = cls.objects.order_by('pk')
+        r = []
+        plentempaj = ', '.join('{} - {} €'.format(row.nomo, row.plena_kosto)
+                        for row in rows)
+        unutagaj = ', '.join('{} - {} €'.format(row.nomo, row.unutaga_kosto)
+                        for row in rows)
+        r.append('Plentempaj kostoj: {}'.format(plentempaj))
+        r.append('Unutagaj kostoj: {}'.format(unutagaj))
+        return ';\n'.join(r)
+
     def __unicode__(self):
-        return u'{} - plentempe: {} EUR, partatempe: {} EUR por tago'.format(
-            self.nomo, self.plena_kosto, self.unutaga_kosto)
-        
+        return self.nomo
+        #~ return u'{} - plentempe: {} €, partatempe: {} € por tago'.format(
+            #~ self.nomo, self.plena_kosto, self.unutaga_kosto)
+
     class Meta:
         verbose_name = eo('Logxkategorio')
         verbose_name_plural = eo('Logxkategorioj')
@@ -190,7 +204,7 @@ class ManghoTipo(models.Model):
 
     def __unicode__(self):
         return self.nomo
-    
+
     class Meta:
         verbose_name = eo('Mangxotipo')
         verbose_name_plural = eo('Mangxotipoj')
@@ -205,7 +219,7 @@ class ProgramKotizo(models.Model):
         verbose_name=eo('Aligxkategorio'))
     kotizo = models.DecimalField(max_digits=8, decimal_places=2,
         help_text=eo('Programkotizo en euxroj por tiu cxi grupo'))
-        
+
     def kalkuli_finan_kotizon(self, agho):
         aldono = self.aghkategorio.kalkuli_aldonan_kotizon(agho)
         return self.kotizo + aldono
@@ -226,9 +240,9 @@ class ProgramKotizo(models.Model):
                                 if k else None)
         return 'window.programkotizoj = {}'.format(
                     json.dumps(obj, default=json_default))
-        
+
     def __unicode__(self):
-        return eo(u'{}, {}, {} : {} EUR'.format(
+        return eo(u'{}, {}, {} : {} €'.format(
             self.aghkategorio, self.landokategorio, self.alighkategorio,
             self.kotizo))
     class Meta:
@@ -253,8 +267,8 @@ class Pagmaniero(models.Model):
     @classmethod
     def javascript(cls):
         return u''
-        
-        
+
+
     def __unicode__(self):
         return self.nomo + (u' (nur en Israelo)' if self.chu_nurisraela
                                                 else u'')
@@ -279,13 +293,13 @@ class KrompagTipo(models.Model):
             return cls.objects.get(nomo=key).sumo
         except cls.DoesNotExist:
             return u''
-                    
+
     def __unicode__(self):
         return self.nomo
     class Meta:
         verbose_name = eo('KrompagTipo')
         verbose_name_plural = eo('KrompagTipoj')
-        
+
 class Retposhtajho(models.Model):
     '''Retpoŝta mesaĝo, por amasa/aŭtomata sendo'''
     nomo = models.CharField(unique=True, max_length=50)
@@ -336,7 +350,7 @@ class UEARabato(models.Model):
 
     @classmethod
     def infoline(cls):
-        return ', '.join('{}: {} EUR'.format(o.landokategorio, o.sumo)
+        return u', '.join(u'{}: {} €'.format(o.landokategorio, o.sumo)
             for o in cls.objects.order_by('landokategorio'))
 
     @classmethod
@@ -349,9 +363,9 @@ class UEARabato(models.Model):
     def rabato(cls, lando):
         r = cls.objects.get(landokategorio=lando.kategorio)
         return r.sumo
-        
+
     def __unicode__(self):
-        return eo(u'{} EUR por {}'.format(
+        return eo(u'{} € por {}'.format(
                         self.sumo, self.landokategorio))
     class Meta:
         verbose_name = eo('UEA-rabato')
@@ -420,6 +434,9 @@ class Partoprenanto(models.Model):
         verbose_name=eo('Cxambro'), null=True, blank=True)
     manghotipo = models.ForeignKey(ManghoTipo, verbose_name=eo('Mangxotipo'),
         help_text=eo('Tipo de mangxo, ekz. vegetare, viande, ktp'))
+    antaupagos_ghis = models.ForeignKey(AlighKategorio,
+        verbose_name=eo('Antauxpagos gxis'), null=True,
+        help_text=eo('Kio estis enigita en la alighformularo'))
     pagmaniero = models.ForeignKey(Pagmaniero,
         help_text=eo('Por la antauxpago'))
         # el la publikaj pagmanieroj, por la antaupago
@@ -483,7 +500,7 @@ class Partoprenanto(models.Model):
         if not self.chu_ueamembro:
             return 0
         return UEARabato.rabato(self.loghlando)
-        
+
     def kotizo(self):
         '''Liveri la bazan kotizon de tiu ĉi partoprenanto
         Formulo por kotizo:
@@ -500,7 +517,7 @@ class Partoprenanto(models.Model):
         programkotizo = self.programkotizo()
 
         return manghomenda_kosto + loghkosto + programkotizo - uearabato
-    
+
     def __unicode__(self):
         return u'{} {}'.format(self.persona_nomo, self.familia_nomo)
 
@@ -520,10 +537,10 @@ class ManghoMendoTipo(models.Model):
         d = {obj.id: obj.kosto for obj in cls.objects.all()}
         return '''window.manghomendotipoj = {}'''.format(json.dumps(d,
             default=json_default))
-    
+
     def __unicode__(self):
-        return eo(u'{} je {} EUR'.format(self.nomo, self.kosto))
-        
+        return eo(u'{} je {} €'.format(self.nomo, self.kosto))
+
     class Meta:
         verbose_name = eo('Mangxomendotipo')
         verbose_name_plural = eo('Mangxomendotipoj')
@@ -574,7 +591,7 @@ class NeEstontecaDato(models.DateField):
             msg = self.error_messages['estonteco']
             raise ValidationError(msg)
         return super(NeEstontecaDato, self).validate(value, instance)
-        
+
 class Pago(models.Model):
     '''Unuopa pago de unuopa partoprenanto'''
     partoprenanto = models.ForeignKey(Partoprenanto)
@@ -584,7 +601,7 @@ class Pago(models.Model):
         help_text=eo('Kiamaniere ni ricevis la pagon'))
     pagtipo = models.ForeignKey(Pagtipo,
         help_text=eo(u'Tipo de pago, ekz. subvencio, antauxpago, ktp'))
-    valuto = models.ForeignKey(Valuto) # XXX default should be EUR
+    valuto = models.ForeignKey(Valuto) # XXX default should be euro
     sumo = models.DecimalField(max_digits=8, decimal_places=2,
         help_text=eo(u'Rabaton enigu kiel normalan pagon, krompagon '
                      u'enigu kiel minusan sumon'))
@@ -619,9 +636,9 @@ class MinimumaAntaupago(models.Model):
                         for o in cls.objects.all()}
         return 'window.minimumaj_antaupagoj = {}'.format(
                         json.dumps(obj, default=json_default))
-    
+
     def __unicode__(self):
-        return eo(u'{} EUR por {}'.format(
+        return eo(u'{} € por {}'.format(
                   self.oficiala_antaupago, self.landokategorio))
     class Meta:
         verbose_name = eo('Minimuma Antauxpago')
@@ -701,8 +718,8 @@ class UEAValideco(models.Model):
 
     class Meta:
         unique_together = ('kodo', 'lando')
-        
-        
+
+
 #class AghKategoriSistemo(models.Model):
     #nomo = models.CharField(max_length=60, unique=True)
     #priskribo = models.TextField()
@@ -757,9 +774,9 @@ class UEAValideco(models.Model):
                      #'al specifa partoprenanto'))
         ## will be a python expression evaluating to whether this applies
     #kvanto = models.DecimalField(max_digits=8, decimal_places=2,
-        #help_text=eo('Povas esti elcento aux sumo en EUR'))
+        #help_text=eo('Povas esti elcento aux sumo en euroj'))
     ##valuto = models.CharField(max_length=3, blank=True)
-    ## devas estis EUR
+    ## devas estis euroj
     #def chu_aplikighas(self, partoprenanto):
         #'''kontrolu chu tiu chi kotizero aplikighas al
         #la donita partoprenanto'''
@@ -883,7 +900,7 @@ class UEAValideco(models.Model):
     #alighkategorio = models.ForeignKey(AlighKategorio)
     #kondichtipo = models.ForeignKey(MalalighKondichoTipo)
 
-    
+
 #class NotojPorEntajpanto(models.Model): # shajne por ligi notojn kun uzulojn
     #noto = models.ForeignKey(Noto)
     #entajpanto = models.IntegerField(db_column='entajpantoID')

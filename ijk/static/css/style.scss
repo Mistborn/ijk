@@ -13,13 +13,21 @@ textarea {
 
 //#alighformo {
 #form-tabs {
-  .form-nav {
-    padding: 0.5em;
-    margin: 0.5em;
-  }
+	.form-nav {
+		padding: 0.5em;
+		margin: 0.5em;
+	}
   .tab {
-    .helptext { display: inline-block; width: 400px; }
-    .fieldset-label { font-weight: bold; }
+    .helptext {
+		display: inline-block;
+		width: 400px;
+		color: #707070;
+		font-size: 90%;
+	}
+    .fieldset-label {
+		font-weight: bold;
+		//margin-left: $root-em;
+	}
     > ul, .fieldset > ul {
         list-style: none;
         margin: 0;
@@ -40,6 +48,7 @@ textarea {
                 margin-left: $left;
             }
             ul {
+				white-space: nowrap;
                 list-style: none;
                 display: inline-block;
                 margin: 0;
@@ -50,6 +59,7 @@ textarea {
                 }
             }
             .vertical-display {
+				white-space: normal;
                 display: inline-block;
                 li {
                     display: block;
@@ -65,11 +75,11 @@ text-align: center; width: 2 *18px * $root-em / 18px; font-size: 18px; }
             }
         }
         label + * {
-            display: inline-block; width: 300px;
+            display: inline-block; width: $li-width;
             //white-space: normal;
             //ul { white-space: inherit; }
         }
-        label + input[type="checkbox"] { width: 16px; }
+        label + input[type="checkbox"] { width: $root-em; }
     }
     .required > label {
         font-weight: bold;
