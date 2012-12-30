@@ -1,4 +1,5 @@
 $ ->
+    NUMTABS = 6   
     DAY = 1000 * 60 * 60 * 24
     YEAR = DAY * 365.25
     # datoj
@@ -217,10 +218,12 @@ $ ->
     nav_callback = (offset) -> ->
         active = $tabs.tabs 'option', 'active'
         newtab = active+offset
-        return false if newtab < 0 or newtab > 3
+        return false if newtab < 0 or newtab >= NUMTABS
         $tabs.tabs 'option', 'active', newtab
         false
 
     $('.reen, .antauen, input[type="submit"]').button()
     $('.reen').click nav_callback -1
     $('.antauen').click nav_callback 1
+
+
