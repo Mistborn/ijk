@@ -183,7 +183,7 @@ class RadioAndTextInput(forms.widgets.RadioInput):
         #print '&&& all done, my dict is {}'.format(self.__dict__)
 
 class RadioFieldWithCommentRenderer(forms.widgets.RadioFieldRenderer):
-    infolist = models.AlighKategorio.infolist()
+    #~ infolist = models.AlighKategorio.infolist()
     def __init__(self, name, value, attrs, choices, *args, **kw):
         #print 'initing {}, vals are {}'.format(
             #self.__class__.__name__, dict(name=name, value=value, attrs=attrs, choices=choices, args=args, kw=kw))
@@ -195,14 +195,14 @@ class RadioFieldWithCommentRenderer(forms.widgets.RadioFieldRenderer):
             self.value = [None, u'']
         #print 'done initing the renderer, my dict is {}'.format(self.__dict__)
     def render(self):
-        info = u'<ul class="infolist">{}</ul>'.format(
-            u'\n'.join(u'<li>{}</li>'.format(i) for i in self.infolist))
+        #~ info = u'<ul class="infolist">{}</ul>'.format(
+            #~ u'\n'.join(u'<li>{}</li>'.format(i) for i in self.infolist))
         lis = [force_unicode(w.render(self.name, self.value, self.attrs))
                         for w in self]
         lis = u'\n'.join(u'<li>{}</li>'.format(li) for li in lis)
-        ul = u'<ul>\n{}\n</ul>'.format(lis)
-        return mark_safe(
-            u'<div class="vertical-display">{}{}</div>'.format(info, ul))
+        ul = u'<ul class="vertical-display infolist">\n{}\n</ul>'.format(lis)
+        return mark_safe(ul)
+        ## u'<div class="vertical-display">{}</div>'.format(ul))
     def _get_widget(self, choice, idx):
         return RadioAndTextInput(
             self.name, self.value, self.attrs.copy(), choice, idx)
