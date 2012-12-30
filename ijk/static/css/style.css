@@ -1,89 +1,209 @@
+/* http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+body {
+  line-height: 1;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+blockquote, q {
+  quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* end css reset */
 html, body {
-  font-size: 14px; }
+  font-size: 14px;
+}
+
+h1 {
+  display: block;
+  font-size: 200%;
+  margin: 1em 0.5em;
+  font-weight: bold;
+}
+
+div, p, #alighi-btn, #form-tabs {
+  margin: 1em 0.5em;
+  display: block;
+}
+
+strong {
+  font-weight: bold;
+}
 
 textarea {
-  height: 3em; }
+  height: 3em;
+}
 
-#form-tabs .form-nav {
-  padding: 0.5em;
-  margin: 0.5em; }
-#form-tabs .tab .helptext {
-  display: inline-block;
-  width: 400px;
-  color: #707070;
-  font-size: 90%; }
-#form-tabs .tab .fieldset-label {
-  font-weight: bold; }
-#form-tabs .tab > ul, #form-tabs .tab .fieldset > ul {
-  list-style: none;
-  margin: 0;
-  padding: 0; }
-  #form-tabs .tab > ul .info, #form-tabs .tab .fieldset > ul .info {
-    margin-left: 50px; }
-  #form-tabs .tab > ul > li, #form-tabs .tab .fieldset > ul > li {
-    white-space: nowrap;
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-    display: block; }
-    #form-tabs .tab > ul > li > *, #form-tabs .tab .fieldset > ul > li > * {
-      white-space: normal;
-      vertical-align: middle; }
-    #form-tabs .tab > ul > li > label, #form-tabs .tab .fieldset > ul > li > label {
-      display: inline-block;
-      width: 300px;
-      margin-left: 14px; }
-    #form-tabs .tab > ul > li ul, #form-tabs .tab .fieldset > ul > li ul {
-      white-space: nowrap;
-      list-style: none;
-      display: inline-block;
-      margin: 0;
-      padding: 0; }
-      #form-tabs .tab > ul > li ul li, #form-tabs .tab .fieldset > ul > li ul li {
-        display: inline;
-        margin: 0 1em 0 0; }
-    #form-tabs .tab > ul > li .vertical-display, #form-tabs .tab .fieldset > ul > li .vertical-display {
-      white-space: normal;
-      display: inline-block; }
-      #form-tabs .tab > ul > li .vertical-display li, #form-tabs .tab .fieldset > ul > li .vertical-display li {
-        display: block; }
-      #form-tabs .tab > ul > li .vertical-display ul, #form-tabs .tab .fieldset > ul > li .vertical-display ul {
-        display: block; }
-    #form-tabs .tab > ul > li ul.infolist, #form-tabs .tab .fieldset > ul > li ul.infolist {
-      list-style: disc; }
-      #form-tabs .tab > ul > li ul.infolist li, #form-tabs .tab .fieldset > ul > li ul.infolist li {
-        margin-left: 0; }
-      #form-tabs .tab > ul > li ul.infolist li:before, #form-tabs .tab .fieldset > ul > li ul.infolist li:before {
-        content: " \25CF ";
-        font-weight: bold;
-        display: inline-block;
-        text-align: center;
-        width: 28px;
-        font-size: 18px; }
-  #form-tabs .tab > ul label + *, #form-tabs .tab .fieldset > ul label + * {
-    display: inline-block;
-    width: 300px; }
-  #form-tabs .tab > ul label + input[type="checkbox"], #form-tabs .tab .fieldset > ul label + input[type="checkbox"] {
-    width: 14px; }
-#form-tabs .tab .required > label {
+.error {
+  border: 1px solid black;
+}
+
+.style-of-required {
+  color: red;
   font-weight: bold;
-  margin-left: 0;
-  width: 314px; }
-  #form-tabs .tab .required > label:before {
-    content: "* ";
-    color: red;
-    font-weight: bold;
-    display: inline-block;
-    width: 14px; }
-#form-tabs .tab .error {
-  border: 1px solid black; }
-#form-tabs .tab .required-stilo {
-  font-weight: bold;
-  color: red; }
-#form-tabs .tab ul.errorlist {
+}
+
+.errorlist {
   list-style: none;
   display: block;
-  margin-left: 50px; }
-  #form-tabs .tab ul.errorlist li {
-    display: inline-block;
-    font-weight: bold;
-    color: red; }
+  margin-left: 50px;
+}
+.errorlist li {
+  display: inline-block;
+  font-weight: bold;
+  color: red;
+}
+
+.form-nav {
+  padding: 0.5em;
+  margin: 0.5em;
+}
+
+.helptext {
+  display: inline-block;
+  width: 300px;
+  color: #707070;
+  font-size: 90%;
+}
+
+.fieldset-label {
+  font-weight: bold;
+  margin-left: 14px;
+}
+
+.tab {
+  margin: 0;
+  padding: 0;
+}
+.tab .info {
+  margin-left: 50px;
+}
+.tab ul {
+  margin-left: 0;
+  padding-left: 0;
+}
+.tab > ul {
+  margin: 0;
+  padding: 0;
+}
+.tab > ul > li > label {
+  width: 300px;
+  margin-left: 14px;
+}
+.tab > ul .required > label {
+  font-weight: bold;
+  margin-left: 0;
+  width: 314px;
+}
+.tab > ul .required > label:before {
+  content: "* ";
+  color: red;
+  font-weight: bold;
+  display: inline-block;
+  width: 14px;
+}
+.tab .fieldset > ul {
+  margin-left: 28px;
+}
+.tab .fieldset > ul > li > label {
+  width: 286px;
+  white-space: normal;
+}
+.tab > ul, .tab .fieldset > ul {
+  list-style: none;
+}
+.tab > ul label + input[type="checkbox"], .tab .fieldset > ul label + input[type="checkbox"] {
+  width: 14px;
+}
+.tab > ul label + ul, .tab .fieldset > ul label + ul {
+  white-space: nowrap;
+}
+.tab > ul .infolist, .tab .fieldset > ul .infolist {
+  white-space: normal;
+}
+.tab > ul > li, .tab .fieldset > ul > li {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  display: block;
+}
+.tab > ul > li > *, .tab .fieldset > ul > li > * {
+  vertical-align: middle;
+}
+.tab > ul > li > label, .tab .fieldset > ul > li > label {
+  display: inline-block;
+}
+.tab label + ul,
+.tab label + input[type="text"],
+.tab label + select,
+.tab label + .vertical-display {
+  display: inline-block;
+  width: 200px;
+}
+.tab label + * {
+  display: inline-block;
+}
+.tab label + ul {
+  list-style: none;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+.tab label + ul li {
+  display: inline;
+  margin: 0 1em 0 0;
+}
+.tab .vertical-display li {
+  display: block;
+  margin: 0 0 0 1em;
+  text-indent: -1em;
+}
+.tab .vertical-display ul {
+  display: block;
+}
+.tab .vertical-display input[type="text"] {
+  display: block;
+  width: 150px;
+  margin: auto 0;
+}
