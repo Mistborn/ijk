@@ -154,11 +154,16 @@ class RadioAndTextInput(forms.widgets.RadioInput):
     def render(self, name=None, value=None, attrs=None, choices=()):
         #print '**** my dict: {}\n\tmy args: {}'.format(self.__dict__,
             #dict(name=name, value=value, attrs=attrs, choices=choices))
-        textval = self.comment_value if self.is_checked() else u''
-        textid = '{}_comment_{}'.format(
-            self.attrs['id'], self.choice_value)
-        textname = '{}_comment_{}'.format(self.name, self.choice_value)
-        text = forms.TextInput().render(textname, textval, {'id': textid})
+        if self.extra_label:
+            textval = self.comment_value if self.is_checked() else u''
+            textid = '{}_comment_{}'.format(
+                self.attrs['id'], self.choice_value)
+            textname = '{}_comment_{}'.format(self.name, self.choice_value)
+            text = forms.TextInput().render(textname, textval, {'id': textid})
+        else:
+            text = u''
+        ## print 'rendering text and radio, name is {} and value is {}'.format(
+                ## name, value[0])
         return mark_safe(
             super(RadioAndTextInput, self).render(
                 name, value[0], attrs, choices) + text)
@@ -169,22 +174,34 @@ class RadioAndTextInput(forms.widgets.RadioInput):
         #print 'and the answer is: {}'.format(r)
         #return r
         #return self.value[0] == self.choice_value[0]
-    def __init__(self, name, value, attrs, choice, index):
+    def __init__(self, name, value, attrs, choice, index, *args, **kw):
         #print 'initing {}, args are {}'.format(
             #self.__class__.__name__,
             #dict(name=name, value=value, attrs=attrs,
                  #choice=choice, index=index))
+        if 'extra_label' in kw:
+            self.extra_label = kw['extra_label']
+            del kw['extra_label']
+        else:
+            self.extra_label = None
         super(RadioAndTextInput, self).__init__(
-            name, value, attrs, choice, index)
+            name, value, attrs, choice, index, *args, **kw)
         self.choice_value = force_unicode(choice[0][0])
         self.value = force_unicode(value[0])
         self.comment_choice_value = force_unicode(choice[0][1])
         self.comment_value = force_unicode(value[1])
-        #print '&&& all done, my dict is {}'.format(self.__dict__)
+        if self.extra_label:
+            self.choice_label += ', {}:'.format(self.extra_label)
+        ## print '&&& all done, my dict is {}'.format(self.__dict__)
 
 class RadioFieldWithCommentRenderer(forms.widgets.RadioFieldRenderer):
     #~ infolist = models.AlighKategorio.infolist()
     def __init__(self, name, value, attrs, choices, *args, **kw):
+        if 'extra_labels' in kw:
+            self.extra_labels = kw['extra_labels']
+            del kw['extra_labels']
+        else:
+            self.extra_labels = [None] * len(choices)
         #print 'initing {}, vals are {}'.format(
             #self.__class__.__name__, dict(name=name, value=value, attrs=attrs, choices=choices, args=args, kw=kw))
         super(RadioFieldWithCommentRenderer, self).__init__(
@@ -205,7 +222,8 @@ class RadioFieldWithCommentRenderer(forms.widgets.RadioFieldRenderer):
         ## u'<div class="vertical-display">{}</div>'.format(ul))
     def _get_widget(self, choice, idx):
         return RadioAndTextInput(
-            self.name, self.value, self.attrs.copy(), choice, idx)
+            self.name, self.value, self.attrs.copy(), choice, idx,
+            extra_label=self.extra_labels[idx])
     def __iter__(self):
         for i, choice in enumerate(self.choices):
             yield self._get_widget(choice, i)
@@ -232,7 +250,17 @@ class RadioSelectPagmanieroj(forms.RadioSelect):
         #str_value = force_unicode(value) # Normalize to string.
         final_attrs = self.build_attrs(attrs)
         choices = list(self.choices) # list(chain(self.choices, choices))
-        return self.renderer(name, value, final_attrs, choices)
+        return self.renderer(name, value, final_attrs, choices,
+            extra_labels=self.extra_labels)
+    def get_selected_extra_label(self, pk):
+        '''Given the primary key of the value
+        that this widget returns from the form,
+        return the value that the extra_label had for the selected item'''
+        ## print list(self.choices)
+        ## import sys; sys.exit()
+        for (extra_label, choice) in zip(self.extra_labels, self.choices):
+            if choice[0][0] == pk:
+                return extra_label
     #def comment_value(self, data, name):
         #radioval = self.value_from_datadict(data, None, name)
         #if radioval is None:
@@ -245,6 +273,8 @@ class PagmanieroChoiceField(forms.ModelChoiceField):
     widget = RadioSelectPagmanieroj
     def __init__(self, queryset, **kw):
         super(PagmanieroChoiceField, self).__init__(queryset, **kw)
+        if not hasattr(self.widget, 'extra_labels'):
+            self.widget.extra_labels = [None] * len(self.choices)
     def prepare_value(self, value):
         #print '&&&& value is {}'.format(repr(value))
         if not value:
@@ -258,6 +288,14 @@ class PagmanieroChoiceField(forms.ModelChoiceField):
     def to_python(self, value):
         self.comment = value[1]
         return super(PagmanieroChoiceField, self).to_python(value[0])
+
+    def _get_queryset(self):
+        return self._queryset
+    def _set_queryset(self, queryset):
+        self._queryset = queryset
+        self.widget.choices = self.choices
+        self.widget.extra_labels = [o.komenta_etikedo for o in queryset]
+    queryset = property(_get_queryset, _set_queryset)
 
 class CustomLabelModelChoiceField(forms.ModelChoiceField):
     def __init__(self, *args, **kw):
@@ -457,14 +495,36 @@ PartoprenantoFormBase = partoprenanto_form_factory(
 class PartoprenantoForm(PartoprenantoFormBase):
     def clean(self):
         cleaned_data = super(PartoprenantoForm, self).clean()
-        if 'uea_kodo' not in cleaned_data or 'loghlando' not in cleaned_data:
-            return cleaned_data
-        uea_kodo = cleaned_data['uea_kodo']
-        loghlando = cleaned_data['loghlando'].kodo
-        result, msg = models.UEAValideco.chu_valida(uea_kodo, loghlando)
-        if not result:
-            self._errors['uea_kodo'] = self.error_class([msg])
-            del cleaned_data['uea_kodo']
+        if ('uea_kodo' in cleaned_data and cleaned_data['uea_kodo'] and
+                'loghlando'  in cleaned_data):
+            uea_kodo = cleaned_data['uea_kodo']
+            loghlando = cleaned_data['loghlando'].kodo
+            result, msg = models.UEAValideco.chu_valida(uea_kodo, loghlando)
+            if not result:
+                self._errors['uea_kodo'] = self.error_class([msg])
+                del cleaned_data['uea_kodo']
+        if 'pagmaniero' in cleaned_data:
+            pw = self.fields['pagmaniero'].widget
+            extra_label = pw.get_selected_extra_label(
+                          cleaned_data['pagmaniero'].pk)
+            # if an extra_label is defined in the db,
+            # then the comment is required
+            if extra_label and not self.fields['pagmaniero'].comment:
+                ## print 'we have found an error, it is ', ValidationError(u'necesas enigi kroman valoron',
+                                     ## code='mankas_komento')
+                self._errors['pagmaniero'] = self.error_class(
+                    [u'Necesas enigi kroman valoron'])
+                del cleaned_data['pagmaniero']
+            ## print 'the pagmaniero we got is {}'.format(`cleaned_data['pagmaniero']`)
+            ## print 'the other stuff we got is {}'.format(
+                ## cleaned_data)
+            ## print '*** and the comment is.... {}'.format(
+                ## self.fields['pagmaniero'].comment)
+            ## print 'and the extra_labels are .... {}'.format(
+                ## pw.extra_labels)
+            ## print '&+& widget.__dir__: {}'.format(dir(pw))
+            ## print 'so finally, we say that the extra label is ...',
+            ## print pw.get_selected_extra_label(cleaned_data['pagmaniero'].pk)
         return cleaned_data
 
 def partoprenanto_fieldset_factory(label, fieldlist):

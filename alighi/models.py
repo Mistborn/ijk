@@ -262,6 +262,9 @@ class Pagmaniero(models.Model):
     nomo = models.CharField(unique=True, max_length=50)
     priskribo = models.TextField(blank=True,
         verbose_name=eo('Publika priskribo'))
+    komenta_etikedo = models.CharField(blank=True, max_length=50,
+        verbose_name=eo('Komenta etikedo'),
+        help_text=eo('Etikedo por la komenta kampo en la aligxformularo'))
     chu_publika = models.BooleanField(default=True,
         verbose_name=eo('Cxu publika'),
         help_text=eo('Cxu tiu cxi pagmaniero estu elektebla por indiki, '
@@ -446,7 +449,7 @@ class Partoprenanto(models.Model):
     pagmaniero = models.ForeignKey(Pagmaniero,
         help_text=eo('Por la antauxpago'))
         # el la publikaj pagmanieroj, por la antaupago
-    pagmaniera_komento = models.CharField(blank=True, max_length=50)
+    pagmaniera_komento = models.CharField(blank=True, max_length=250)
         # ekz por nomo de peranto
     #antaupago_ghis = models.DateField()
     chu_ueamembro = models.BooleanField(eo('Cxu membro de UEA/TEJO'),
