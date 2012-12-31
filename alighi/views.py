@@ -444,7 +444,7 @@ class PartoprenantoBaseForm(forms.ModelForm):
             normal_row = u'<li%(html_class_attr)s>%(errors)s%(label)s %(field)s%(help_text)s</li>',
             error_row = u'<li>%s</li>',
             row_ender = '</li>',
-            help_text_html = u' <div class="helptext">%s</span>',
+            help_text_html = u' <div class="helptext">%s</div>',
             errors_on_separate_row = False)
 
 def partoprenanto_form_factory(name, fieldnames):
