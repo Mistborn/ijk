@@ -183,11 +183,11 @@ class LoghKategorio(models.Model):
         rows = cls.objects.order_by('pk')
         r = []
         plentempaj = u''.join(
-            u'<li>{} - {} €</li>'.format(escape(row.nomo),
+            u'<li>{} &mdash; {} €</li>'.format(escape(row.nomo),
                                          escape(row.plena_kosto))
                 for row in rows)
         unutagaj = u''.join(
-            u'<li>{} - {} €</li>'.format(escape(row.nomo),
+            u'<li>{} &mdash; {} €</li>'.format(escape(row.nomo),
                                          escape(row.unutaga_kosto))
                 for row in rows)
         r.append(u'Plentempaj kostoj: <ul>{}</ul>'.format(plentempaj))

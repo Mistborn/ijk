@@ -13,26 +13,34 @@
 <script src="{{ STATIC_URL }}js/alighi.js" type="text/javascript"></script>
 </head>
 <body>
+<div id="enhavo">
 <h1>Aliĝi al IJK 2013 en Afikim, Israelo</h1>
 <div id="informoj">Kotizo: </div>
 <form id="alighformo" method="post" action="{% url alighi %}">
 {% csrf_token %}
-<p>La kampoj markitaj per steleto (<span class="style-of-required">*</span>) estas plenigendaj.</p>
+<p>
+    La kampoj markitaj per steleto (<span class="style-of-required">*</span>)
+    estas plenigendaj.
+</p>
 <div id="form-tabs">
-    <ul><li><a href="#tab-0">unu</a></li><li><a href="#tab-1">du</a></li><li><a href="#tab-2">tri</a></li><li><a href="#tab-3">kvar</a></li>
-    <li><a href="#tab-4">kvin</a></li><li><a href="#tab-5">ses</a></li></ul>
-<div class="form-nav"><a class="reen" href=""> Reen </a><a class="antauen" href=""> Antaŭen </a></div>
+{{ tabs }}
+<div class="form-nav">
+    <a class="reen" href=""> Reen </a><a class="antauen" href=""> Antaŭen </a>
+</div>
 {% for div in formdivs %}
 <div class="tab" id="tab-{{ forloop.counter0 }}">
-<ul> <!-- style="border: 1px black solid; margin: 1em; padding: 1em;" -->
+<ul>
     {% for form in div %}{{ form.as_ul }}{% endfor %}
 </ul>
 </div>
 {% endfor %}
-<div class="form-nav"><a class="reen" href=""> Reen </a><a class="antauen" href=""> Antaŭen </a></div>
+<div class="form-nav">
+    <a class="reen" href=""> Reen </a><a class="antauen" href=""> Antaŭen </a>
 </div>
+</div> <!-- #form-tabs -->
 <p><strong>Grave</strong>: La kotizoj enhavas nenian asekuron.</p>
 <input id="alighi-btn" type="submit" value="Mi aliĝas al IJK!">
 </form>
+</div> <!-- .content -->
 </body>
 </html>

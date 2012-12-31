@@ -520,39 +520,41 @@ class MultiField(forms.Field):
     #return FormInfo
 
 formdivisions = [
-    [
+    ('Personaj informoj', [
         ['persona_nomo', 'familia_nomo', 'shildnomo', 'sekso', 'naskighdato',
         'adreso', 'urbo', 'poshtkodo', 'loghlando', 'shildlando',
         'chu_bezonas_invitleteron', 'retposhtadreso',
         'chu_komencanto', 'chu_interesighas_pri_kurso']
-    ],
-    [
+    ]),
+    ('Komunikiloj', [
         ['telefono', 'skype', 'facebook', 'mesaghiloj'],
         partoprenanto_fieldset_factory(
             'Mi permesas publikigi mian nomon, urbon kaj landon:',
             ['chu_retalisto', 'chu_postkongresalisto',])
-    ],
-    [
+    ]),
+    ('Partopreno', [
         ['ekde', 'ghis', 'chu_unua_dua_ijk', 'alveno', 'foriro',
         'chu_tuttaga_ekskurso',
         'interesighas_pri_antaukongreso',
         'interesighas_pri_postkongreso',
         'programa_kontribuo', 'organiza_kontribuo']
-    ],
-    [
+    ]),
+    (eo('Logxado'), [
         ['loghkategorio', 'chu_preferas_unuseksan_chambron',
         'chu_malnoktemulo', 'deziras_loghi_kun_nomo',]
-    ],
-    [   ManghoMendoForm, ['manghotipo',]    ],
-    [
+    ]),
+    (eo('Mangxado'), [   ManghoMendoForm, ['manghotipo',]    ]),
+    (eo('Pago'), [
         ['chu_ueamembro'], MembroKategorioFormInfo, ['uea_kodo',
         #['pagmaniero', #'pagmaniera_komento',
         'antaupagos_ghis', 'pagmaniero'],  NotoForm
-    ]
+    ])
 ]
 
 form_class_list = []
-for (i, division) in enumerate(formdivisions):
+tablist = []
+for (i, (tag, division)) in enumerate(formdivisions):
+    tablist.append(tag)
     cur = []
     for (j, subdiv) in enumerate(division):
         if type(subdiv) is list:
@@ -561,6 +563,12 @@ for (i, division) in enumerate(formdivisions):
         else:
             cur.append(subdiv)
     form_class_list.append(cur)
+
+tabs = mark_safe(
+    u'<ul>{}</ul>'.format(
+        u''.join(u'<li><a href="#tab-{}">{}</a></li>'.format(i, tab)
+            for (i, tab) in enumerate(tablist))))
+
 #~ from django.views.decorators.csrf import csrf_exempt
 #~ @csrf_exempt
 def alighi(request):
@@ -595,7 +603,9 @@ def alighi(request):
     else:
         pageforms = [[form() for form in div] for div in form_class_list]
     context = RequestContext(request,
-            {'formdivs': pageforms, 'JAVASCRIPT': all_javascript()})
+            {'formdivs': pageforms,
+             'JAVASCRIPT': all_javascript(),
+             'tabs': tabs})
     return render_to_response('alighi/alighi.html', context)
 
 def gratulon(request):

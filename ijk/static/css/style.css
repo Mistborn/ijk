@@ -53,7 +53,7 @@ table {
 
 /* end css reset */
 html, body {
-  font-size: 14px;
+  font: 14px "Lucida Grande", "Lucida Sans", Arial, sans-serif;
 }
 
 h1 {
@@ -106,6 +106,8 @@ textarea {
   width: 300px;
   color: #707070;
   font-size: 90%;
+  margin: 1em;
+  padding: 0;
 }
 .helptext li {
   margin-left: 14px;
@@ -114,6 +116,11 @@ textarea {
 .fieldset-label {
   font-weight: bold;
   margin-left: 14px;
+}
+
+#enhavo {
+  width: 926px;
+  margin: auto;
 }
 
 .tab {

@@ -4,6 +4,7 @@ $hanging-indent: 50px;
 $label-width: 300px;
 $widget-width: 200px;
 $helptext-width: 300px;
+$content-width: $label-width + $widget-width + $helptext-width + 9 * $root-em;
 
 @mixin style-of-required {
     color: red;
@@ -62,7 +63,7 @@ table {
 /* end css reset */
 
 html, body {
-    font-size: $root-em;
+    font: $root-em "Lucida Grande","Lucida Sans",Arial,sans-serif;
 }
 
 h1 {
@@ -114,6 +115,8 @@ textarea {
     width: $helptext-width;
     color: #707070;
     font-size: 90%;
+    margin: 1em;
+    padding: 0;
     li {
         margin-left: $left;
     }
@@ -122,6 +125,11 @@ textarea {
 .fieldset-label {
     font-weight: bold;
     margin-left: $left;
+}
+
+#enhavo {
+    width: $content-width;
+    margin: auto;
 }
 
 .tab {
