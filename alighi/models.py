@@ -7,6 +7,8 @@ import urllib
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.utils.html import escape
+from django.utils.safestring import mark_safe
 
 from utils import eo, KOMENCA_DATO, FINIGHA_DATO, SEKSOJ, json_default, esperanteca_dato
 
@@ -180,13 +182,17 @@ class LoghKategorio(models.Model):
     def helptext(cls):
         rows = cls.objects.order_by('pk')
         r = []
-        plentempaj = ', '.join('{} - {} €'.format(row.nomo, row.plena_kosto)
-                        for row in rows)
-        unutagaj = ', '.join('{} - {} €'.format(row.nomo, row.unutaga_kosto)
-                        for row in rows)
-        r.append('Plentempaj kostoj: {}'.format(plentempaj))
-        r.append('Unutagaj kostoj: {}'.format(unutagaj))
-        return ';\n'.join(r)
+        plentempaj = u''.join(
+            u'<li>{} - {} €</li>'.format(escape(row.nomo),
+                                         escape(row.plena_kosto))
+                for row in rows)
+        unutagaj = u''.join(
+            u'<li>{} - {} €</li>'.format(escape(row.nomo),
+                                         escape(row.unutaga_kosto))
+                for row in rows)
+        r.append(u'Plentempaj kostoj: <ul>{}</ul>'.format(plentempaj))
+        r.append(u'Unutagaj kostoj: <ul>{}</ul>'.format(unutagaj))
+        return mark_safe('\n'.join(r))
 
     def __unicode__(self):
         return self.nomo

@@ -437,11 +437,21 @@ class NotoForm(forms.ModelForm):
         model = models.Noto
         fields = ('enhavo',)
 
+class PartoprenantoBaseForm(forms.ModelForm):
+    def as_ul(self):
+        "Returns this form rendered as HTML <li>s -- excluding the <ul></ul>."
+        return self._html_output(
+            normal_row = u'<li%(html_class_attr)s>%(errors)s%(label)s %(field)s%(help_text)s</li>',
+            error_row = u'<li>%s</li>',
+            row_ender = '</li>',
+            help_text_html = u' <div class="helptext">%s</span>',
+            errors_on_separate_row = False)
+
 def partoprenanto_form_factory(name, fieldnames):
     '''Krei formularan klason por prezenti la kampojn en fieldnames
     el la tabelo Partoprenanto'''
     meta = forms.ModelForm.__metaclass__
-    bases = (forms.ModelForm,)
+    bases = (PartoprenantoBaseForm,)
     d = {f: partoprenanto_fields_dict[f] for f in fieldnames}
     d['required_css_class'] = REQUIRED_CSS_CLASS
     d['error_css_class'] = ERROR_CSS_CLASS

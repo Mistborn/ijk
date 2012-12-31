@@ -28,35 +28,35 @@ article, aside, canvas, details, embed,
 figure, figcaption, footer, header, hgroup,
 menu, nav, output, ruby, section, summary,
 time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
 }
 // HTML5 display-role reset for older browsers
 article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
-	display: block;
+    display: block;
 }
 body {
-	line-height: 1;
+    line-height: 1;
 }
 ol, ul {
-	list-style: none;
+    list-style: none;
 }
 blockquote, q {
-	quotes: none;
+    quotes: none;
 }
 blockquote:before, blockquote:after,
 q:before, q:after {
-	content: '';
-	content: none;
+    content: '';
+    content: none;
 }
 table {
-	border-collapse: collapse;
-	border-spacing: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
 }
 
 /* end css reset */
@@ -66,19 +66,19 @@ html, body {
 }
 
 h1 {
-	display: block;
-	font-size: 200%;
-	margin: 1em 0.5em;
-	font-weight: bold;
+    display: block;
+    font-size: 200%;
+    margin: 1em 0.5em;
+    font-weight: bold;
 }
 
 div, p, #alighi-btn, #form-tabs {
-	margin: 1em 0.5em;
-	display: block;
+    margin: 1em 0.5em;
+    display: block;
 }
 
 strong {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 textarea {
@@ -114,6 +114,9 @@ textarea {
     width: $helptext-width;
     color: #707070;
     font-size: 90%;
+    li {
+        margin-left: $left;
+    }
 }
 
 .fieldset-label {
@@ -122,38 +125,38 @@ textarea {
 }
 
 .tab {
-	margin: 0;
-	padding: 0;
-	.info { margin-left: $hanging-indent; }
-	ul {
-		margin-left: 0;
-		padding-left: 0;
-	}
+    margin: 0;
+    padding: 0;
+    .info { margin-left: $hanging-indent; }
+    ul {
+        margin-left: 0;
+        padding-left: 0;
+    }
     > ul {
         margin: 0;
         padding: 0;
-		> li > label {
-				width: $label-width;
-				margin-left: $left; // XXX to be overriden if this is .required
-		}
-		.required > label {
-			font-weight: bold;
-			margin-left: 0;
-			width: $label-width + $left;
-			&:before {
-				content: "* ";
-				@include style-of-required;
-				display: inline-block;
-				width: $left;
-			}
-		}
+        > li > label {
+                width: $label-width;
+                margin-left: $left; // XXX to be overriden if this is .required
+        }
+        .required > label {
+            font-weight: bold;
+            margin-left: 0;
+            width: $label-width + $left;
+            &:before {
+                content: "* ";
+                @include style-of-required;
+                display: inline-block;
+                width: $left;
+            }
+        }
     }
     .fieldset > ul {
-		> li > label {
-			width: $label-width - $left;
-			white-space: normal;
-		}
-		margin-left: 2 * $left;
+        > li > label {
+            width: $label-width - $left;
+            white-space: normal;
+        }
+        margin-left: 2 * $left;
     }
     > ul, .fieldset > ul {
         list-style: none;
@@ -161,11 +164,11 @@ textarea {
             width: $root-em;
         }
         label + ul {
-			white-space: nowrap;
-		}
-		.infolist {
-			white-space: normal;
-		}
+            white-space: nowrap;
+        }
+        .infolist {
+            white-space: normal;
+        }
         > li { // this <li> is an individual item of the form
             margin-top: 0.5em;
             margin-bottom: 0.5em;
@@ -179,39 +182,39 @@ textarea {
         }
     }
 
-	label + ul,
-	label + input[type="text"],
-	label + select,
-	label + .vertical-display {
-		display: inline-block;
-		width: $widget-width;
-	}
-	label + * { // XXX there *can* be labels elsewhere, within multi-widgets
-		display: inline-block;
-	}
-	label + ul { // for widgets that use a list for display
-		list-style: none;
-		display: inline-block;
-		margin: 0;
-		padding: 0;
-		li {
-			display: inline;
-			margin: 0 1em 0 0; // this is if it's all in a line
-		}
-	}
-	.vertical-display {
-		li {
-			display: block;
-			margin: 0 0 0 1em;
-			text-indent: -1em;
-		}
-		ul {
-			display: block;
-		}
-		input[type="text"] {
-			display: block;
-			width: $widget-width - $hanging-indent;
-			margin: auto 0; // 1em;
-		}
-	}
+    label + ul,
+    label + input[type="text"],
+    label + select,
+    label + .vertical-display {
+        display: inline-block;
+        width: $widget-width;
+    }
+    label + * { // XXX there *can* be labels elsewhere, within multi-widgets
+        display: inline-block;
+    }
+    label + ul { // for widgets that use a list for display
+        list-style: none;
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+        li {
+            display: inline;
+            margin: 0 1em 0 0; // this is if it's all in a line
+        }
+    }
+    .vertical-display {
+        li {
+            display: block;
+            margin: 0 0 0 1em;
+            text-indent: -1em;
+        }
+        ul {
+            display: block;
+        }
+        input[type="text"] {
+            display: block;
+            width: $widget-width - $hanging-indent;
+            margin: auto 0; // 1em;
+        }
+    }
 }
