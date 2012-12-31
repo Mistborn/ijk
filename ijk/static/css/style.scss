@@ -110,18 +110,6 @@ textarea {
     margin: 0.5em;
 }
 
-.helptext { // tria kolono en la formularo, kun klarigaj rimarkigoj
-    display: inline-block;
-    width: $helptext-width;
-    color: #707070;
-    font-size: 90%;
-    margin: 1em;
-    padding: 0;
-    li {
-        margin-left: $left;
-    }
-}
-
 .fieldset-label {
     font-weight: bold;
     margin-left: $left;
@@ -223,6 +211,27 @@ textarea {
             display: block;
             width: $widget-width - $hanging-indent;
             margin: auto 0; // 1em;
+        }
+    }
+    .helptext { // tria kolono en la formularo, kun klarigaj rimarkigoj
+        display: inline-block;
+        width: $helptext-width;
+        color: #707070;
+        font-size: 90%;
+        margin: 0 1em;
+        padding: 0;
+        li {
+            margin-left: $left;
+        }
+    }
+    .helptext-below {
+        @extend .helptext;
+        //width: 450px;
+        width: auto;
+        display: block;
+        margin: 0 0 0.5em $label-width + 1.4 * $left;
+        p {
+            margin: 0.5em 0;
         }
     }
 }

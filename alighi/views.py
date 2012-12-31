@@ -279,8 +279,7 @@ partoprenanto_fields_dict = dict(
         error_messages=em(required='Enigu vian familian nomon'),
         validators=[nomo_validator]),
     shildnomo = forms.CharField(required=False,
-        label=eo('Kromnomo'), help_text='Por la nomŝildo',
-        validators=[kromnomo_validator]),
+        label=eo('Kromnomo'), validators=[kromnomo_validator]),
     sekso = forms.ChoiceField(widget=forms.RadioSelect, choices=SEKSOJ,
         error_messages=em(required='Elektu vian sekson')),
     naskighdato = forms.DateField(label=eo('Naskigxdato'),
@@ -307,10 +306,7 @@ partoprenanto_fields_dict = dict(
         label=eo('Mi bezonas invitleteron'),
         help_text=eo(u'Kromkosto: {} €'.format(models.KrompagTipo.liveri_koston('invitletero')))),
     telefono = forms.CharField(max_length=50, required=False,
-        label='Poŝtelefon-numero', help_text='Enigu numeron en formato '
-            '+[lando-kodo]-[prefikso]-[numero]. Se vi indikos ĝin, '
-            'ni povos sendi al vi SMS-on okaze de lastmomentaj sciigoj.',
-        validators=[telefono_validator]),
+        label='Poŝtelefon-numero', validators=[telefono_validator]),
     skype = forms.CharField(max_length=50, required=False,
         validators=[skype_validator]),
     facebook = forms.CharField(max_length=50, required=False),
@@ -331,11 +327,9 @@ partoprenanto_fields_dict = dict(
         initial=FINIGHA_DATO, label=eo('Mi partoprenos gxis'),
         error_messages=em(required='Elektu la daton, kiam vi forlasos',
                           invalid=NEVALIDA_DATO)),
-    alveno = forms.CharField(required=False, label=eo('Mi alvenas per/je'),
-        help_text=eo('Ekz. flugnumero kaj horo, se vi jam scias gxin')),
+    alveno = forms.CharField(required=False, label=eo('Mi alvenas per/je')),
     #alvenas_je = forms.DateField(required=False, label=eo('Mi alvenas je'))
-    foriro = forms.CharField(required=False, label=eo('Mi foriras per/je'),
-        help_text=eo('Ekz. flugnumero kaj horo, se vi jam scias gxin')),
+    foriro = forms.CharField(required=False, label=eo('Mi foriras per/je')),
     #foriras_je = forms.DateField(required=False, label=eo('Mi foriras je'))
     interesighas_pri_antaukongreso = forms.IntegerField(
         required=True, widget=forms.RadioSelect(
@@ -409,9 +403,7 @@ partoprenanto_fields_dict = dict(
     #pagmaniera_komento = forms.CharField(max_length=50, required=False),
     chu_ueamembro = forms.BooleanField(
         required=False, initial=False,
-        label=eo('Mi estas/estos membro de UEA/TEJO en 2013'),
-        help_text=u'Individuaj membroj de TEJO/UEA ricevas rabaton ĉe IJK '
-                  u'(kategorio MG ne validas por la rabato).'),
+        label=eo('Mi estas/estos membro de TEJO/UEA en 2013')),
     uea_kodo = forms.CharField(max_length=6, min_length=6, required=False,
         label=eo('UEA-kodo'), validators=[ueakodo_validator],
         error_messages=em(
@@ -430,9 +422,7 @@ class ManghoMendoForm(forms.Form):
 
 class NotoForm(forms.ModelForm):
     enhavo = forms.CharField(widget=forms.Textarea,
-        required=False, label=eo('Aldonaj rimarkoj'),
-        help_text='Sciigu nin pri ajna grava detalo rilate vin; '
-            'ekz. specifaj bezonoj pri manĝoj aŭ ĉu vi venos kun infanoj.')
+        required=False, label=eo('Aldonaj rimarkoj'))
     class Meta:
         model = models.Noto
         fields = ('enhavo',)
@@ -495,7 +485,13 @@ class FormInfo(object):
         pass
     def as_ul(self):
         return mark_safe(
-            u'<li><span class="info">{}</span></li>'.format(self.value))
+            u'<li class="helptext-below">{}</li>'.format(
+                self.value))
+    @classmethod
+    def make_form(cls, val):
+        class FormInfoClass(cls):
+            value = val
+        return FormInfoClass
 
 class MembroKategorioFormInfo(FormInfo):
     value = models.UEARabato.infoline()
@@ -521,20 +517,29 @@ class MultiField(forms.Field):
 
 formdivisions = [
     ('Personaj informoj', [
-        ['persona_nomo', 'familia_nomo', 'shildnomo', 'sekso', 'naskighdato',
+        ['persona_nomo', 'familia_nomo', 'shildnomo',],
+        FormInfo.make_form(u'Por la nomŝildo'),
+        ['sekso', 'naskighdato',
         'adreso', 'urbo', 'poshtkodo', 'loghlando', 'shildlando',
         'chu_bezonas_invitleteron', 'retposhtadreso',
         'chu_komencanto', 'chu_interesighas_pri_kurso']
     ]),
     ('Komunikiloj', [
-        ['telefono', 'skype', 'facebook', 'mesaghiloj'],
+        ['telefono'], FormInfo.make_form(u'Enigu numeron en formato '
+            u'+[lando-kodo]-[prefikso]-[numero]. Se vi indikos ĝin, '
+            u'ni povos sendi al vi SMS-on okaze de lastmomentaj sciigoj.'),
+        ['skype', 'facebook', 'mesaghiloj'],
         partoprenanto_fieldset_factory(
             'Mi permesas publikigi mian nomon, urbon kaj landon:',
             ['chu_retalisto', 'chu_postkongresalisto',])
     ]),
     ('Partopreno', [
-        ['ekde', 'ghis', 'chu_unua_dua_ijk', 'alveno', 'foriro',
-        'chu_tuttaga_ekskurso',
+        ['ekde', 'ghis', 'chu_unua_dua_ijk'],
+        ['alveno'], FormInfo.make_form(
+            eo('Ekz. flugnumero kaj horo, se vi jam scias gxin')),
+        ['foriro'], FormInfo.make_form(
+            eo('Ekz. flugnumero kaj horo, se vi jam scias gxin')),
+        ['chu_tuttaga_ekskurso',
         'interesighas_pri_antaukongreso',
         'interesighas_pri_postkongreso',
         'programa_kontribuo', 'organiza_kontribuo']
@@ -545,9 +550,14 @@ formdivisions = [
     ]),
     (eo('Mangxado'), [   ManghoMendoForm, ['manghotipo',]    ]),
     (eo('Pago'), [
-        ['chu_ueamembro'], MembroKategorioFormInfo, ['uea_kodo',
-        #['pagmaniero', #'pagmaniera_komento',
-        'antaupagos_ghis', 'pagmaniero'],  NotoForm
+        ['chu_ueamembro'], FormInfo.make_form(u'<p>{}</p><p>{}</p>'.format(
+            u'Individuaj membroj de TEJO/UEA ricevas rabaton ĉe IJK '
+                  u'(kategorio MG ne validas por la rabato).',
+            models.UEARabato.infoline()
+        )),
+        ['uea_kodo', 'antaupagos_ghis', 'pagmaniero'],  NotoForm,
+        FormInfo.make_form(u'Sciigu nin pri ajna grava detalo rilate vin; '
+            u'ekz. specifaj bezonoj pri manĝoj aŭ ĉu vi venos kun infanoj.')
     ])
 ]
 

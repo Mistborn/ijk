@@ -101,18 +101,6 @@ textarea {
   margin: 0.5em;
 }
 
-.helptext {
-  display: inline-block;
-  width: 300px;
-  color: #707070;
-  font-size: 90%;
-  margin: 1em;
-  padding: 0;
-}
-.helptext li {
-  margin-left: 14px;
-}
-
 .fieldset-label {
   font-weight: bold;
   margin-left: 14px;
@@ -216,4 +204,23 @@ textarea {
   display: block;
   width: 150px;
   margin: auto 0;
+}
+.tab .helptext, .tab .helptext-below {
+  display: inline-block;
+  width: 300px;
+  color: #707070;
+  font-size: 90%;
+  margin: 0 1em;
+  padding: 0;
+}
+.tab .helptext li, .tab .helptext-below li {
+  margin-left: 14px;
+}
+.tab .helptext-below {
+  width: auto;
+  display: block;
+  margin: 0 0 0.5em 319.6px;
+}
+.tab .helptext-below p {
+  margin: 0.5em 0;
 }
