@@ -237,7 +237,39 @@
         }
       });
     });
-    $tabs = $('#form-tabs').tabs();
+    $tabs = $('#form-tabs').tabs({
+      hide: {
+        effect: 'slide',
+        direction: 'left'
+      },
+      show: {
+        effect: 'slide',
+        direction: 'right'
+      },
+      beforeActivate: function(e, ui) {
+        var hide_dir, show_dir, slide_dirs, tabdiff, _ref;
+        tabdiff = ui.newTab.index() - ui.oldTab.index();
+        if (Math.abs(tabdiff) === 1) {
+          slide_dirs = ['left', 'right'];
+        } else {
+          slide_dirs = ['down', 'up'];
+        }
+        hide_dir = slide_dirs[0], show_dir = slide_dirs[1];
+        if (tabdiff < 0) {
+          _ref = [show_dir, hide_dir], hide_dir = _ref[0], show_dir = _ref[1];
+        }
+        return $tabs.tabs('option', {
+          hide: {
+            effect: 'slide',
+            direction: hide_dir
+          },
+          show: {
+            effect: 'slide',
+            direction: show_dir
+          }
+        });
+      }
+    });
     nav_callback = function(offset) {
       return function() {
         var active, newtab;

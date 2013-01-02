@@ -14,6 +14,8 @@ from validators import *
 
 import datetime
 
+VERTICAL_CLASS = 'vertical-display'
+
 NEVALIDA_DATO = u'Enigu validan valoron (en formato jjjj-mm-tt).'
 INVALID_MODEL_CHOICE = eo(u'Faru elekton el la listo de haveblaj opcioj. '
         u'La valoro de vi provizita (%(value)s) ne validas.')
@@ -57,12 +59,21 @@ PARTOPRENANTO_EXCLUDE = ('chambro', 'chu_invitletero_sendita',
 
 class RadioFieldSpecialClassRenderer(forms.widgets.RadioFieldRenderer):
     def render(self):
-        return mark_safe(u'<ul class="vertical-display">\n'
-                         u'%s\n</ul>' % u'\n'.join([u'<li>%s</li>'
-                % force_unicode(w) for w in self]))
+        return mark_safe(u'<ul class="%s">\n%s\n</ul>' % 
+                         (VERTICAL_CLASS, u'\n'.join(
+            [u'<li>%s</li>' % force_unicode(w) for w in self])))
 
 class RadioSelectSpecialClass(forms.RadioSelect):
     renderer = RadioFieldSpecialClassRenderer
+
+class CheckboxSpecialClass(forms.CheckboxSelectMultiple):
+    def render(self, *args, **kw):
+        orig = super(CheckboxSpecialClass, self).render(
+            *args, **kw)
+        if not orig.startswith(u'<ul>'):
+            return orig
+        return u'<ul class="{}">{}'.format(VERTICAL_CLASS, 
+                                           orig[4:])
 
 paginfo = mark_safe(
     u'''<p>Via aliĝo ekvalidas post ricevo de antaŭpago je
@@ -412,7 +423,8 @@ partoprenanto_fields_dict = dict(
         #help_text=u'Se vi ŝatas dormi frue, sciigu nin',
         initial=False, required=False, label=eo('Mi estas malnoktemulo')),
     manghotipo = forms.ModelChoiceField(models.ManghoTipo.objects,
-        label=eo('Mangxotipo'), widget=RadioSelectSpecialClass,
+        label=eo('Mangxotipo'), widget=forms.RadioSelect, 
+            #widget=RadioSelectSpecialClass,
         required=True, initial=None,
         empty_label=None,
         #initial=models.ManghoTipo.objects.get(nomo='Viande'),
@@ -422,7 +434,7 @@ partoprenanto_fields_dict = dict(
         labelfunc=lambda o: esperanteca_dato(o.limdato),
         widget=RadioSelectSpecialClass, empty_label=None,
         error_messages=em(
-            required='Elektu gxis kiam vi faros la antauxpagon')),
+            required=eo('Elektu gxis kiam vi faros la antauxpagon'))),
     pagmaniero = PagmanieroChoiceField(
         models.Pagmaniero.objects.filter(chu_publika=True),
     #paginformoj = forms.ChoiceField(
@@ -451,7 +463,8 @@ partoprenanto_fields_dict = dict(
 
 class ManghoMendoForm(forms.Form):
     manghomendoj = forms.ModelMultipleChoiceField(label=eo('Mi volas mendi'),
-        required=False, widget=forms.CheckboxSelectMultiple,
+        required=False, widget=CheckboxSpecialClass, 
+            #forms.CheckboxSelectMultiple,
         queryset=models.ManghoMendoTipo.objects,
         initial=models.ManghoMendoTipo.objects.all(),
         error_messages=em(invalid_choice='Ne, ne, ne: %r'))
@@ -513,7 +526,7 @@ class PartoprenantoForm(PartoprenantoFormBase):
                 ## print 'we have found an error, it is ', ValidationError(u'necesas enigi kroman valoron',
                                      ## code='mankas_komento')
                 self._errors['pagmaniero'] = self.error_class(
-                    [u'Necesas enigi kroman valoron'])
+                    [u'Necesas enigi kroman informon'])
                 del cleaned_data['pagmaniero']
             ## print 'the pagmaniero we got is {}'.format(`cleaned_data['pagmaniero']`)
             ## print 'the other stuff we got is {}'.format(

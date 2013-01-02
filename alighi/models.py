@@ -262,7 +262,7 @@ class Pagmaniero(models.Model):
     nomo = models.CharField(unique=True, max_length=50)
     priskribo = models.TextField(blank=True,
         verbose_name=eo('Publika priskribo'))
-    komenta_etikedo = models.CharField(blank=True, max_length=50,
+    komenta_etikedo = models.CharField(blank=True, max_length=250,
         verbose_name=eo('Komenta etikedo'),
         help_text=eo('Etikedo por la komenta kampo en la aligxformularo'))
     chu_publika = models.BooleanField(default=True,

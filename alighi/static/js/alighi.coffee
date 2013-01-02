@@ -214,13 +214,36 @@ $ ->
                     $(this).prop 'checked', off
                     $li.hide()
 
-    $tabs = $('#form-tabs').tabs()
+    $tabs = $('#form-tabs').tabs
+        hide:
+            effect: 'slide'
+            direction: 'left'
+        show:
+            effect: 'slide'
+            direction: 'right'
+        beforeActivate:
+            (e, ui) ->
+                tabdiff = ui.newTab.index() - ui.oldTab.index()
+                if Math.abs(tabdiff) is 1
+                    slide_dirs = ['left', 'right']
+                else
+                    slide_dirs = ['down', 'up']
+                [hide_dir, show_dir] = slide_dirs
+                [hide_dir, show_dir] = [show_dir, hide_dir] if tabdiff < 0
+                $tabs.tabs 'option'
+                    hide:
+                        effect: 'slide'
+                        direction: hide_dir
+                    show:
+                        effect: 'slide'
+                        direction: show_dir
+                # alert "we are going to move to tab #{ui.newTab.index()} from #{ui.oldTab.index()}"
     nav_callback = (offset) -> ->
         active = $tabs.tabs 'option', 'active'
         newtab = active+offset
         return false if newtab < 0 or newtab >= NUMTABS
         $tabs.tabs 'option', 'active', newtab
-        false
+        false 
 
     $('.reen, .antauen, input[type="submit"]').button()
     $('.reen').click nav_callback -1
