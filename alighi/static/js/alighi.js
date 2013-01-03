@@ -310,7 +310,7 @@
       for (var _i = _ref = datogamo_start - 1, _ref1 = datogamo_end + 1; _ref <= _ref1 ? _i <= _ref1 : _i >= _ref1; _ref <= _ref1 ? _i++ : _i--){ _results.push(_i); }
       return _results;
     }).apply(this), function(i, v) {
-      return $("<div class=\"datomarko\">" + v + "</div>").css({
+      return $("<div class=\"datomarko\" id=\"id_datomarko_" + v + "\">" + v + "</div>").css({
         display: 'inline-block',
         width: "" + (100 / numnotches) + "%",
         margin: 0,
@@ -330,9 +330,18 @@
         var ekde, ghis, _ref2;
         _ref2 = ui.values, ekde = _ref2[0], ghis = _ref2[1];
         $('#id_ekde').val("2013-08-" + ekde);
-        return $('#id_ghis').val("2013-08-" + ghis);
+        $('#id_ghis').val("2013-08-" + ghis);
+        $('.datomarko').each(function() {
+          return $(this).css({
+            fontWeight: 'normal'
+          });
+        });
+        return $("#id_datomarko_" + ekde + ", #id_datomarko_" + ghis).css({
+          fontWeight: 'bold'
+        });
       }
     });
+    $dateslider.slider('values', $dateslider.slider('values'));
     return $("<div>la oficiala daŭro de IJK estas de la " + datogamo_start + "-a             ĝis la " + datogamo_end + "-a de aŭgusto, 2013</div>").appendTo($dateslider_container).css({
       width: widget_width * (numnotches - 2) / numnotches,
       height: '1em',

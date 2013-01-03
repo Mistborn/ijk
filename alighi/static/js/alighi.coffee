@@ -273,7 +273,7 @@ $ ->
         margin: 'auto', padding: 0
         whiteSpace: 'nowrap';
     $.each [datogamo_start-1..datogamo_end+1], (i, v) ->
-        $("<div class=\"datomarko\">#{v}</div>")
+        $("<div class=\"datomarko\" id=\"id_datomarko_#{v}\">#{v}</div>")
             .css
                 display: 'inline-block'
                 width: "#{100 / numnotches}%"
@@ -291,9 +291,15 @@ $ ->
             range: on
             values: [curstart, curend]
             change: (e, ui) ->
+                #alert "event type is #{e.type}"
                 [ekde, ghis] = ui.values 
                 $('#id_ekde').val("2013-08-#{ekde}")
                 $('#id_ghis').val("2013-08-#{ghis}")
+                $('.datomarko').each ->
+                    $(this).css fontWeight: 'normal'
+                $("#id_datomarko_#{ekde}, #id_datomarko_#{ghis}").css 
+                    fontWeight: 'bold'
+    $dateslider.slider 'values', $dateslider.slider('values')
     $("<div>la oficiala daŭro de IJK estas de la #{datogamo_start}-a 
             ĝis la #{datogamo_end}-a de aŭgusto, 2013</div>")
         .appendTo($dateslider_container).css
@@ -307,4 +313,5 @@ $ ->
             left: widget_width / numnotches + 14
             color: 'blue'
             textAlign: 'center'
+            
 
