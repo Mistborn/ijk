@@ -76,10 +76,11 @@ textarea {
   height: 3em;
 }
 
+/*
 .error {
-  border: 1px solid black;
+    border: 1px dotted red;
 }
-
+*/
 .style-of-required {
   color: red;
   font-weight: bold;

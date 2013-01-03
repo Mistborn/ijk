@@ -58,7 +58,7 @@ $ ->
         day = '0' + day if day < 10
         "#{year}-#{month}-#{day}"
 
-    window.partoprenelektoj = ->
+    partoprenelektoj = ->
         @ekdato = iso_to_date $('#id_ekde').val() ? off
         @ghisdato = iso_to_date $('#id_ghis').val() ? off
         @naskighdato = iso_to_date $('#id_naskighdato').val() ? off
@@ -197,8 +197,8 @@ $ ->
         return if not result?
         $(this).text result[1]
         $(this).data 'landokategorio', " #{result[2]}"
-    $('#id_loghlando').after('<span class="klarigo"></span>').change ->
-        $(this).next('.klarigo').text(
+    $('#id_loghlando').after('<span class="klarigo helptext"></span>').change ->
+        $(this).next('.helptext').text(
             $(this).find(':selected').data('landokategorio'))
 
     # montru nur-israelajn pagmanierojn nur se
@@ -213,7 +213,9 @@ $ ->
                 else
                     $(this).prop 'checked', off
                     $li.hide()
+    .change()
 
+    # tabs
     $tabs = $('#form-tabs').tabs
         hide:
             effect: 'slide'
@@ -227,7 +229,7 @@ $ ->
                 if Math.abs(tabdiff) is 1
                     slide_dirs = ['left', 'right']
                 else
-                    slide_dirs = ['down', 'up']
+                    slide_dirs = ['up', 'up'] # ['down', 'up']
                 [hide_dir, show_dir] = slide_dirs
                 [hide_dir, show_dir] = [show_dir, hide_dir] if tabdiff < 0
                 $tabs.tabs 'option'
@@ -248,5 +250,61 @@ $ ->
     $('.reen, .antauen, input[type="submit"]').button()
     $('.reen').click nav_callback -1
     $('.antauen').click nav_callback 1
-
+    
+    # glitilo por elekti la gamon de datoj de partoprenado
+    datogamo_start = window.KOMENCA_DATO.getDate()
+    datogamo_end = window.FINIGHA_DATO.getDate()
+    numnotches = datogamo_end - datogamo_start + 2
+    curstart = if c = iso_to_date $('#id_ekde').val() then c.getDate() else datogamo_start
+    curend = if c = iso_to_date $('#id_ghis').val() then c.getDate() else datogamo_end
+    
+    $('#id_ekde, #id_ghis').parent().hide()
+    tabwidths = $('.tab').map -> $(this).width()
+    tabwidth = Math.max tabwidths...
+    widget_width = tabwidth - 300 - 14*2.5
+    
+    $datesliderli = $('<li class="required">
+        <label for="id_datogamo">La daŭro de mia partopreno:</label></li>')
+        .insertAfter $('#id_ghis').parent()
+    $dateslider_container = $('<div></div>').appendTo($datesliderli)
+        .width(widget_width)
+    $gvidilo = $('<div id="datogamo-gvidilo"></div>').css
+        width: widget_width
+        margin: 'auto', padding: 0
+        whiteSpace: 'nowrap';
+    $.each [datogamo_start-1..datogamo_end+1], (i, v) ->
+        $("<div class=\"datomarko\">#{v}</div>")
+            .css
+                display: 'inline-block'
+                width: "#{100 / numnotches}%"
+                margin: 0, padding: 0
+            .appendTo $gvidilo
+    $dateslider_container.append $gvidilo
+    $dateslider = $('<div class="datogamo" id="id_datogamo"></div>')
+        .appendTo($dateslider_container)
+        .css
+            width: widget_width
+            clear: 'both'
+        .slider
+            min: datogamo_start - 1
+            max: datogamo_end + 1
+            range: on
+            values: [curstart, curend]
+            change: (e, ui) ->
+                [ekde, ghis] = ui.values 
+                $('#id_ekde').val("2013-08-#{ekde}")
+                $('#id_ghis').val("2013-08-#{ghis}")
+    $("<div>la oficiala daŭro de IJK estas de la #{datogamo_start}-a 
+            ĝis la #{datogamo_end}-a de aŭgusto, 2013</div>")
+        .appendTo($dateslider_container).css
+            width: widget_width * (numnotches-2) / numnotches
+            height: '1em'
+            fontSize: '80%'
+            borderTop: '3px dotted blue'
+            margin: 0#'auto'
+            position: 'relative'
+            padding: 0
+            left: widget_width / numnotches + 14
+            color: 'blue'
+            textAlign: 'center'
 

@@ -86,9 +86,11 @@ textarea {
     height: 3em;
 }
 
+/*
 .error {
-    border: 1px solid black;
+    border: 1px dotted red;
 }
+*/
 
 .style-of-required {
     @include style-of-required;
@@ -135,9 +137,11 @@ textarea {
     > ul {
         margin: 0;
         padding: 0;
-        > li > label {
+        > li {
+            > label {
                 width: $label-width;
                 margin-left: $left; // XXX to be overriden if this is .required
+            }
         }
         .required > label {
             font-weight: bold;
@@ -173,6 +177,7 @@ textarea {
             margin-top: 0.5em;
             margin-bottom: 0.5em;
             display: block;
+            // padding: 0.25em;
             > * {
                 vertical-align: middle;
             }

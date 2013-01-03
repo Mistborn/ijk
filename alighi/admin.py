@@ -25,7 +25,7 @@ admin.site.register(SurlokaMembrigho)
 admin.site.register(Chambro)
 class PartoprenantoAdmin(admin.ModelAdmin):
     '''Unuopa partoprenanto en la kongreso'''
-    readonly_fields = ('alighdato',)
+    readonly_fields = ('id', 'alighdato',)
 admin.site.register(Partoprenanto, PartoprenantoAdmin)
 admin.site.register(Pago)
 admin.site.register(Pagtipo)

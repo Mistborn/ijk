@@ -2,7 +2,7 @@
 (function() {
 
   $(function() {
-    var $tabs, DAY, NUMTABS, YEAR, date_to_iso, iso_to_date, kotizo, kotizo_selectors, liveri_aghon_lau_naskightago, nav_callback;
+    var $dateslider, $dateslider_container, $datesliderli, $gvidilo, $tabs, DAY, NUMTABS, YEAR, c, curend, curstart, date_to_iso, datogamo_end, datogamo_start, iso_to_date, kotizo, kotizo_selectors, liveri_aghon_lau_naskightago, nav_callback, numnotches, partoprenelektoj, tabwidth, tabwidths, widget_width, _i, _ref, _ref1, _results;
     NUMTABS = 6;
     DAY = 1000 * 60 * 60 * 24;
     YEAR = DAY * 365.25;
@@ -76,7 +76,7 @@
       }
       return "" + year + "-" + month + "-" + day;
     };
-    window.partoprenelektoj = function() {
+    partoprenelektoj = function() {
       var limagho, manghokosto, result, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6,
         _this = this;
       this.ekdato = iso_to_date((_ref = $('#id_ekde').val()) != null ? _ref : false);
@@ -218,8 +218,8 @@
       $(this).text(result[1]);
       return $(this).data('landokategorio', " " + result[2]);
     });
-    $('#id_loghlando').after('<span class="klarigo"></span>').change(function() {
-      return $(this).next('.klarigo').text($(this).find(':selected').data('landokategorio'));
+    $('#id_loghlando').after('<span class="klarigo helptext"></span>').change(function() {
+      return $(this).next('.helptext').text($(this).find(':selected').data('landokategorio'));
     });
     $('#id_loghlando').change(function() {
       var chu_israelo;
@@ -236,7 +236,7 @@
           }
         }
       });
-    });
+    }).change();
     $tabs = $('#form-tabs').tabs({
       hide: {
         effect: 'slide',
@@ -252,7 +252,7 @@
         if (Math.abs(tabdiff) === 1) {
           slide_dirs = ['left', 'right'];
         } else {
-          slide_dirs = ['down', 'up'];
+          slide_dirs = ['up', 'up'];
         }
         hide_dir = slide_dirs[0], show_dir = slide_dirs[1];
         if (tabdiff < 0) {
@@ -284,7 +284,67 @@
     };
     $('.reen, .antauen, input[type="submit"]').button();
     $('.reen').click(nav_callback(-1));
-    return $('.antauen').click(nav_callback(1));
+    $('.antauen').click(nav_callback(1));
+    datogamo_start = window.KOMENCA_DATO.getDate();
+    datogamo_end = window.FINIGHA_DATO.getDate();
+    numnotches = datogamo_end - datogamo_start + 2;
+    curstart = (c = iso_to_date($('#id_ekde').val())) ? c.getDate() : datogamo_start;
+    curend = (c = iso_to_date($('#id_ghis').val())) ? c.getDate() : datogamo_end;
+    $('#id_ekde, #id_ghis').parent().hide();
+    tabwidths = $('.tab').map(function() {
+      return $(this).width();
+    });
+    tabwidth = Math.max.apply(Math, tabwidths);
+    widget_width = tabwidth - 300 - 14 * 2.5;
+    $datesliderli = $('<li class="required">\
+        <label for="id_datogamo">La daŭro de mia partopreno:</label></li>').insertAfter($('#id_ghis').parent());
+    $dateslider_container = $('<div></div>').appendTo($datesliderli).width(widget_width);
+    $gvidilo = $('<div id="datogamo-gvidilo"></div>').css({
+      width: widget_width,
+      margin: 'auto',
+      padding: 0,
+      whiteSpace: 'nowrap'
+    });
+    $.each((function() {
+      _results = [];
+      for (var _i = _ref = datogamo_start - 1, _ref1 = datogamo_end + 1; _ref <= _ref1 ? _i <= _ref1 : _i >= _ref1; _ref <= _ref1 ? _i++ : _i--){ _results.push(_i); }
+      return _results;
+    }).apply(this), function(i, v) {
+      return $("<div class=\"datomarko\">" + v + "</div>").css({
+        display: 'inline-block',
+        width: "" + (100 / numnotches) + "%",
+        margin: 0,
+        padding: 0
+      }).appendTo($gvidilo);
+    });
+    $dateslider_container.append($gvidilo);
+    $dateslider = $('<div class="datogamo" id="id_datogamo"></div>').appendTo($dateslider_container).css({
+      width: widget_width,
+      clear: 'both'
+    }).slider({
+      min: datogamo_start - 1,
+      max: datogamo_end + 1,
+      range: true,
+      values: [curstart, curend],
+      change: function(e, ui) {
+        var ekde, ghis, _ref2;
+        _ref2 = ui.values, ekde = _ref2[0], ghis = _ref2[1];
+        $('#id_ekde').val("2013-08-" + ekde);
+        return $('#id_ghis').val("2013-08-" + ghis);
+      }
+    });
+    return $("<div>la oficiala daŭro de IJK estas de la " + datogamo_start + "-a             ĝis la " + datogamo_end + "-a de aŭgusto, 2013</div>").appendTo($dateslider_container).css({
+      width: widget_width * (numnotches - 2) / numnotches,
+      height: '1em',
+      fontSize: '80%',
+      borderTop: '3px dotted blue',
+      margin: 0,
+      position: 'relative',
+      padding: 0,
+      left: widget_width / numnotches + 14,
+      color: 'blue',
+      textAlign: 'center'
+    });
   });
 
 }).call(this);

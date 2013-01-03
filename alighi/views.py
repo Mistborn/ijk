@@ -59,7 +59,7 @@ PARTOPRENANTO_EXCLUDE = ('chambro', 'chu_invitletero_sendita',
 
 class RadioFieldSpecialClassRenderer(forms.widgets.RadioFieldRenderer):
     def render(self):
-        return mark_safe(u'<ul class="%s">\n%s\n</ul>' % 
+        return mark_safe(u'<ul class="%s">\n%s\n</ul>' %
                          (VERTICAL_CLASS, u'\n'.join(
             [u'<li>%s</li>' % force_unicode(w) for w in self])))
 
@@ -72,7 +72,7 @@ class CheckboxSpecialClass(forms.CheckboxSelectMultiple):
             *args, **kw)
         if not orig.startswith(u'<ul>'):
             return orig
-        return u'<ul class="{}">{}'.format(VERTICAL_CLASS, 
+        return u'<ul class="{}">{}'.format(VERTICAL_CLASS,
                                            orig[4:])
 
 paginfo = mark_safe(
@@ -320,6 +320,9 @@ class CustomLabelModelChoiceField(forms.ModelChoiceField):
         return super(CustomLabelModelChoiceField,
                      self).label_from_instance(obj)
 
+class DatoGamo(forms.TextInput):
+    pass
+
 partoprenanto_fields_dict = dict(
     persona_nomo = forms.CharField(max_length=50,
         error_messages=em(required='Enigu vian personan nomon'),
@@ -376,6 +379,7 @@ partoprenanto_fields_dict = dict(
         initial=FINIGHA_DATO, label=eo('Mi partoprenos gxis'),
         error_messages=em(required='Elektu la daton, kiam vi forlasos',
                           invalid=NEVALIDA_DATO)),
+    # partoprengamo = DatoGamo(),
     alveno = forms.CharField(required=False, label=eo('Mi alvenas per/je')),
     #alvenas_je = forms.DateField(required=False, label=eo('Mi alvenas je'))
     foriro = forms.CharField(required=False, label=eo('Mi foriras per/je')),
@@ -423,7 +427,7 @@ partoprenanto_fields_dict = dict(
         #help_text=u'Se vi ŝatas dormi frue, sciigu nin',
         initial=False, required=False, label=eo('Mi estas malnoktemulo')),
     manghotipo = forms.ModelChoiceField(models.ManghoTipo.objects,
-        label=eo('Mangxotipo'), widget=forms.RadioSelect, 
+        label=eo('Mangxotipo'), widget=forms.RadioSelect,
             #widget=RadioSelectSpecialClass,
         required=True, initial=None,
         empty_label=None,
@@ -463,7 +467,7 @@ partoprenanto_fields_dict = dict(
 
 class ManghoMendoForm(forms.Form):
     manghomendoj = forms.ModelMultipleChoiceField(label=eo('Mi volas mendi'),
-        required=False, widget=CheckboxSpecialClass, 
+        required=False, widget=CheckboxSpecialClass,
             #forms.CheckboxSelectMultiple,
         queryset=models.ManghoMendoTipo.objects,
         initial=models.ManghoMendoTipo.objects.all(),
