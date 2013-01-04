@@ -15,8 +15,10 @@
 <body>
 <div id="enhavo">
 <h1>Aliĝi al IJK 2013 en Afikim, Israelo</h1>
-<div id="informoj">Kotizo: </div>
 <form id="alighformo" method="post" action="{% url alighi %}">
+<div id="kotizo">
+    <input type="hidden" name="js-active" id="js-active" value="0" />
+</div>
 {% csrf_token %}
 <p>
     La kampoj markitaj per steleto (<span class="style-of-required">*</span>)

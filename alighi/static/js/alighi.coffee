@@ -88,6 +88,7 @@ $ ->
         @aghaldona_pago = if @aghkategoriaj_informoj
             @aghkategoriaj_informoj[1]
         else @aghkategoriaj_informoj
+        ###
         @alighkategorio = do -> # XXX supozante ke hodiaŭ estas la aliĝdato
             hodiau = date_to_iso new Date()
             result = null
@@ -95,6 +96,9 @@ $ ->
                 result = limdato unless hodiau > limdato or
                     (result? and limdato > result)
             window.limdatoj[result]
+        ###
+        alighid = $('input[name="antaupagos_ghis"]:checked').val() ? off
+        @alighkategorio = if alighid then window.limdatoj[alighid] else off
         @tranoktoj = Math.floor((@ghisdato - @ekdato) / DAY)
         @loghkosto = do =>
             return off unless @loghkategorio isnt off and @chu_plentempa?
@@ -117,7 +121,19 @@ $ ->
         @chu_invitletero = $('#id_chu_bezonas_invitleteron').is ':checked'
         @chu_ekskurso = $('#id_chu_tuttaga_ekskurso').is(':checked')
 
-
+    # konstruo de la strukturo de la kotizo-"fakturo"
+    $('#js-active').val(1)
+    $kotizoul = $('<ul></ul>').appendTo '#kotizo'
+    kotizeroj = ['mangho', 'loghado', 'programo'
+        'ekskurso', 'invitletero', 'uearabato']
+    for id in kotizeroj
+        $kotizoul.append "<li>
+            <div id='#{id}-signo'></div>
+            <div id='#{id}-ero'>
+                <div id='#{id}-kosto'></div>
+                <div id='#{id}-klarigo'></div>
+            </div>
+        </li>"
     # dinama kalkulo de la kotizo
     kotizo = ->
         ###
@@ -130,12 +146,14 @@ $ ->
 
         info = new partoprenelektoj
 
-        klarigo = []
+        # klarigo = []
         kosto = 0
 
         # manghokosto ne povas esti off
         if info.manghokosto?
-            klarigo.push "#{info.manghokosto} (manĝokosto)"
+            # klarigo.push "#{info.manghokosto} (manĝokosto)"
+            $('#mangho-klarigo').text('manĝokosto')
+            $('#mangho-kosto').text(info.manghokosto)
             kosto += info.manghokosto
         else klarigo.push '(manĝokosto nedefinita)'
 
@@ -180,12 +198,13 @@ $ ->
         klarigo += " - #{info.uearabato} (UEA-rabato)" if info.uearabato > 0
         klarigo += ' (UEA-rabato nedefinita)' unless info.uearabato?
         klarigo += ']'
-        $('#informoj').text("Kotizo: #{kosto} #{klarigo}")
+        $('#kotizo').text("Kotizo: #{kosto} #{klarigo}")
 
     kotizo_selectors = ['#id_naskighdato', '#id_loghlando'
         'input[name="loghkategorio"]', 'input[name="manghomendoj"]'
         '#id_chu_ueamembro', '#id_ekde', '#id_ghis',
-        '#id_chu_bezonas_invitleteron', '#id_chu_tuttaga_ekskurso']
+        '#id_chu_bezonas_invitleteron', '#id_chu_tuttaga_ekskurso'
+        'input[name="antaupagos_ghis"]']
     $(kotizo_selectors.join ', ').change ->
         kotizo()
 

@@ -2,7 +2,7 @@
 (function() {
 
   $(function() {
-    var $dateslider, $dateslider_container, $datesliderli, $gvidilo, $tabs, DAY, NUMTABS, YEAR, c, curend, curstart, date_to_iso, datogamo_end, datogamo_start, iso_to_date, kotizo, kotizo_selectors, liveri_aghon_lau_naskightago, nav_callback, numnotches, partoprenelektoj, tabwidth, tabwidths, widget_width, _i, _ref, _ref1, _results;
+    var $dateslider, $dateslider_container, $datesliderli, $gvidilo, $kotizoul, $tabs, DAY, NUMTABS, YEAR, c, curend, curstart, date_to_iso, datogamo_end, datogamo_start, id, iso_to_date, kotizeroj, kotizo, kotizo_selectors, liveri_aghon_lau_naskightago, nav_callback, numnotches, partoprenelektoj, tabwidth, tabwidths, widget_width, _i, _j, _len, _ref, _ref1, _results;
     NUMTABS = 6;
     DAY = 1000 * 60 * 60 * 24;
     YEAR = DAY * 365.25;
@@ -77,7 +77,7 @@
       return "" + year + "-" + month + "-" + day;
     };
     partoprenelektoj = function() {
-      var limagho, manghokosto, result, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6,
+      var alighid, limagho, manghokosto, result, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7,
         _this = this;
       this.ekdato = iso_to_date((_ref = $('#id_ekde').val()) != null ? _ref : false);
       this.ghisdato = iso_to_date((_ref1 = $('#id_ghis').val()) != null ? _ref1 : false);
@@ -102,31 +102,32 @@
       }).call(this);
       this.aghkategorio = this.aghkategoriaj_informoj ? this.aghkategoriaj_informoj[0] : this.aghkategoriaj_informoj;
       this.aghaldona_pago = this.aghkategoriaj_informoj ? this.aghkategoriaj_informoj[1] : this.aghkategoriaj_informoj;
-      this.alighkategorio = (function() {
-        var hodiau, limdato;
-        hodiau = date_to_iso(new Date());
-        result = null;
-        for (limdato in window.limdatoj) {
-          if (!(hodiau > limdato || ((result != null) && limdato > result))) {
-            result = limdato;
-          }
-        }
-        return window.limdatoj[result];
-      })();
+      /*
+              @alighkategorio = do -> # XXX supozante ke hodiaŭ estas la aliĝdato
+                  hodiau = date_to_iso new Date()
+                  result = null
+                  for limdato of window.limdatoj
+                      result = limdato unless hodiau > limdato or
+                          (result? and limdato > result)
+                  window.limdatoj[result]
+      */
+
+      alighid = (_ref5 = $('input[name="antaupagos_ghis"]:checked').val()) != null ? _ref5 : false;
+      this.alighkategorio = alighid ? window.limdatoj[alighid] : false;
       this.tranoktoj = Math.floor((this.ghisdato - this.ekdato) / DAY);
       this.loghkosto = (function() {
-        var base, _ref5;
+        var base, _ref6;
         if (!(_this.loghkategorio !== false && (_this.chu_plentempa != null))) {
           return false;
         }
-        base = (_ref5 = window.loghkategorioj[_this.loghkategorio]) != null ? _ref5[_this.chu_plentempa ? 0 : 1] : void 0;
+        base = (_ref6 = window.loghkategorioj[_this.loghkategorio]) != null ? _ref6[_this.chu_plentempa ? 0 : 1] : void 0;
         if (_this.chu_plentempa) {
           return base;
         } else {
           return base * _this.tranoktoj;
         }
       })();
-      this.programkotizo = !((this.aghkategorio != null) && (this.landokategorio != null) && (this.alighkategorio != null)) ? null : this.aghkategorio === false || this.landokategorio === false || this.alighkategorio === false ? false : (_ref5 = window.programkotizoj[this.aghkategorio]) != null ? (_ref6 = _ref5[this.landokategorio]) != null ? _ref6[this.alighkategorio] : void 0 : void 0;
+      this.programkotizo = !((this.aghkategorio != null) && (this.landokategorio != null) && (this.alighkategorio != null)) ? null : this.aghkategorio === false || this.landokategorio === false || this.alighkategorio === false ? false : (_ref6 = window.programkotizoj[this.aghkategorio]) != null ? (_ref7 = _ref6[this.landokategorio]) != null ? _ref7[this.alighkategorio] : void 0 : void 0;
       manghokosto = 0;
       $('input[name="manghomendoj"]:checked').each(function() {
         return manghokosto += window.manghomendotipoj[$(this).val()];
@@ -136,6 +137,13 @@
       this.chu_invitletero = $('#id_chu_bezonas_invitleteron').is(':checked');
       return this.chu_ekskurso = $('#id_chu_tuttaga_ekskurso').is(':checked');
     };
+    $('#js-active').val(1);
+    $kotizoul = $('<ul></ul>').appendTo('#kotizo');
+    kotizeroj = ['mangho', 'loghado', 'programo', 'ekskurso', 'invitletero', 'uearabato'];
+    for (_i = 0, _len = kotizeroj.length; _i < _len; _i++) {
+      id = kotizeroj[_i];
+      $kotizoul.append("<li>            <div id='" + id + "-signo'></div>            <div id='" + id + "-ero'>                <div id='" + id + "-kosto'></div>                <div id='" + id + "-klarigo'></div>            </div>        </li>");
+    }
     kotizo = function() {
       /*
               Liveri la bazan kotizon de tiu ĉi partoprenanto
@@ -147,10 +155,10 @@
 
       var elektote, info, klarigo, klarigo_text, kosto, programkotizo, whatfor;
       info = new partoprenelektoj;
-      klarigo = [];
       kosto = 0;
       if (info.manghokosto != null) {
-        klarigo.push("" + info.manghokosto + " (manĝokosto)");
+        $('#mangho-klarigo').text('manĝokosto');
+        $('#mangho-kosto').text(info.manghokosto);
         kosto += info.manghokosto;
       } else {
         klarigo.push('(manĝokosto nedefinita)');
@@ -200,9 +208,9 @@
         klarigo += ' (UEA-rabato nedefinita)';
       }
       klarigo += ']';
-      return $('#informoj').text("Kotizo: " + kosto + " " + klarigo);
+      return $('#kotizo').text("Kotizo: " + kosto + " " + klarigo);
     };
-    kotizo_selectors = ['#id_naskighdato', '#id_loghlando', 'input[name="loghkategorio"]', 'input[name="manghomendoj"]', '#id_chu_ueamembro', '#id_ekde', '#id_ghis', '#id_chu_bezonas_invitleteron', '#id_chu_tuttaga_ekskurso'];
+    kotizo_selectors = ['#id_naskighdato', '#id_loghlando', 'input[name="loghkategorio"]', 'input[name="manghomendoj"]', '#id_chu_ueamembro', '#id_ekde', '#id_ghis', '#id_chu_bezonas_invitleteron', '#id_chu_tuttaga_ekskurso', 'input[name="antaupagos_ghis"]'];
     $(kotizo_selectors.join(', ')).change(function() {
       return kotizo();
     });
@@ -307,7 +315,7 @@
     });
     $.each((function() {
       _results = [];
-      for (var _i = _ref = datogamo_start - 1, _ref1 = datogamo_end + 1; _ref <= _ref1 ? _i <= _ref1 : _i >= _ref1; _ref <= _ref1 ? _i++ : _i--){ _results.push(_i); }
+      for (var _j = _ref = datogamo_start - 1, _ref1 = datogamo_end + 1; _ref <= _ref1 ? _j <= _ref1 : _j >= _ref1; _ref <= _ref1 ? _j++ : _j--){ _results.push(_j); }
       return _results;
     }).apply(this), function(i, v) {
       return $("<div class=\"datomarko\" id=\"id_datomarko_" + v + "\">" + v + "</div>").css({
