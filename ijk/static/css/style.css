@@ -20,61 +20,49 @@ time, mark, audio, video {
   border: 0;
   font-size: 100%;
   font: inherit;
-  vertical-align: baseline;
-}
+  vertical-align: baseline; }
 
 article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
-  display: block;
-}
+  display: block; }
 
 body {
-  line-height: 1;
-}
+  line-height: 1; }
 
 ol, ul {
-  list-style: none;
-}
+  list-style: none; }
 
 blockquote, q {
-  quotes: none;
-}
+  quotes: none; }
 
 blockquote:before, blockquote:after,
 q:before, q:after {
   content: '';
-  content: none;
-}
+  content: none; }
 
 table {
   border-collapse: collapse;
-  border-spacing: 0;
-}
+  border-spacing: 0; }
 
 /* end css reset */
 html, body {
-  font: 14px "Lucida Grande", "Lucida Sans", Arial, sans-serif;
-}
+  font: 14px "Lucida Grande", "Lucida Sans", Arial, sans-serif; }
 
 h1 {
   display: block;
   font-size: 200%;
   margin: 1em 0.5em;
-  font-weight: bold;
-}
+  font-weight: bold; }
 
 div, p, #alighi-btn, #form-tabs {
   margin: 1em 0.5em;
-  display: block;
-}
+  display: block; }
 
 strong {
-  font-weight: bold;
-}
+  font-weight: bold; }
 
 textarea {
-  height: 3em;
-}
+  height: 3em; }
 
 /*
 .error {
@@ -83,149 +71,122 @@ textarea {
 */
 .style-of-required {
   color: red;
-  font-weight: bold;
-}
+  font-weight: bold; }
 
 .errorlist {
   list-style: none;
   display: block;
-  margin-left: 50px;
-}
-.errorlist li {
-  display: inline-block;
-  font-weight: bold;
-  color: red;
-}
+  margin-left: 50px; }
+  .errorlist li {
+    display: inline-block;
+    font-weight: bold;
+    color: red; }
 
 .form-nav {
   padding: 0.5em;
-  margin: 0.5em;
-}
+  margin: 0.5em; }
 
 .fieldset-label {
   font-weight: bold;
-  margin-left: 14px;
-}
+  margin-left: 14px; }
 
 #enhavo {
   width: 926px;
-  margin: auto;
-}
+  margin: auto; }
 
 .klarigo {
-  white-space: nowrap;
-}
+  white-space: nowrap; }
 
 .tab {
   margin: 0;
-  padding: 0;
-}
-.tab .info {
-  margin-left: 50px;
-}
-.tab ul {
-  margin-left: 0;
-  padding-left: 0;
-}
-.tab > ul {
-  margin: 0;
-  padding: 0;
-}
-.tab > ul > li > label {
-  width: 300px;
-  margin-left: 14px;
-}
-.tab > ul .required > label {
-  font-weight: bold;
-  margin-left: 0;
-  width: 314px;
-}
-.tab > ul .required > label:before {
-  content: "* ";
-  color: red;
-  font-weight: bold;
-  display: inline-block;
-  width: 14px;
-}
-.tab .fieldset > ul {
-  margin-left: 28px;
-}
-.tab .fieldset > ul > li > label {
-  width: 286px;
-  white-space: normal;
-}
-.tab > ul, .tab .fieldset > ul {
-  list-style: none;
-}
-.tab > ul label + input[type="checkbox"], .tab .fieldset > ul label + input[type="checkbox"] {
-  width: 14px;
-}
-.tab > ul label + ul, .tab .fieldset > ul label + ul {
-  white-space: nowrap;
-}
-.tab > ul .infolist, .tab .fieldset > ul .infolist {
-  white-space: normal;
-}
-.tab > ul > li, .tab .fieldset > ul > li {
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-  display: block;
-}
-.tab > ul > li > *, .tab .fieldset > ul > li > * {
-  vertical-align: middle;
-}
-.tab > ul > li > label, .tab .fieldset > ul > li > label {
-  display: inline-block;
-}
-.tab label + ul,
-.tab label + input[type="text"],
-.tab label + select,
-.tab label + .vertical-display {
-  display: inline-block;
-  width: 200px;
-}
-.tab label + * {
-  display: inline-block;
-}
-.tab label + ul {
-  list-style: none;
-  display: inline-block;
-  margin: 0;
-  padding: 0;
-}
-.tab label + ul li {
-  display: inline;
-  margin: 0 1em 0 0;
-}
-.tab .vertical-display li {
-  display: block;
-  margin: 0 0 0 1em;
-  text-indent: -1em;
-}
-.tab .vertical-display ul {
-  display: block;
-}
-.tab .vertical-display input[type="text"] {
-  display: block;
-  width: 150px;
-  margin: auto 0;
-}
-.tab .helptext, .tab .helptext-below {
-  display: inline-block;
-  width: 300px;
-  color: #707070;
-  font-size: 90%;
-  margin: 0 1em;
-  padding: 0;
-}
-.tab .helptext li, .tab .helptext-below li {
-  margin-left: 14px;
-}
-.tab .helptext-below {
-  width: auto;
-  display: block;
-  margin: 0 0 0.5em 319.6px;
-}
-.tab .helptext-below p {
-  margin: 0.5em 0;
-}
+  padding: 0; }
+  .tab .info {
+    margin-left: 50px; }
+  .tab ul {
+    margin-left: 0;
+    padding-left: 0; }
+  .tab > ul {
+    margin: 0;
+    padding: 0; }
+    .tab > ul > li > label {
+      width: 300px;
+      margin-left: 14px; }
+    .tab > ul .required > label {
+      font-weight: bold;
+      margin-left: 0;
+      width: 314px; }
+      .tab > ul .required > label:before {
+        content: "* ";
+        color: red;
+        font-weight: bold;
+        display: inline-block;
+        width: 14px; }
+  .tab .fieldset > ul {
+    margin-left: 28px; }
+    .tab .fieldset > ul > li > label {
+      width: 286px;
+      white-space: normal; }
+  .tab > ul, .tab .fieldset > ul {
+    list-style: none; }
+    .tab > ul label + input[type="checkbox"], .tab .fieldset > ul label + input[type="checkbox"] {
+      width: 14px; }
+    .tab > ul label + ul, .tab .fieldset > ul label + ul {
+      white-space: nowrap; }
+    .tab > ul .infolist, .tab .fieldset > ul .infolist {
+      white-space: normal; }
+    .tab > ul > li, .tab .fieldset > ul > li {
+      margin-top: 0.5em;
+      margin-bottom: 0.5em;
+      display: block; }
+      .tab > ul > li > *, .tab .fieldset > ul > li > * {
+        vertical-align: middle; }
+      .tab > ul > li > label, .tab .fieldset > ul > li > label {
+        display: inline-block; }
+  .tab label + ul,
+  .tab label + input[type="text"],
+  .tab label + select,
+  .tab label + .vertical-display {
+    display: inline-block;
+    width: 200px; }
+  .tab label + * {
+    display: inline-block; }
+  .tab label + ul {
+    list-style: none;
+    display: inline-block;
+    margin: 0;
+    padding: 0; }
+    .tab label + ul li {
+      display: inline;
+      margin: 0 1em 0 0; }
+  .tab .vertical-display li {
+    display: block;
+    margin: 0 0 0 1em;
+    text-indent: -1em; }
+  .tab .vertical-display ul {
+    display: block; }
+  .tab .vertical-display input[type="text"] {
+    display: block;
+    width: 150px;
+    margin: auto 0; }
+  .tab .helptext, .tab .helptext-below {
+    display: inline-block;
+    width: 300px;
+    color: #707070;
+    font-size: 90%;
+    margin: 0 1em;
+    padding: 0; }
+    .tab .helptext li, .tab .helptext-below li {
+      margin-left: 14px; }
+  .tab .helptext-below {
+    width: auto;
+    display: block;
+    margin: 0 0 0.5em 319.6px; }
+    .tab .helptext-below p {
+      margin: 0.5em 0; }
+
+#kotizo ul {
+  list-style: none; }
+  #kotizo ul li {
+    display: inline-block; }
+    #kotizo ul li div {
+      display: inline-block; }

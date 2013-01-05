@@ -2,7 +2,7 @@
 (function() {
 
   $(function() {
-    var $dateslider, $dateslider_container, $datesliderli, $gvidilo, $kotizoul, $tabs, DAY, NUMTABS, YEAR, c, curend, curstart, date_to_iso, datogamo_end, datogamo_start, id, iso_to_date, kotizeroj, kotizo, kotizo_selectors, liveri_aghon_lau_naskightago, nav_callback, numnotches, partoprenelektoj, tabwidth, tabwidths, widget_width, _i, _j, _len, _ref, _ref1, _results;
+    var $dateslider, $dateslider_container, $datesliderli, $gvidilo, $kotizoul, $tabs, DAY, NUMTABS, YEAR, c, curend, curstart, date_to_iso, datogamo_end, datogamo_start, id, iso_to_date, kotizeroj, kotizo, kotizo_selectors, liveri_aghon_lau_naskightago, nav_callback, numnotches, partoprenelektoj, selector, signo, tabwidth, tabwidths, widget_width, _i, _j, _k, _len, _len1, _ref, _ref1, _results;
     NUMTABS = 6;
     DAY = 1000 * 60 * 60 * 24;
     YEAR = DAY * 365.25;
@@ -139,11 +139,29 @@
     };
     $('#js-active').val(1);
     $kotizoul = $('<ul></ul>').appendTo('#kotizo');
-    kotizeroj = ['mangho', 'loghado', 'programo', 'ekskurso', 'invitletero', 'uearabato'];
+    kotizeroj = ['mangho', 'loghado', 'programo', 'ekskurso', 'invitletero', 'uearabato', 'sumo'];
     for (_i = 0, _len = kotizeroj.length; _i < _len; _i++) {
       id = kotizeroj[_i];
-      $kotizoul.append("<li>            <div id='" + id + "-signo'></div>            <div id='" + id + "-ero'>                <div id='" + id + "-kosto'></div>                <div id='" + id + "-klarigo'></div>            </div>        </li>");
+      signo = (function() {
+        switch (id) {
+          case 'mangho':
+            return '';
+          case 'uearabato':
+            return '-';
+          case 'sumo':
+            return '=';
+          default:
+            return '+';
+        }
+      })();
+      $kotizoul.append("<li id='" + id + "-li'>            <div class='kotizo-signo' id='" + id + "-signo'>" + signo + "</div>            <div class='kotizo-ero' id='" + id + "-ero'>                <div class='kotizo-kosto' id='" + id + "-kosto'></div>                <div class='kotizo-klarigo' id='" + id + "-klarigo'></div>            </div>        </li>");
     }
+    $('#mangho-klarigo').text('manĝado');
+    $('#programo-klarigo').text('programo');
+    $('#ekskurso-klarigo').text('ekskurso');
+    $('#invitletero-klarigo').text('invitletero');
+    $('#uearabato-klarigo').text('UDA-rabato');
+    $('#sumo-klarigo').text('sumo');
     kotizo = function() {
       /*
               Liveri la bazan kotizon de tiu ĉi partoprenanto
@@ -153,24 +171,28 @@
                   [rabato pro UEA-membreco] + [program-kotizo]
       */
 
-      var elektote, info, klarigo, klarigo_text, kosto, programkotizo, whatfor;
+      var elektote, elektu, info, klarigo, klarigo_text, kosto, nedifinita, programkotizo;
       info = new partoprenelektoj;
       kosto = 0;
+      nedifinita = '(nedifinita)';
+      elektu = '(elektu)';
       if (info.manghokosto != null) {
-        $('#mangho-klarigo').text('manĝokosto');
         $('#mangho-kosto').text(info.manghokosto);
         kosto += info.manghokosto;
       } else {
-        klarigo.push('(manĝokosto nedefinita)');
+        $('#mangho-kosto').text(nedifinita);
       }
       if (info.loghkosto === false) {
-        klarigo.push('(elektu loĝkategorion)');
+        $('#loghado-kosto').text(elektu);
+        $('#loghado-klarigo').text('loĝado');
       } else if (info.loghkosto != null) {
         kosto += info.loghkosto;
-        klarigo_text = info.chu_plentempa ? 'plentempa loĝkosto' : "loĝkosto por " + info.tranoktoj + " noktoj";
-        klarigo.push("" + info.loghkosto + " (" + klarigo_text + ")");
+        klarigo_text = info.chu_plentempa ? 'plentempa loĝado' : "loĝado por " + info.tranoktoj + " noktoj";
+        $('#loghado-kosto').text(info.loghkosto);
+        $('#loghado-klarigo').text(klarigo_text);
       } else {
-        klarigo.push('(loĝkosto nedefinita)');
+        $('#loghado-kosto').text(nedifinita);
+        $('#loghado-klarigo').text('loĝado');
       }
       if (info.programkotizo === false) {
         elektote = [];
@@ -180,40 +202,51 @@
         if (info.landokategorio === false) {
           elektote.push('loĝlandon');
         }
-        klarigo.push("(elektu " + (elektote.join(' kaj ')) + "            por kalkuli la programkotizon)");
+        $('#programo-kosto').text("(elektu " + (elektote.join(' kaj ')) + ")");
+        $('#programo-klarigo').text('programo');
       } else if (info.programkotizo != null) {
-        whatfor = 'programkotizo';
-        programkotizo = info.chu_plentempa ? info.programkotizo : (whatfor += " por " + (info.tranoktoj + 1) + " tagoj", info.programkotizo / 5 * (info.tranoktoj + 1));
-        klarigo.push("" + programkotizo + " (" + whatfor + ")");
+        klarigo = 'programo';
+        programkotizo = info.chu_plentempa ? info.programkotizo : (klarigo += " por " + (info.tranoktoj + 1) + " tagoj", info.programkotizo / 5 * (info.tranoktoj + 1));
+        $('#programo-klarigo').text(klarigo);
+        $('#programo-kosto').text(programkotizo);
         kosto += programkotizo;
       } else {
-        klarigo.push('(programkotizo nedefinita)');
+        $('#programo-klarigo').text('programo');
+        $('#programo-kosto').text(nedifinita);
       }
       if (info.chu_ekskurso) {
+        $('#ekskurso-li').show();
         kosto += window.krompagtipoj.ekskurso;
-        klarigo.push("" + window.krompagtipoj.ekskurso + " (tut-taga ekskurso)");
+        $('#ekskurso-kosto').text(window.krompagtipoj.ekskurso);
+      } else {
+        $('#ekskurso-li').hide();
       }
       if (info.chu_invitletero) {
+        $('#invitletero-li').show();
         kosto += window.krompagtipoj.invitletero;
-        klarigo.push("" + window.krompagtipoj.invitletero + " (invitletero)");
+        $('#invitletero-kosto')(window.krompagtipoj.invitletero);
+      } else {
+        $('#invitletero-li').hide();
       }
       if (info.uearabato != null) {
-        kosto -= info.uearabato;
+        if (info.uearabato > 0) {
+          kosto -= info.uearabato;
+          $('#uearabato-li').show();
+          $('#uearabato-kosto').text(info.uearabato);
+        } else {
+          $('#uearabato-li').hide();
+        }
+      } else {
+        $('#uearabato-li').show();
+        $('#uearabato-kosto').text(nedifinita);
       }
-      klarigo = '[konsistas el ' + (klarigo.join(' + '));
-      if (info.uearabato > 0) {
-        klarigo += " - " + info.uearabato + " (UEA-rabato)";
-      }
-      if (info.uearabato == null) {
-        klarigo += ' (UEA-rabato nedefinita)';
-      }
-      klarigo += ']';
-      return $('#kotizo').text("Kotizo: " + kosto + " " + klarigo);
+      return $('#sumo-kosto').text(kosto);
     };
     kotizo_selectors = ['#id_naskighdato', '#id_loghlando', 'input[name="loghkategorio"]', 'input[name="manghomendoj"]', '#id_chu_ueamembro', '#id_ekde', '#id_ghis', '#id_chu_bezonas_invitleteron', '#id_chu_tuttaga_ekskurso', 'input[name="antaupagos_ghis"]'];
-    $(kotizo_selectors.join(', ')).change(function() {
-      return kotizo();
-    });
+    for (_j = 0, _len1 = kotizo_selectors.length; _j < _len1; _j++) {
+      selector = kotizo_selectors[_j];
+      $(selector).change(kotizo);
+    }
     /* aspektigaj detaloj
     */
 
@@ -315,7 +348,7 @@
     });
     $.each((function() {
       _results = [];
-      for (var _j = _ref = datogamo_start - 1, _ref1 = datogamo_end + 1; _ref <= _ref1 ? _j <= _ref1 : _j >= _ref1; _ref <= _ref1 ? _j++ : _j--){ _results.push(_j); }
+      for (var _k = _ref = datogamo_start - 1, _ref1 = datogamo_end + 1; _ref <= _ref1 ? _k <= _ref1 : _k >= _ref1; _ref <= _ref1 ? _k++ : _k--){ _results.push(_k); }
       return _results;
     }).apply(this), function(i, v) {
       return $("<div class=\"datomarko\" id=\"id_datomarko_" + v + "\">" + v + "</div>").css({

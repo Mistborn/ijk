@@ -86,6 +86,7 @@ $ ->
             @aghkategoriaj_informoj[0]
         else @aghkategoriaj_informoj
         @aghaldona_pago = if @aghkategoriaj_informoj
+            # FIXME: need to take this into account in the calculation
             @aghkategoriaj_informoj[1]
         else @aghkategoriaj_informoj
         ###
@@ -125,15 +126,27 @@ $ ->
     $('#js-active').val(1)
     $kotizoul = $('<ul></ul>').appendTo '#kotizo'
     kotizeroj = ['mangho', 'loghado', 'programo'
-        'ekskurso', 'invitletero', 'uearabato']
+        'ekskurso', 'invitletero', 'uearabato', 'sumo']
     for id in kotizeroj
-        $kotizoul.append "<li>
-            <div id='#{id}-signo'></div>
-            <div id='#{id}-ero'>
-                <div id='#{id}-kosto'></div>
-                <div id='#{id}-klarigo'></div>
+        signo = switch id
+                when 'mangho' then ''
+                when 'uearabato' then '-'
+                when 'sumo' then '='
+                else '+'
+        $kotizoul.append "<li id='#{id}-li'>
+            <div class='kotizo-signo' id='#{id}-signo'>#{signo}</div>
+            <div class='kotizo-ero' id='#{id}-ero'>
+                <div class='kotizo-kosto' id='#{id}-kosto'></div>
+                <div class='kotizo-klarigo' id='#{id}-klarigo'></div>
             </div>
         </li>"
+    $('#mangho-klarigo').text 'manĝado'
+    # $('#loghado-klarigo').text 'loghado'
+    $('#programo-klarigo').text 'programo'
+    $('#ekskurso-klarigo').text 'ekskurso'
+    $('#invitletero-klarigo').text 'invitletero'
+    $('#uearabato-klarigo').text 'UDA-rabato'
+    $('#sumo-klarigo').text 'sumo'
     # dinama kalkulo de la kotizo
     kotizo = ->
         ###
@@ -148,65 +161,91 @@ $ ->
 
         # klarigo = []
         kosto = 0
-
+        nedifinita = '(nedifinita)'
+        elektu = '(elektu)'
+        
         # manghokosto ne povas esti off
         if info.manghokosto?
             # klarigo.push "#{info.manghokosto} (manĝokosto)"
-            $('#mangho-klarigo').text('manĝokosto')
-            $('#mangho-kosto').text(info.manghokosto)
+            # $('#mangho-klarigo').text('manĝokosto')
+            $('#mangho-kosto').text info.manghokosto
             kosto += info.manghokosto
-        else klarigo.push '(manĝokosto nedefinita)'
+        else
+            $('#mangho-kosto').text nedifinita
 
         if info.loghkosto is off
-            klarigo.push '(elektu loĝkategorion)'
+            $('#loghado-kosto').text elektu
+            $('#loghado-klarigo').text 'loĝado'
         else if info.loghkosto?
             kosto += info.loghkosto
-            klarigo_text = if info.chu_plentempa then 'plentempa loĝkosto'
-            else "loĝkosto por #{info.tranoktoj} noktoj"
-            klarigo.push "#{info.loghkosto} (#{klarigo_text})"
+            klarigo_text = if info.chu_plentempa then 'plentempa loĝado'
+            else "loĝado por #{info.tranoktoj} noktoj"
+            $('#loghado-kosto').text info.loghkosto
+            $('#loghado-klarigo').text klarigo_text
         else
-            klarigo.push '(loĝkosto nedefinita)'
+            $('#loghado-kosto').text nedifinita
+            $('#loghado-klarigo').text 'loĝado'
 
         if info.programkotizo is off
             elektote = []
             elektote.push 'naskiĝdaton' if info.naskighdato is off
             elektote.push 'loĝlandon' if info.landokategorio is off
-            klarigo.push "(elektu #{elektote.join ' kaj '}
-            por kalkuli la programkotizon)"
+            $('#programo-kosto').text "(elektu #{elektote.join ' kaj '})"
+            $('#programo-klarigo').text 'programo'
         else if info.programkotizo?
-            whatfor = 'programkotizo'
+            klarigo = 'programo'
             programkotizo = if info.chu_plentempa
                 info.programkotizo
             else
-                whatfor += " por #{info.tranoktoj+1} tagoj"
+                klarigo += " por #{info.tranoktoj+1} tagoj"
                 info.programkotizo / 5 * (info.tranoktoj + 1)
-            klarigo.push "#{programkotizo} (#{whatfor})"
+            $('#programo-klarigo').text klarigo
+            $('#programo-kosto').text programkotizo
             kosto += programkotizo
         else
-            klarigo.push '(programkotizo nedefinita)'
+            $('#programo-klarigo').text 'programo'
+            $('#programo-kosto').text nedifinita
 
         if info.chu_ekskurso
+            $('#ekskurso-li').show()
             kosto += window.krompagtipoj.ekskurso
-            klarigo.push "#{window.krompagtipoj.ekskurso} (tut-taga ekskurso)"
-        if info.chu_invitletero
-            kosto += window.krompagtipoj.invitletero
-            klarigo.push "#{window.krompagtipoj.invitletero} (invitletero)"
-            
-        kosto -= info.uearabato if info.uearabato?
+            $('#ekskurso-kosto').text window.krompagtipoj.ekskurso
+        else
+            $('#ekskurso-li').hide()
         
-        klarigo = '[konsistas el ' + (klarigo.join ' + ')
-        klarigo += " - #{info.uearabato} (UEA-rabato)" if info.uearabato > 0
-        klarigo += ' (UEA-rabato nedefinita)' unless info.uearabato?
-        klarigo += ']'
-        $('#kotizo').text("Kotizo: #{kosto} #{klarigo}")
+        if info.chu_invitletero
+            $('#invitletero-li').show()
+            kosto += window.krompagtipoj.invitletero
+            $('#invitletero-kosto') window.krompagtipoj.invitletero
+        else
+            $('#invitletero-li').hide()
+
+        if info.uearabato?
+            if info.uearabato > 0
+                kosto -= info.uearabato
+                $('#uearabato-li').show()
+                $('#uearabato-kosto').text info.uearabato
+            else
+                $('#uearabato-li').hide()
+        else
+            $('#uearabato-li').show()
+            $('#uearabato-kosto').text nedifinita
+
+        $('#sumo-kosto').text kosto
+        
+        #klarigo = '[konsistas el ' + (klarigo.join ' + ')
+        #klarigo += " - #{info.uearabato} (UEA-rabato)" if info.uearabato > 0
+        #klarigo += ' (UEA-rabato nedefinita)' unless info.uearabato?
+        #klarigo += ']'
+        #$('#kotizo').text("Kotizo: #{kosto} #{klarigo}")
 
     kotizo_selectors = ['#id_naskighdato', '#id_loghlando'
         'input[name="loghkategorio"]', 'input[name="manghomendoj"]'
         '#id_chu_ueamembro', '#id_ekde', '#id_ghis',
         '#id_chu_bezonas_invitleteron', '#id_chu_tuttaga_ekskurso'
         'input[name="antaupagos_ghis"]']
-    $(kotizo_selectors.join ', ').change ->
-        kotizo()
+    for selector in kotizo_selectors
+        $(selector).change kotizo
 
     ### aspektigaj detaloj ###
     # montru la landokategorion malantaŭ la falmenuo post elekto de la lando

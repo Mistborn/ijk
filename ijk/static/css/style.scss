@@ -244,3 +244,14 @@ textarea {
         }
     }
 }
+
+// Area to display the calculated kotizo
+#kotizo ul {
+    list-style: none;
+    li {
+	display: inline-block;
+	div {
+	    display: inline-block;
+	}
+    }
+}
