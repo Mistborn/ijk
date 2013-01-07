@@ -1,4 +1,4 @@
-$ ->
+alighi_form = ->
     NUMTABS = 6   
     DAY = 1000 * 60 * 60 * 24
     YEAR = DAY * 365.25
@@ -379,4 +379,5 @@ $ ->
             color: 'blue'
             textAlign: 'center'
             
-
+$ ->
+    alighi_form()
