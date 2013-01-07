@@ -77,7 +77,7 @@
       return "" + year + "-" + month + "-" + day;
     };
     partoprenelektoj = function() {
-      var alighid, limagho, manghokosto, result, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7,
+      var limagho, manghokosto, result, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7,
         _this = this;
       this.ekdato = iso_to_date((_ref = $('#id_ekde').val()) != null ? _ref : false);
       this.ghisdato = iso_to_date((_ref1 = $('#id_ghis').val()) != null ? _ref1 : false);
@@ -112,8 +112,8 @@
                   window.limdatoj[result]
       */
 
-      alighid = (_ref5 = $('input[name="antaupagos_ghis"]:checked').val()) != null ? _ref5 : false;
-      this.alighkategorio = alighid ? window.limdatoj[alighid] : false;
+      this.alighkategorio = (_ref5 = $('input[name="antaupagos_ghis"]:checked').val()) != null ? _ref5 : false;
+      this.alighlimdato = this.alighkategorio ? window.limdatoj[this.alighkategorio] : false;
       this.tranoktoj = Math.floor((this.ghisdato - this.ekdato) / DAY);
       this.loghkosto = (function() {
         var base, _ref6;
@@ -138,7 +138,9 @@
       return this.chu_ekskurso = $('#id_chu_tuttaga_ekskurso').is(':checked');
     };
     $('#js-active').val(1);
-    $kotizoul = $('<ul></ul>').appendTo('#kotizo');
+    $('.fakturo-placeholder').addClass('fakturo');
+    $('.fakturo').append('<span class="label">Kotizo: </span>');
+    $kotizoul = $('<ul></ul>').appendTo('.fakturo');
     kotizeroj = ['mangho', 'loghado', 'programo', 'ekskurso', 'invitletero', 'uearabato', 'sumo'];
     for (_i = 0, _len = kotizeroj.length; _i < _len; _i++) {
       id = kotizeroj[_i];
@@ -154,14 +156,14 @@
             return '+';
         }
       })();
-      $kotizoul.append("<li id='" + id + "-li'>            <div class='kotizo-signo' id='" + id + "-signo'>" + signo + "</div>            <div class='kotizo-ero' id='" + id + "-ero'>                <div class='kotizo-kosto' id='" + id + "-kosto'></div>                <div class='kotizo-klarigo' id='" + id + "-klarigo'></div>            </div>        </li>");
+      $kotizoul.append("<li class='" + id + "-li'>            <div class='kotizo-signo " + id + "-signo'>" + signo + "</div>            <div class='kotizo-ero " + id + "-ero'>                <div class='kotizo-kosto " + id + "-kosto'></div>                <div class='kotizo-klarigo " + id + "-klarigo'></div>            </div>        </li>");
     }
-    $('#mangho-klarigo').text('manĝado');
-    $('#programo-klarigo').text('programo');
-    $('#ekskurso-klarigo').text('ekskurso');
-    $('#invitletero-klarigo').text('invitletero');
-    $('#uearabato-klarigo').text('UDA-rabato');
-    $('#sumo-klarigo').text('sumo');
+    $('.mangho-klarigo').text('manĝado');
+    $('.programo-klarigo').text('programo');
+    $('.ekskurso-klarigo').text('ekskurso');
+    $('.invitletero-klarigo').text('invitletero');
+    $('.uearabato-klarigo').text('UEA-rabato');
+    $('.sumo-klarigo').text('sumo');
     kotizo = function() {
       /*
               Liveri la bazan kotizon de tiu ĉi partoprenanto
@@ -177,22 +179,22 @@
       nedifinita = '(nedifinita)';
       elektu = '(elektu)';
       if (info.manghokosto != null) {
-        $('#mangho-kosto').text(info.manghokosto);
+        $('.mangho-kosto').text(info.manghokosto);
         kosto += info.manghokosto;
       } else {
-        $('#mangho-kosto').text(nedifinita);
+        $('.mangho-kosto').text(nedifinita);
       }
       if (info.loghkosto === false) {
-        $('#loghado-kosto').text(elektu);
-        $('#loghado-klarigo').text('loĝado');
+        $('.loghado-kosto').text(elektu);
+        $('.loghado-klarigo').text('loĝado');
       } else if (info.loghkosto != null) {
         kosto += info.loghkosto;
         klarigo_text = info.chu_plentempa ? 'plentempa loĝado' : "loĝado por " + info.tranoktoj + " noktoj";
-        $('#loghado-kosto').text(info.loghkosto);
-        $('#loghado-klarigo').text(klarigo_text);
+        $('.loghado-kosto').text(info.loghkosto);
+        $('.loghado-klarigo').text(klarigo_text);
       } else {
-        $('#loghado-kosto').text(nedifinita);
-        $('#loghado-klarigo').text('loĝado');
+        $('.loghado-kosto').text(nedifinita);
+        $('.loghado-klarigo').text('loĝado');
       }
       if (info.programkotizo === false) {
         elektote = [];
@@ -202,45 +204,48 @@
         if (info.landokategorio === false) {
           elektote.push('loĝlandon');
         }
-        $('#programo-kosto').text("(elektu " + (elektote.join(' kaj ')) + ")");
-        $('#programo-klarigo').text('programo');
+        if (info.alighkategorio === false) {
+          elektote.push('antaŭpagan daton');
+        }
+        $('.programo-kosto').text("(elektu " + (elektote.join(' kaj ')) + ")");
+        $('.programo-klarigo').text('programo');
       } else if (info.programkotizo != null) {
         klarigo = 'programo';
         programkotizo = info.chu_plentempa ? info.programkotizo : (klarigo += " por " + (info.tranoktoj + 1) + " tagoj", info.programkotizo / 5 * (info.tranoktoj + 1));
-        $('#programo-klarigo').text(klarigo);
-        $('#programo-kosto').text(programkotizo);
+        $('.programo-klarigo').text(klarigo);
+        $('.programo-kosto').text(programkotizo);
         kosto += programkotizo;
       } else {
-        $('#programo-klarigo').text('programo');
-        $('#programo-kosto').text(nedifinita);
+        $('.programo-klarigo').text('programo');
+        $('.programo-kosto').text(nedifinita);
       }
       if (info.chu_ekskurso) {
-        $('#ekskurso-li').show();
+        $('.ekskurso-li').show();
         kosto += window.krompagtipoj.ekskurso;
-        $('#ekskurso-kosto').text(window.krompagtipoj.ekskurso);
+        $('.ekskurso-kosto').text(window.krompagtipoj.ekskurso);
       } else {
-        $('#ekskurso-li').hide();
+        $('.ekskurso-li').hide();
       }
       if (info.chu_invitletero) {
-        $('#invitletero-li').show();
+        $('.invitletero-li').show();
         kosto += window.krompagtipoj.invitletero;
-        $('#invitletero-kosto')(window.krompagtipoj.invitletero);
+        $('.invitletero-kosto').text(window.krompagtipoj.invitletero);
       } else {
-        $('#invitletero-li').hide();
+        $('.invitletero-li').hide();
       }
       if (info.uearabato != null) {
         if (info.uearabato > 0) {
           kosto -= info.uearabato;
-          $('#uearabato-li').show();
-          $('#uearabato-kosto').text(info.uearabato);
+          $('.uearabato-li').show();
+          $('.uearabato-kosto').text(info.uearabato);
         } else {
-          $('#uearabato-li').hide();
+          $('.uearabato-li').hide();
         }
       } else {
-        $('#uearabato-li').show();
-        $('#uearabato-kosto').text(nedifinita);
+        $('.uearabato-li').show();
+        $('.uearabato-kosto').text(nedifinita);
       }
-      return $('#sumo-kosto').text(kosto);
+      return $('.sumo-kosto').text(kosto);
     };
     kotizo_selectors = ['#id_naskighdato', '#id_loghlando', 'input[name="loghkategorio"]', 'input[name="manghomendoj"]', '#id_chu_ueamembro', '#id_ekde', '#id_ghis', '#id_chu_bezonas_invitleteron', '#id_chu_tuttaga_ekskurso', 'input[name="antaupagos_ghis"]'];
     for (_j = 0, _len1 = kotizo_selectors.length; _j < _len1; _j++) {

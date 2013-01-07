@@ -98,8 +98,11 @@ $ ->
                     (result? and limdato > result)
             window.limdatoj[result]
         ###
-        alighid = $('input[name="antaupagos_ghis"]:checked').val() ? off
-        @alighkategorio = if alighid then window.limdatoj[alighid] else off
+        @alighkategorio = $('input[name="antaupagos_ghis"]:checked').val() ? off
+        @alighlimdato = if @alighkategorio
+            window.limdatoj[@alighkategorio] 
+        else 
+            off
         @tranoktoj = Math.floor((@ghisdato - @ekdato) / DAY)
         @loghkosto = do =>
             return off unless @loghkategorio isnt off and @chu_plentempa?
@@ -124,7 +127,9 @@ $ ->
 
     # konstruo de la strukturo de la kotizo-"fakturo"
     $('#js-active').val(1)
-    $kotizoul = $('<ul></ul>').appendTo '#kotizo'
+    $('.fakturo-placeholder').addClass 'fakturo'
+    $('.fakturo').append '<span class="label">Kotizo: </span>'
+    $kotizoul = $('<ul></ul>').appendTo '.fakturo'
     kotizeroj = ['mangho', 'loghado', 'programo'
         'ekskurso', 'invitletero', 'uearabato', 'sumo']
     for id in kotizeroj
@@ -133,20 +138,20 @@ $ ->
                 when 'uearabato' then '-'
                 when 'sumo' then '='
                 else '+'
-        $kotizoul.append "<li id='#{id}-li'>
-            <div class='kotizo-signo' id='#{id}-signo'>#{signo}</div>
-            <div class='kotizo-ero' id='#{id}-ero'>
-                <div class='kotizo-kosto' id='#{id}-kosto'></div>
-                <div class='kotizo-klarigo' id='#{id}-klarigo'></div>
+        $kotizoul.append "<li class='#{id}-li'>
+            <div class='kotizo-signo #{id}-signo'>#{signo}</div>
+            <div class='kotizo-ero #{id}-ero'>
+                <div class='kotizo-kosto #{id}-kosto'></div>
+                <div class='kotizo-klarigo #{id}-klarigo'></div>
             </div>
         </li>"
-    $('#mangho-klarigo').text 'manĝado'
+    $('.mangho-klarigo').text 'manĝado'
     # $('#loghado-klarigo').text 'loghado'
-    $('#programo-klarigo').text 'programo'
-    $('#ekskurso-klarigo').text 'ekskurso'
-    $('#invitletero-klarigo').text 'invitletero'
-    $('#uearabato-klarigo').text 'UDA-rabato'
-    $('#sumo-klarigo').text 'sumo'
+    $('.programo-klarigo').text 'programo'
+    $('.ekskurso-klarigo').text 'ekskurso'
+    $('.invitletero-klarigo').text 'invitletero'
+    $('.uearabato-klarigo').text 'UEA-rabato'
+    $('.sumo-klarigo').text 'sumo'
     # dinama kalkulo de la kotizo
     kotizo = ->
         ###
@@ -168,30 +173,31 @@ $ ->
         if info.manghokosto?
             # klarigo.push "#{info.manghokosto} (manĝokosto)"
             # $('#mangho-klarigo').text('manĝokosto')
-            $('#mangho-kosto').text info.manghokosto
+            $('.mangho-kosto').text info.manghokosto
             kosto += info.manghokosto
         else
-            $('#mangho-kosto').text nedifinita
+            $('.mangho-kosto').text nedifinita
 
         if info.loghkosto is off
-            $('#loghado-kosto').text elektu
-            $('#loghado-klarigo').text 'loĝado'
+            $('.loghado-kosto').text elektu
+            $('.loghado-klarigo').text 'loĝado'
         else if info.loghkosto?
             kosto += info.loghkosto
             klarigo_text = if info.chu_plentempa then 'plentempa loĝado'
             else "loĝado por #{info.tranoktoj} noktoj"
-            $('#loghado-kosto').text info.loghkosto
-            $('#loghado-klarigo').text klarigo_text
+            $('.loghado-kosto').text info.loghkosto
+            $('.loghado-klarigo').text klarigo_text
         else
-            $('#loghado-kosto').text nedifinita
-            $('#loghado-klarigo').text 'loĝado'
+            $('.loghado-kosto').text nedifinita
+            $('.loghado-klarigo').text 'loĝado'
 
         if info.programkotizo is off
             elektote = []
             elektote.push 'naskiĝdaton' if info.naskighdato is off
             elektote.push 'loĝlandon' if info.landokategorio is off
-            $('#programo-kosto').text "(elektu #{elektote.join ' kaj '})"
-            $('#programo-klarigo').text 'programo'
+            elektote.push 'antaŭpagan daton' if info.alighkategorio is off
+            $('.programo-kosto').text "(elektu #{elektote.join ' kaj '})"
+            $('.programo-klarigo').text 'programo'
         else if info.programkotizo?
             klarigo = 'programo'
             programkotizo = if info.chu_plentempa
@@ -199,39 +205,39 @@ $ ->
             else
                 klarigo += " por #{info.tranoktoj+1} tagoj"
                 info.programkotizo / 5 * (info.tranoktoj + 1)
-            $('#programo-klarigo').text klarigo
-            $('#programo-kosto').text programkotizo
+            $('.programo-klarigo').text klarigo
+            $('.programo-kosto').text programkotizo
             kosto += programkotizo
         else
-            $('#programo-klarigo').text 'programo'
-            $('#programo-kosto').text nedifinita
+            $('.programo-klarigo').text 'programo'
+            $('.programo-kosto').text nedifinita
 
         if info.chu_ekskurso
-            $('#ekskurso-li').show()
+            $('.ekskurso-li').show()
             kosto += window.krompagtipoj.ekskurso
-            $('#ekskurso-kosto').text window.krompagtipoj.ekskurso
+            $('.ekskurso-kosto').text window.krompagtipoj.ekskurso
         else
-            $('#ekskurso-li').hide()
+            $('.ekskurso-li').hide()
         
         if info.chu_invitletero
-            $('#invitletero-li').show()
+            $('.invitletero-li').show()
             kosto += window.krompagtipoj.invitletero
-            $('#invitletero-kosto') window.krompagtipoj.invitletero
+            $('.invitletero-kosto').text window.krompagtipoj.invitletero
         else
-            $('#invitletero-li').hide()
+            $('.invitletero-li').hide()
 
         if info.uearabato?
             if info.uearabato > 0
                 kosto -= info.uearabato
-                $('#uearabato-li').show()
-                $('#uearabato-kosto').text info.uearabato
+                $('.uearabato-li').show()
+                $('.uearabato-kosto').text info.uearabato
             else
-                $('#uearabato-li').hide()
+                $('.uearabato-li').hide()
         else
-            $('#uearabato-li').show()
-            $('#uearabato-kosto').text nedifinita
+            $('.uearabato-li').show()
+            $('.uearabato-kosto').text nedifinita
 
-        $('#sumo-kosto').text kosto
+        $('.sumo-kosto').text kosto
         
         #klarigo = '[konsistas el ' + (klarigo.join ' + ')
         #klarigo += " - #{info.uearabato} (UEA-rabato)" if info.uearabato > 0
@@ -297,7 +303,6 @@ $ ->
                     show:
                         effect: 'slide'
                         direction: show_dir
-                # alert "we are going to move to tab #{ui.newTab.index()} from #{ui.oldTab.index()}"
     nav_callback = (offset) -> ->
         active = $tabs.tabs 'option', 'active'
         newtab = active+offset
@@ -313,8 +318,10 @@ $ ->
     datogamo_start = window.KOMENCA_DATO.getDate()
     datogamo_end = window.FINIGHA_DATO.getDate()
     numnotches = datogamo_end - datogamo_start + 2
-    curstart = if c = iso_to_date $('#id_ekde').val() then c.getDate() else datogamo_start
-    curend = if c = iso_to_date $('#id_ghis').val() then c.getDate() else datogamo_end
+    curstart = if c = iso_to_date $('#id_ekde').val() then c.getDate()
+    else datogamo_start
+    curend = if c = iso_to_date $('#id_ghis').val() then c.getDate()
+    else datogamo_end
     
     $('#id_ekde, #id_ghis').parent().hide()
     tabwidths = $('.tab').map -> $(this).width()

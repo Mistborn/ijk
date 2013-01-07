@@ -527,21 +527,25 @@ class PartoprenantoForm(PartoprenantoFormBase):
             # if an extra_label is defined in the db,
             # then the comment is required
             if extra_label and not self.fields['pagmaniero'].comment:
-                ## print 'we have found an error, it is ', ValidationError(u'necesas enigi kroman valoron',
-                                     ## code='mankas_komento')
                 self._errors['pagmaniero'] = self.error_class(
                     [u'Necesas enigi kroman informon'])
                 del cleaned_data['pagmaniero']
-            ## print 'the pagmaniero we got is {}'.format(`cleaned_data['pagmaniero']`)
-            ## print 'the other stuff we got is {}'.format(
-                ## cleaned_data)
-            ## print '*** and the comment is.... {}'.format(
-                ## self.fields['pagmaniero'].comment)
-            ## print 'and the extra_labels are .... {}'.format(
-                ## pw.extra_labels)
-            ## print '&+& widget.__dir__: {}'.format(dir(pw))
-            ## print 'so finally, we say that the extra label is ...',
-            ## print pw.get_selected_extra_label(cleaned_data['pagmaniero'].pk)
+        if cleaned_data.get('chu_bezonas_invitleteron', False):
+            # se la partoprenanto bezonas invitleteron, la adresaj kampoj estas
+            # plenigendaj
+            msg = u'Se vi bezonas invitleteron, necesas provizi {}'
+            if not cleaned_data.get('adreso', u'').strip():
+                self._errors['adreso'] = self.error_class(
+                    [msg.format('adreson')])
+                del cleaned_data['adreso']
+            if not cleaned_data.get('poshtkodo', u'').strip():
+                self._errors['poshtkodo'] = self.error_class(
+                    [msg.format(u'poŝtkodon')])
+                del cleaned_data['poshtkodo']
+            if not cleaned_data.get('urbo', u'').strip():
+                self._errors['urbo'] = self.error_class(
+                    [msg.format(u'urbon')])
+                del cleaned_data['urbo']
         return cleaned_data
 
 def partoprenanto_fieldset_factory(label, fieldlist):
@@ -598,7 +602,9 @@ formdivisions = [
         FormInfo.make_form(u'Por la nomŝildo'),
         ['sekso', 'naskighdato',
         'adreso', 'urbo', 'poshtkodo', 'loghlando', 'shildlando',
-        'chu_bezonas_invitleteron', 'retposhtadreso',
+        'chu_bezonas_invitleteron'],
+        FormInfo.make_form(u'Se vi bezonas invitleteron, nepre indiku '
+        u'plenan adreson, poŝtkodon, kaj urbon.'), ['retposhtadreso',
         'chu_komencanto', 'chu_interesighas_pri_kurso']
     ]),
     ('Komunikiloj', [

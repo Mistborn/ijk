@@ -16,9 +16,8 @@
 <div id="enhavo">
 <h1>Aliĝi al IJK 2013 en Afikim, Israelo</h1>
 <form id="alighformo" method="post" action="{% url alighi %}">
-<div id="kotizo">
-    <input type="hidden" name="js-active" id="js-active" value="0" />
-</div>
+<input type="hidden" name="js-active" id="js-active" value="0" />
+<div class="fakturo-placeholder"></div>
 {% csrf_token %}
 <p>
     La kampoj markitaj per steleto (<span class="style-of-required">*</span>)
@@ -40,6 +39,7 @@
     <a class="reen" href=""> Reen </a><a class="antauen" href=""> Antaŭen </a>
 </div>
 </div> <!-- #form-tabs -->
+<div class="fakturo-placeholder"></div>
 <p><strong>Grave</strong>: La kotizoj enhavas nenian asekuron.</p>
 <input id="alighi-btn" type="submit" value="Mi aliĝas al IJK!">
 </form>

@@ -5,6 +5,7 @@ $label-width: 300px;
 $widget-width: 200px;
 $helptext-width: 300px;
 $content-width: $label-width + $widget-width + $helptext-width + 9 * $root-em;
+$style-color: #A6C9E2;
 
 @mixin style-of-required {
     color: red;
@@ -246,12 +247,35 @@ textarea {
 }
 
 // Area to display the calculated kotizo
-#kotizo ul {
-    list-style: none;
-    li {
-	display: inline-block;
-	div {
-	    display: inline-block;
-	}
+.fakturo {
+    border: 5px ridge $style-color; // #ddd;
+    display: inline-block;
+    padding: 0.5em;
+    .label { font-weight: bold; }
+    ul {
+        display: inline-block;
+        list-style: none;
+        * {
+            vertical-align: middle;
+            text-align: center;
+        }
+        .mangho-signo { display: none; }
+        li {
+            display: inline-block;
+            div {
+                display: inline-block;
+            }
+            .kotizo-ero div {
+                display: block;
+                margin: 0;
+                padding: 0;
+            }
+            .kotizo-klarigo {
+                border-top: 1px solid black;
+            }
+            .sumo-klarigo {
+                border-top: 3px double black;
+            }
+        }
     }
 }
