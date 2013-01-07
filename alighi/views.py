@@ -702,7 +702,9 @@ def alighi(request):
     return render_to_response('alighi/alighi.html', context)
 
 def gratulon(request):
-    return render_to_response('alighi/gratulon.html', {})
+    context = RequestContext(request)
+    return render_to_response('alighi/gratulon.html', context)
 
 def bazo(request):
-    return render_to_response('base.html', {})
+    context = RequestContext(request)
+    return render_to_response('base.html', context)
