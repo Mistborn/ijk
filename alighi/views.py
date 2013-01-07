@@ -704,3 +704,5 @@ def alighi(request):
 def gratulon(request):
     return render_to_response('alighi/gratulon.html', {})
 
+def bazo(request):
+    return render_to_response('base.html', {})
