@@ -61,16 +61,16 @@ def skype_validator(value):
     if not (str(result['status']) == '406' and
             result['data']['markup'] == "Skype Name not available"):
         raise ValidationError('Tiu Skype-nomo ne ekzistas', code='skype')
-    
+
 nomo_validator = RegexValidator(r"(?u)^([^\W\d_]|[ '-])+$",
     "Enigu nur literojn, spacetojn, apostrofon, kaj divido-strekon",
     'nomo')
 
-shildlando_validator = RegexValidator(r"(?u)^([^\W\d_][ .()'-])+$",
+shildlando_validator = RegexValidator(r"(?u)^([^\W\d_]|[ .()'-])+$",
     "Enigu nur literojn, spacetojn, punkton, krampojn, apostrofon, "
     "kaj divido-strekon",
     'shildlando')
-    
+
 kromnomo_validator = RegexValidator(u"(?u)^[\w .'_!?-]+$",
     u'Enigu validan valoron. '
     u'Validas nur literoj, ciferoj, spaceto, kaj simboloj el inter .\'-_!?',
