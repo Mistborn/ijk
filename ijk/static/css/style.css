@@ -59,8 +59,56 @@ html, body {
 h1 {
   display: block;
   font-size: 200%;
-  margin: 1em 0.5em;
+  margin: 0;
+  padding: 0;
   font-weight: bold;
+}
+
+#heading {
+  margin: 15px auto;
+  position: relative;
+  width: 926px;
+  height: 100px;
+  vertical-align: middle;
+  background: #a6c9e2;
+  border-radius: 15px;
+}
+#heading #ijk-heading {
+  font-weight: bold;
+  font-size: 35px;
+  line-height: 100px;
+  position: absolute;
+  left: 50px;
+  text-transform: lowercase;
+}
+#heading .menuo {
+  position: absolute;
+  top: 73.75px;
+  width: 100%;
+  font-size: 21px;
+  line-height: 26.25px;
+  height: 26.25px;
+  list-style: none;
+}
+#heading .menuo li {
+  display: inline-block;
+  margin: 0 0.5em;
+  width: 100px;
+  text-align: center;
+  text-transform: lowercase;
+  border-radius: 7px 7px 0 0;
+}
+#heading .menuo li a {
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+  color: inherit;
+}
+#heading .menuo li:hover {
+  background-color: white;
+}
+#heading .menuo li:hover a {
+  color: #1e415a;
 }
 
 div, p, #alighi-btn, #form-tabs {
@@ -228,4 +276,44 @@ textarea {
 }
 .tab .helptext-below p {
   margin: 0.5em 0;
+}
+
+.fakturo {
+  border: 5px ridge #a6c9e2;
+  -moz-box-shadow: 3px 3px 5px 6px #ccc;
+  -webkit-box-shadow: 3px 3px 5px 6px #ccc;
+  box-shadow: 3px 3px 5px 6px #ccc;
+  display: inline-block;
+  padding: 0.5em;
+}
+.fakturo .label {
+  font-weight: bold;
+}
+.fakturo ul {
+  display: inline-block;
+  list-style: none;
+}
+.fakturo ul * {
+  vertical-align: middle;
+  text-align: center;
+}
+.fakturo ul .mangho-signo {
+  display: none;
+}
+.fakturo ul li {
+  display: inline-block;
+}
+.fakturo ul li div {
+  display: inline-block;
+}
+.fakturo ul li .kotizo-ero div {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+.fakturo ul li .kotizo-klarigo {
+  border-top: 1px solid black;
+}
+.fakturo ul li .sumo-klarigo {
+  border-top: 3px double black;
 }

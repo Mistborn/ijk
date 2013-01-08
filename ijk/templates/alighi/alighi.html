@@ -1,22 +1,13 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>Aliĝi al IJK 2013 en Afikim, Israelo</title>
-<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/redmond/jquery-ui.css">
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/style.css">
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
-<script type="text/javascript">
-{% autoescape off %}{{ JAVASCRIPT }}{% endautoescape %}
-</script>
-<script src="{{ STATIC_URL }}js/alighi.js" type="text/javascript"></script>
-</head>
-<body>
-<div id="enhavo">
-<h1>Aliĝi al IJK 2013 en Afikim, Israelo</h1>
-<div id="informoj">Kotizo: </div>
+{% extends 'base.html' %}
+
+{% block title %}Aliĝi al IJK 2013 en Afikim, Israelo{% endblock %}
+
+{% block heading %}Aliĝi al IJK{% endblock %}
+
+{% block content %}
 <form id="alighformo" method="post" action="{% url alighi %}">
+<input type="hidden" name="js-active" id="js-active" value="0" />
+<div class="fakturo-placeholder"></div>
 {% csrf_token %}
 <p>
     La kampoj markitaj per steleto (<span class="style-of-required">*</span>)
@@ -38,9 +29,8 @@
     <a class="reen" href=""> Reen </a><a class="antauen" href=""> Antaŭen </a>
 </div>
 </div> <!-- #form-tabs -->
+<div class="fakturo-placeholder"></div>
 <p><strong>Grave</strong>: La kotizoj enhavas nenian asekuron.</p>
 <input id="alighi-btn" type="submit" value="Mi aliĝas al IJK!">
 </form>
-</div> <!-- .content -->
-</body>
-</html>
+{% endblock %}

@@ -108,7 +108,7 @@ class AlighKategorio(models.Model):
 
     @classmethod
     def javascript(cls):
-        obj = {o.limdato.isoformat(): o.id for o in cls.objects.all()}
+        obj = {o.id: o.limdato.isoformat() for o in cls.objects.all()}
         return 'window.limdatoj = {}'.format(
                     json.dumps(obj, default=json_default))
 
