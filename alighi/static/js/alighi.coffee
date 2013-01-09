@@ -78,16 +78,18 @@ alighi_form = ->
         @aghkategoriaj_informoj = if not @agho then @agho
         else
             result = null
+            minimum = null
             for limagho of window.limaghoj
                 result = limagho unless limagho < @agho or
                     (result? and limagho > result)
+                minimum = limagho unless limagho > @agho or
+                    (minimum? and limagho < minimum)
             window.limaghoj[result]
         @aghkategorio = if @aghkategoriaj_informoj
             @aghkategoriaj_informoj[0]
         else @aghkategoriaj_informoj
         @aghaldona_pago = if @aghkategoriaj_informoj
-            # FIXME: need to take this into account in the calculation
-            @aghkategoriaj_informoj[1]
+            @aghkategoriaj_informoj[1] * (1+Math.floor(@agho)-parseInt(minimum))
         else @aghkategoriaj_informoj
         ###
         @alighkategorio = do -> # XXX supozante ke hodiaŭ estas la aliĝdato
@@ -205,11 +207,17 @@ alighi_form = ->
             else
                 klarigo += " por #{info.tranoktoj+1} tagoj"
                 info.programkotizo / 5 * (info.tranoktoj + 1)
+            programkotizo += info.aghaldona_pago if info.aghaldona_pago
             $('.programo-klarigo').text klarigo
             $('.programo-kosto').text programkotizo
             kosto += programkotizo
         else
             $('.programo-klarigo').text 'programo'
+            $('.programo-klarigo').attr 'title', "
+                alighkategorio: #{info.alighkategorio},
+                aghkategorio: #{info.aghkategorio},
+                landokategorio: #{info.landokategorio},
+                aghaldona_pago: #{info.aghaldona_pago}"
             $('.programo-kosto').text nedifinita
 
         if info.chu_ekskurso

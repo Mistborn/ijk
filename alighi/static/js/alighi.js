@@ -78,7 +78,7 @@
       return "" + year + "-" + month + "-" + day;
     };
     partoprenelektoj = function() {
-      var limagho, manghokosto, result, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7,
+      var limagho, manghokosto, minimum, result, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7,
         _this = this;
       this.ekdato = iso_to_date((_ref = $('#id_ekde').val()) != null ? _ref : false);
       this.ghisdato = iso_to_date((_ref1 = $('#id_ghis').val()) != null ? _ref1 : false);
@@ -93,16 +93,20 @@
           return this.agho;
         } else {
           result = null;
+          minimum = null;
           for (limagho in window.limaghoj) {
             if (!(limagho < this.agho || ((result != null) && limagho > result))) {
               result = limagho;
+            }
+            if (!(limagho > this.agho || ((minimum != null) && limagho < minimum))) {
+              minimum = limagho;
             }
           }
           return window.limaghoj[result];
         }
       }).call(this);
       this.aghkategorio = this.aghkategoriaj_informoj ? this.aghkategoriaj_informoj[0] : this.aghkategoriaj_informoj;
-      this.aghaldona_pago = this.aghkategoriaj_informoj ? this.aghkategoriaj_informoj[1] : this.aghkategoriaj_informoj;
+      this.aghaldona_pago = this.aghkategoriaj_informoj ? this.aghkategoriaj_informoj[1] * (1 + Math.floor(this.agho) - parseInt(minimum)) : this.aghkategoriaj_informoj;
       /*
               @alighkategorio = do -> # XXX supozante ke hodiaŭ estas la aliĝdato
                   hodiau = date_to_iso new Date()
@@ -213,11 +217,15 @@
       } else if (info.programkotizo != null) {
         klarigo = 'programo';
         programkotizo = info.chu_plentempa ? info.programkotizo : (klarigo += " por " + (info.tranoktoj + 1) + " tagoj", info.programkotizo / 5 * (info.tranoktoj + 1));
+        if (info.aghaldona_pago) {
+          programkotizo += info.aghaldona_pago;
+        }
         $('.programo-klarigo').text(klarigo);
         $('.programo-kosto').text(programkotizo);
         kosto += programkotizo;
       } else {
         $('.programo-klarigo').text('programo');
+        $('.programo-klarigo').attr('title', "                alighkategorio: " + info.alighkategorio + ",                aghkategorio: " + info.aghkategorio + ",                landokategorio: " + info.landokategorio + ",                aghaldona_pago: " + info.aghaldona_pago);
         $('.programo-kosto').text(nedifinita);
       }
       if (info.chu_ekskurso) {
