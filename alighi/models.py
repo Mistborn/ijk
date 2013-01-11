@@ -789,16 +789,16 @@ class UEAValideco(models.Model):
         unique_together = ('kodo', 'lando')
 
 class SenditaRetposhtajho(models.Model):
-    temo = models.CharField(max_length=250, blank=False)
-    teksto = models.TextField(blank=False)
-    sendadreso = models.EmailField(blank=False)
-    ricevanto = models.EmailField(blank=False)
-    partoprenanto = models.ForeignKey(Partoprenanto, null=True)
-    retposhtajho = models.ForeignKey(Retposhtajho, null=True)
-    ## chu_sukcesa = models.BooleanField(default=True,
-        ## verbose_name=eo('Cxu sukcese sendita'))
+    # this table is append-only
+    temo = models.CharField(max_length=250, blank=False, editable=False)
+    teksto = models.TextField(blank=False, editable=False)
+    sendadreso = models.EmailField(blank=False, editable=False)
+    ricevanto = models.EmailField(blank=False, editable=False)
+    partoprenanto = models.ForeignKey(Partoprenanto, null=True, editable=False)
+    retposhtajho = models.ForeignKey(Retposhtajho, null=True, editable=False)
     # no traceback means it succeeded
-    traceback = models.TextField(blank=True)
+    traceback = models.TextField(blank=True, editable=False)
+    dato = models.DateField(auto_now_add=True, editable=False)
 
     def __unicode__(self):
         return u'"{}" al <{}>'.format(self.temo, self.ricevanto)
