@@ -3,7 +3,7 @@
   var alighi_form;
 
   alighi_form = function() {
-    var $dateslider, $dateslider_container, $datesliderli, $gvidilo, $kotizoul, $tabs, DAY, NUMTABS, YEAR, c, curend, curstart, date_to_iso, datogamo_end, datogamo_start, id, iso_to_date, kotizeroj, kotizo, kotizo_selectors, liveri_aghon_lau_naskightago, nav_callback, numnotches, partoprenelektoj, selector, signo, tabwidth, tabwidths, widget_width, _i, _j, _k, _len, _len1, _ref, _ref1, _results;
+    var $dateslider, $dateslider_container, $datesliderli, $gvidilo, $kotizoul, $tabs, DAY, NUMTABS, YEAR, activate_cb, c, curend, curstart, date_to_iso, datogamo_end, datogamo_start, id, iso_to_date, kotizeroj, kotizo, kotizo_selectors, liveri_aghon_lau_naskightago, nav_callback, numnotches, partoprenelektoj, selector, signo, tabwidth, tabwidths, widget_width, _i, _j, _k, _len, _len1, _ref, _ref1, _results;
     NUMTABS = 6;
     DAY = 1000 * 60 * 60 * 24;
     YEAR = DAY * 365.25;
@@ -138,7 +138,7 @@
         return manghokosto += window.manghomendotipoj[$(this).val()];
       });
       this.manghokosto = isNaN(manghokosto) ? null : manghokosto;
-      this.uearabato = !$('#id_chu_ueamembro').is(':checked') ? 0 : this.landokategorio != null ? window.uearabatoj[this.landokategorio] : null;
+      this.uearabato = !$('#id_chu_ueamembro').is(':checked') ? 0 : this.landokategorio != null ? this.landokategorio === !false ? window.uearabatoj[this.landokategorio] : false : null;
       this.chu_invitletero = $('#id_chu_bezonas_invitleteron').is(':checked');
       return this.chu_ekskurso = $('#id_chu_tuttaga_ekskurso').is(':checked');
     };
@@ -146,7 +146,7 @@
     $('.fakturo-placeholder').addClass('fakturo');
     $('.fakturo').append('<span class="label">Kotizo: </span>');
     $kotizoul = $('<ul></ul>').appendTo('.fakturo');
-    kotizeroj = ['mangho', 'loghado', 'programo', 'ekskurso', 'invitletero', 'uearabato', 'sumo'];
+    kotizeroj = ['programo', 'loghado', 'mangho', 'ekskurso', 'invitletero', 'uearabato', 'sumo'];
     for (_i = 0, _len = kotizeroj.length; _i < _len; _i++) {
       id = kotizeroj[_i];
       signo = (function() {
@@ -154,7 +154,7 @@
           case 'mangho':
             return '';
           case 'uearabato':
-            return '-';
+            return '\u2013';
           case 'sumo':
             return '=';
           default:
@@ -243,7 +243,10 @@
         $('.invitletero-li').hide();
       }
       if (info.uearabato != null) {
-        if (info.uearabato > 0) {
+        if (info.uearabato === false) {
+          $('.uearabato-li').show();
+          $('.uearabato-kosto').text('(elektu loĝlandon)');
+        } else if (info.uearabato > 0) {
           kosto -= info.uearabato;
           $('.uearabato-li').show();
           $('.uearabato-kosto').text(info.uearabato);
@@ -254,7 +257,7 @@
         $('.uearabato-li').show();
         $('.uearabato-kosto').text(nedifinita);
       }
-      return $('.sumo-kosto').text(kosto);
+      return $('.sumo-kosto').text("" + kosto + " €");
     };
     kotizo_selectors = ['#id_naskighdato', '#id_loghlando', 'input[name="loghkategorio"]', 'input[name="manghomendoj"]', '#id_chu_ueamembro', '#id_ekde', '#id_ghis', '#id_chu_bezonas_invitleteron', '#id_chu_tuttaga_ekskurso', 'input[name="antaupagos_ghis"]'];
     for (_j = 0, _len1 = kotizo_selectors.length; _j < _len1; _j++) {
@@ -292,6 +295,34 @@
         }
       });
     }).change();
+    nav_callback = function(offset) {
+      return function() {
+        var active, newtab;
+        active = $tabs.tabs('option', 'active');
+        newtab = active + offset;
+        if (newtab >= NUMTABS) {
+          $('body, html').animate({
+            scrollTop: $('.alighi').offset().top
+          }, 400, 'swing', function() {
+            return $('.alighi').effect('highlight').effect('shake');
+          });
+          return false;
+        }
+        if (newtab < 0 || newtab >= NUMTABS) {
+          return false;
+        }
+        $tabs.tabs('option', 'active', newtab);
+        return false;
+      };
+    };
+    $('.reen, .antauen, .alighi').button();
+    $('.reen').click(nav_callback(-1));
+    $('.antauen').click(nav_callback(1));
+    activate_cb = function(e, ui) {
+      var tab, _ref;
+      tab = (_ref = ui.newTab) != null ? _ref : ui.tab;
+      return $('.reen').button('option', 'disabled', tab.index() === 0);
+    };
     $tabs = $('#form-tabs').tabs({
       hide: {
         effect: 'slide',
@@ -323,23 +354,10 @@
             direction: show_dir
           }
         });
-      }
+      },
+      activate: activate_cb,
+      create: activate_cb
     });
-    nav_callback = function(offset) {
-      return function() {
-        var active, newtab;
-        active = $tabs.tabs('option', 'active');
-        newtab = active + offset;
-        if (newtab < 0 || newtab >= NUMTABS) {
-          return false;
-        }
-        $tabs.tabs('option', 'active', newtab);
-        return false;
-      };
-    };
-    $('.reen, .antauen, input[type="submit"]').button();
-    $('.reen').click(nav_callback(-1));
-    $('.antauen').click(nav_callback(1));
     datogamo_start = window.KOMENCA_DATO.getDate();
     datogamo_end = window.FINIGHA_DATO.getDate();
     numnotches = datogamo_end - datogamo_start + 2;

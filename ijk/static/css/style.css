@@ -279,6 +279,7 @@ textarea {
 }
 
 .fakturo {
+  white-space: nowrap;
   border: 5px ridge #a6c9e2;
   -moz-box-shadow: 3px 3px 5px 6px #ccc;
   -webkit-box-shadow: 3px 3px 5px 6px #ccc;
@@ -313,6 +314,7 @@ textarea {
 }
 .fakturo ul li .kotizo-klarigo {
   border-top: 1px solid black;
+  font-size: 85%;
 }
 .fakturo ul li .sumo-klarigo {
   border-top: 3px double black;

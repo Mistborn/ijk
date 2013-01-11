@@ -122,7 +122,11 @@ alighi_form = ->
             manghokosto += window.manghomendotipoj[$(this).val()]
         @manghokosto = if isNaN manghokosto then null else manghokosto
         @uearabato = if not $('#id_chu_ueamembro').is(':checked') then 0
-        else if @landokategorio? then window.uearabatoj[@landokategorio]
+        else if @landokategorio?
+            if @landokategorio is not off
+                window.uearabatoj[@landokategorio]
+            else
+                off
         else null
         @chu_invitletero = $('#id_chu_bezonas_invitleteron').is ':checked'
         @chu_ekskurso = $('#id_chu_tuttaga_ekskurso').is(':checked')
@@ -132,12 +136,12 @@ alighi_form = ->
     $('.fakturo-placeholder').addClass 'fakturo'
     $('.fakturo').append '<span class="label">Kotizo: </span>'
     $kotizoul = $('<ul></ul>').appendTo '.fakturo'
-    kotizeroj = ['mangho', 'loghado', 'programo'
+    kotizeroj = ['programo', 'loghado', 'mangho'
         'ekskurso', 'invitletero', 'uearabato', 'sumo']
     for id in kotizeroj
         signo = switch id
                 when 'mangho' then ''
-                when 'uearabato' then '-'
+                when 'uearabato' then '\u2013'
                 when 'sumo' then '='
                 else '+'
         $kotizoul.append "<li class='#{id}-li'>
@@ -235,7 +239,10 @@ alighi_form = ->
             $('.invitletero-li').hide()
 
         if info.uearabato?
-            if info.uearabato > 0
+            if info.uearabato is off
+                $('.uearabato-li').show()
+                $('.uearabato-kosto').text '(elektu loĝlandon)'
+            else if info.uearabato > 0
                 kosto -= info.uearabato
                 $('.uearabato-li').show()
                 $('.uearabato-kosto').text info.uearabato
@@ -245,7 +252,7 @@ alighi_form = ->
             $('.uearabato-li').show()
             $('.uearabato-kosto').text nedifinita
 
-        $('.sumo-kosto').text kosto
+        $('.sumo-kosto').text "#{kosto} €"
         
         #klarigo = '[konsistas el ' + (klarigo.join ' + ')
         #klarigo += " - #{info.uearabato} (UEA-rabato)" if info.uearabato > 0
@@ -286,8 +293,27 @@ alighi_form = ->
                     $(this).prop 'checked', off
                     $li.hide()
     .change()
+         
+    nav_callback = (offset) -> ->
+        active = $tabs.tabs 'option', 'active'
+        newtab = active+offset
+        if newtab >= NUMTABS
+            $('body, html').animate scrollTop: $('.alighi').offset().top, 
+                400, 'swing', ->
+                    $('.alighi').effect('highlight').effect('shake')
+            return false
+        return false if newtab < 0 or newtab >= NUMTABS
+        $tabs.tabs 'option', 'active', newtab
+        false
+
+    $('.reen, .antauen, .alighi').button()
+    $('.reen').click nav_callback -1
+    $('.antauen').click nav_callback 1
 
     # tabs
+    activate_cb = (e, ui) ->
+        tab = ui.newTab ? ui.tab
+        $('.reen').button 'option', 'disabled', tab.index() is 0
     $tabs = $('#form-tabs').tabs
         hide:
             effect: 'slide'
@@ -295,32 +321,23 @@ alighi_form = ->
         show:
             effect: 'slide'
             direction: 'right'
-        beforeActivate:
-            (e, ui) ->
-                tabdiff = ui.newTab.index() - ui.oldTab.index()
-                if Math.abs(tabdiff) is 1
-                    slide_dirs = ['left', 'right']
-                else
-                    slide_dirs = ['up', 'up'] # ['down', 'up']
-                [hide_dir, show_dir] = slide_dirs
-                [hide_dir, show_dir] = [show_dir, hide_dir] if tabdiff < 0
-                $tabs.tabs 'option'
-                    hide:
-                        effect: 'slide'
-                        direction: hide_dir
-                    show:
-                        effect: 'slide'
-                        direction: show_dir
-    nav_callback = (offset) -> ->
-        active = $tabs.tabs 'option', 'active'
-        newtab = active+offset
-        return false if newtab < 0 or newtab >= NUMTABS
-        $tabs.tabs 'option', 'active', newtab
-        false 
-
-    $('.reen, .antauen, input[type="submit"]').button()
-    $('.reen').click nav_callback -1
-    $('.antauen').click nav_callback 1
+        beforeActivate: (e, ui) ->
+            tabdiff = ui.newTab.index() - ui.oldTab.index()
+            if Math.abs(tabdiff) is 1
+                slide_dirs = ['left', 'right']
+            else
+                slide_dirs = ['up', 'up'] # ['down', 'up']
+            [hide_dir, show_dir] = slide_dirs
+            [hide_dir, show_dir] = [show_dir, hide_dir] if tabdiff < 0
+            $tabs.tabs 'option'
+                hide:
+                    effect: 'slide'
+                    direction: hide_dir
+                show:
+                    effect: 'slide'
+                    direction: show_dir
+        activate: activate_cb
+        create: activate_cb
     
     # glitilo por elekti la gamon de datoj de partoprenado
     datogamo_start = window.KOMENCA_DATO.getDate()
