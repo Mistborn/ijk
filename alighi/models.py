@@ -3,6 +3,10 @@ import datetime
 import time
 import json
 import urllib
+import smtplib
+import traceback
+import ast
+import re
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -47,7 +51,6 @@ class AghKategorio(models.Model):
     '''Kategorio de aĝo por kalkulado de kotizo'''
     nomo = models.CharField(unique=True, max_length=50)
     priskribo = models.TextField(blank=True)
-    #sistemo = models.ForeignKey(AghKategoriSistemo)
     limagho = models.IntegerField(eo('Limagxo'),
         help_text=eo('Partoprenanto kun agxo malpli ol tiu cxi agxo '
                      'eniras tiun cxi kategorion'))
@@ -166,8 +169,6 @@ class LoghKategorio(models.Model):
     '''Elektebla loĝkategorio'''
     nomo = models.CharField(unique=True, max_length=50)
     priskribo = models.TextField(blank=True)
-    #sistemo = models.ForeignKey(LoghKategoriSistemo)
-    #kondicho = models.IntegerField()
     plena_kosto = models.DecimalField(max_digits=8, decimal_places=2,
         help_text=eo('Kosto por logxo dum la tuta kongreso'))
     unutaga_kosto = models.DecimalField(max_digits=8, decimal_places=2,
@@ -307,6 +308,7 @@ class KrompagTipo(models.Model):
 
     def __unicode__(self):
         return self.nomo
+
     class Meta:
         verbose_name = eo('KrompagTipo')
         verbose_name_plural = eo('KrompagTipoj')
@@ -325,13 +327,60 @@ class Retposhtajho(models.Model):
         except cls.DoesNotExist:
             return None
 
-    def sendi(self, partoprenanto, al=None):
-        teksto = self.teksto.format(partoprenanto=partoprenanto)
-        send_mail(self.temo, teksto, self.sendadreso,
-            [partoprenanto.retposhtadreso], fail_silently=False)
+    @staticmethod
+    def eval_cond(cond, yes, no, partoprenanto):
+        try:
+            cond = ('{' + cond.strip() + '!r}').format(
+                partoprenanto=partoprenanto)
+        except LookupError:
+            return u''
+        try:
+            cond = ast.literal_eval(cond)
+        except ValueError:
+            return u''
+        if cond:
+            result = yes
+        else:
+            result = no
+        return re.sub(r'\\([?:\\])', r'\1', result.strip())
+
+    def cond_interpolate(self, partoprenanto):
+        '''interpolate directives like
+        #{partoprenanto.chu_malnoktemulo ? dormu! : festu! }'''
+        def sub(string):
+            return re.sub(r'#{([^{}]+)(?<!\\)\?([^{}]+)(?<!\\):([^{}]+)}',
+                          lambda m: self.eval_cond(m.group(1), m.group(2),
+                                                   m.group(3), partoprenanto),
+                          string)
+        return sub(self.temo), sub(self.teksto)
+
+    def interpolate(self, partoprenanto):
+        ## pwrapper = PartoprenantoWrapper(partoprenanto)
+        temo, teksto = self.cond_interpolate(partoprenanto)
+        teksto = teksto.format(partoprenanto=partoprenanto)
+        temo = temo.format(partoprenanto=partoprenanto)
+        # FIXME: for now we're just letting exceptions propagate
+        return (temo, teksto)
+
+    def sendi(self, partoprenanto):
+        temo, teksto = self.interpolate(partoprenanto)
+        sendajho = SenditaRetposhtajho(
+            temo = temo,
+            teksto = teksto,
+            sendadreso = self.sendadreso,
+            ricevanto = partoprenanto.retposhtadreso,
+            partoprenanto = partoprenanto,
+            retposhtajho = self)
+        try:
+            send_mail(self.temo, teksto, self.sendadreso,
+                [partoprenanto.retposhtadreso], fail_silently=False)
+        except smtplib.SMTPException:
+            sendajho.traceback = traceback.format_exc()
+        sendajho.save()
 
     def __unicode__(self):
         return self.nomo
+
     class Meta:
         verbose_name = eo('Retposxtajxo')
         verbose_name_plural = eo('Retposxtajxoj')
@@ -340,8 +389,6 @@ class MembrighaKategorio(models.Model):
     '''Por krei liston de kategorioj de surlokaj membriĝoj en UEA/TEJO'''
     nomo = models.CharField(unique=True, max_length=50,
         help_text=eo('Nomo de la kategorio de surloka membrigxo en TEJO/UEA'))
-    #kotizo = models.DecimalField(max_digits=8, decimal_places=2,
-        #help_text=eo('Sumo de la kotizo'))
     def __unicode__(self):
         return self.nomo
     class Meta:
@@ -350,16 +397,13 @@ class MembrighaKategorio(models.Model):
 
 class Chambro(models.Model):
     '''Unuopa ĉambro por disdoni'''
-    #renkontigho = models.ForeignKey(Renkontigho)
     nomo = models.CharField(unique=True, max_length=50)
-    #etagho = models.CharField(max_length=150)
     litonombro = models.IntegerField(
         help_text=eo('nombro da litoj en la cxambro'))
         # maksimuma nombro da homoj kiuj povos loghi en tiu chi chambro
     loghkategorio = models.ForeignKey(LoghKategorio,
         verbose_name=eo('Logxkategorio'))
         # al kiu loghkategorio ghi taugas?
-    #dulita = models.CharField(max_length=3)
     rimarko = models.CharField(blank=True, max_length=255)
     def __unicode__(self):
         return u'{} ({}), litoj: {}'.format(
@@ -396,6 +440,18 @@ class UEARabato(models.Model):
         verbose_name = eo('UEA-rabato')
         verbose_name_plural = eo('UEA-rabatoj')
 
+class PartoprenantoWrapper(object):
+    '''Wrapper around a Partoprenanto object to change the string
+    representation of some of the fields,
+    for use in interpolation into emails.'''
+    def __init__(self, partoprenanto):
+        self.partoprenanto = partoprenanto
+    def __getattr__(self, name):
+        attr = getattr(self.partoprenanto, name)
+        if isinstance(attr, bool):
+            attr = 'jes' if attr else 'ne'
+        return attr
+
 class Partoprenanto(models.Model):
     '''Partoprenanto en la kongreso'''
     persona_nomo = models.CharField(max_length=50)
@@ -425,9 +481,7 @@ class Partoprenanto(models.Model):
     ekde = models.DateField(default=KOMENCA_DATO)
     ghis = models.DateField(eo('Gxis'), default=FINIGHA_DATO)
     alveno = models.CharField(blank=True, max_length=255)
-    #alvenas_je = models.DateField(null=True, blank=True)
     foriro = models.CharField(blank=True, max_length=255)
-    #foriras_je = models.DateField(null=True, blank=True)
     interesighas_pri_antaukongreso = models.IntegerField(
         eo('Interesigxas pri antauxkongreso'), null=True, blank=True,
         help_text='kiom da tagoj')
@@ -467,7 +521,6 @@ class Partoprenanto(models.Model):
         # el la publikaj pagmanieroj, por la antaupago
     pagmaniera_komento = models.CharField(blank=True, max_length=250)
         # ekz por nomo de peranto
-    #antaupago_ghis = models.DateField()
     chu_ueamembro = models.BooleanField(eo('Cxu membro de UEA/TEJO'),
         default=False)
     uea_kodo = models.CharField(eo('UEA-kodo'), max_length=18, blank=True)
@@ -483,22 +536,6 @@ class Partoprenanto(models.Model):
         eo('Cxu havas mangxkuponon'), default=False) #*
     chu_havasnomshildon = models.BooleanField(
         eo('Cxu havas nomsxildon'), default=False) #*
-    #rimarkoj = models.TextField()
-#class Partopreno(models.Model):
-    #renkontigho = models.ForeignKey(Renkontigho)
-    #partoprenanto = models.ForeignKey(Partoprenanto)
-    # ******************** pri loghado
-    # manghado
-    # povas esti pluraj manghomendoj, do por tio vidu tiun tabelon
-    # chu mi volas aperi en tiaj listoj:
-    #dulita = models.CharField(max_length=3)
-    #tema = models.TextField()
-    #distra = models.TextField()
-    #vespera = models.TextField()
-    #muzika = models.TextField()
-    #nokta = models.TextField()
-    # informoj por surloka kontrolo:
-    #por rimarkoj, vidu la tabelon Noto
 
     def manghomendoj(self):
         return ManghoMendo.objects.filter(partoprenanto=self)
@@ -542,6 +579,12 @@ class Partoprenanto(models.Model):
         programkotizo = self.programkotizo()
 
         return manghomenda_kosto + loghkosto + programkotizo - uearabato
+
+    def __getattr__(self, name):
+        if name.endswith('_jn'):
+            val = getattr(self, name[:-3])
+            return 'jes' if val else 'ne'
+        return getattr(super(Partoprenanto, self), name)
 
     def __unicode__(self):
         return u'{} {}'.format(self.persona_nomo, self.familia_nomo)
@@ -709,9 +752,10 @@ class Noto(models.Model):
 
 class UEAValideco(models.Model):
     CHOICES = list(enumerate((
-        u'Nekonata UEA-kodo aŭ nekongrua lando',
+        u'Nekonata UEA-kodo aŭ nekongrua lando '
+            u'(lasu malplena se vi ne memoras vian kodon)',
         u'UEA-kodo ekzistas kaj kongruas kun la lando',
-        u'Nevalida UEA-kodo')))
+        u'Nevalida UEA-kodo (lasu malplena se vi ne memoras vian kodon)')))
 
     kodo = models.CharField(max_length=6, editable=False)
     lando = models.CharField(max_length=2, editable=False)
@@ -744,242 +788,31 @@ class UEAValideco(models.Model):
     class Meta:
         unique_together = ('kodo', 'lando')
 
+class SenditaRetposhtajho(models.Model):
+    temo = models.CharField(max_length=250, blank=False)
+    teksto = models.TextField(blank=False)
+    sendadreso = models.EmailField(blank=False)
+    ricevanto = models.EmailField(blank=False)
+    partoprenanto = models.ForeignKey(Partoprenanto, null=True)
+    retposhtajho = models.ForeignKey(Retposhtajho, null=True)
+    ## chu_sukcesa = models.BooleanField(default=True,
+        ## verbose_name=eo('Cxu sukcese sendita'))
+    # no traceback means it succeeded
+    traceback = models.TextField(blank=True)
 
-#class AghKategoriSistemo(models.Model):
-    #nomo = models.CharField(max_length=60, unique=True)
-    #priskribo = models.TextField()
+    def __unicode__(self):
+        return u'"{}" al <{}>'.format(self.temo, self.ricevanto)
 
-#class AlighKategoriSistemo(models.Model):
-    #nomo = models.CharField(max_length=60, unique=True)
-    #priskribo = models.TextField()
+    class Meta:
+        verbose_name = eo('Sendita Retposxtajxo')
+        verbose_name_plural = eo('Senditaj Retposxtajxoj')
 
-#class LandoKategoriSistemo(models.Model):
-    #nomo = models.CharField(max_length=60, unique=True)
-    #priskribo = models.TextField()
-
-#class LandoKategoriLigo(models.Model):
-    #lando = models.ForeignKey(Lando)
-    #kategorio = models.ForeignKey(LandoKategorio)
-
-#class LoghKategoriSistemo(models.Model):
-    #nomo = models.CharField(max_length=60, unique=True)
-    #priskribo = models.TextField()
-
-#class KotizoSistemo(models.Model):
-    #nomo = models.CharField(max_length=60, unique=True)
-    #priskribo = models.TextField()
-    #alighkategorisistemo = models.ForeignKey(AlighKategoriSistemo)
-    #landokategorisistemo = models.ForeignKey(LandoKategoriSistemo)
-    #aghkategorisistemo = models.ForeignKey(AghKategoriSistemo)
-    #loghkategorisistemo = models.ForeignKey(LoghKategoriSistemo)
-    #parttempdivisoro = models.FloatField()
-    #malalighkondichsistemo = models.IntegerField() # XXX
-
-#class KostoSistemo(models.Model): # XXX what is this for?
-    #nomo = models.CharField(max_length=60, unique=True)
-    #priskribo = models.TextField()
-
-#class Renkontigho(models.Model):
-    #nomo = models.CharField(max_length=255, unique=True)
-    #mallongigo = models.CharField(max_length=30, unique=True)
-    #temo = models.CharField(max_length=255)
-    #loko = models.CharField(max_length=255)
-    #de = models.DateField()
-    #ghis = models.DateField()
-    #kotizosistemo = models.ForeignKey(KotizoSistemo)
-    #parttemppartoprendivido = models.IntegerField()
-
-#class Kotizero(models.Model):
-    ## ghenerala rabato au krompago au ero de normala kotizo,
-    ##   aplikebla al pluraj partoprenantoj lau difinita kondicho
-    #nomo = models.CharField(unique=True, max_length=50)
-    #priskribo = models.TextField(blank=True)
-    #kondicho = models.TextField(
-        #help_text=eo('kondicxo, kiu difinas, cxu tiu cxi kotizero aplikigxas '
-                     #'al specifa partoprenanto'))
-        ## will be a python expression evaluating to whether this applies
-    #kvanto = models.DecimalField(max_digits=8, decimal_places=2,
-        #help_text=eo('Povas esti elcento aux sumo en euroj'))
-    ##valuto = models.CharField(max_length=3, blank=True)
-    ## devas estis euroj
-    #def chu_aplikighas(self, partoprenanto):
-        #'''kontrolu chu tiu chi kotizero aplikighas al
-        #la donita partoprenanto'''
-        #return eval(self.kondicho, {'partoprenanto': partoprenanto})
-    #def javascript(self):
-        #'''revenigi jhavaskriptajhon por kontroli, chu la kondicho aplikighas
-        #al specifa homo (por enkrozila kontrolo)'''
-        #subs = {'and': '&&', 'or': '||'}
-        #k = re.sub(r'\b(?:and|or)\b',
-                   #lambda m: subs[m.group(0)], self.kondicho)
-        #return 'function (partoprenanto) {\n    return (' + k + ')\n}'
-    #def __unicode__(self):
-        #return self.nomo
-    #class Meta:
-        #verbose_name_plural = eo('Kotizeroj')
-
-#class Krompago(models.Model):
-    #speco = models.ForeignKey(Kotizero)
-    ##kotizosistemo = models.ForeignKey(KotizoSistemo)
-    #kvanto = models.DecimalField(max_digits=8, decimal_places=2)
-    #valuto = models.CharField(max_length=3, blank=True)
-
-#class KrompagoRegulo(models.Model):
-    #nomo = models.CharField(max_length=60, unique=True)
-    #mallongigo = models.CharField(max_length=30)
-    #priskribo = models.TextField()
-    #kondicho = models.ForeignKey(Kondicho)
-    #uzebla = models.BooleanField()
-    #launokte = models.BooleanField()
-
-#class RegulaKrompago(models.Model):
-    #regulo = models.ForeignKey(KrompagoRegulo)
-    ##kotizosistemo = models.ForeignKey(KotizoSistemo)
-    #kvanto = models.DecimalField(max_digits=8, decimal_places=2)
-    #valuto = models.CharField(max_length=9)
-
-#class IndividuaKrompago(models.Model):
-    #partopreno = models.ForeignKey(Partopreno)
-    #valuto = models.CharField(max_length=9)
-    #kvanto = models.DecimalField(max_digits=8, decimal_places=2)
-    #dato = models.DateField()
-    #tipo = models.CharField(max_length=300)
-
-#class IndividuaRabato(models.Model):
-    #partopreno = models.ForeignKey(Partopreno)
-    #valuto = models.CharField(max_length=9)
-    #kvanto = models.DecimalField(max_digits=8, decimal_places=2)
-    #dato = models.DateField()
-    #tipo = models.CharField(max_length=300)
-
-#class InvitLetero(models.Model):
-    #pasportnumero = models.CharField(max_length=150)
-    #pasporto_valida_de = models.DateField()
-    #pasporto_valida_ghis = models.DateField()
-    #pasporta_persona_nomo = models.CharField(max_length=150)
-    #pasporta_familia_nomo = models.CharField(max_length=150)
-    #pasporta_adreso = models.TextField()
-    #senda_adreso = models.TextField()
-    #senda_faksnumero = models.CharField(max_length=90, blank=True)
-    #invitletero_sendota = models.BooleanField()
-    #invitletero_sendodato = models.DateField()
-
-#class Fikskostoj(models.Model):
-    ## XXX foreign key to kostosistemo but what is a kostosistemo
-    #nomo = models.CharField(max_length=60, unique=True)
-    #kostosistemo = models.ForeignKey(KostoSistemo)
-    #kosto = models.DecimalField(max_digits=9, decimal_places=2)
-
-#class Kondicho(models.Model):
-    #nomo = models.CharField(max_length=60, unique=True)
-    #priskribo = models.TextField()
-    #kondichoteksto = models.TextField()
-    ## jhavaskripta_formo = models.TextField() # XXX say what?
-
-#class KotizoTabelero(models.Model):
-    #kotizosistemo = models.ForeignKey(KotizoSistemo)
-    #alighkategorio = models.ForeignKey(AlighKategorio)
-    #landokategorio = models.ForeignKey(LandoKategorio)
-    #aghkategorio = models.ForeignKey(AghKategorio)
-    #loghkategorio = models.ForeignKey(LoghKategorio)
-    #kotizo = models.DecimalField(max_digits=8, decimal_places=2)
-
-#class PersonKostoTipo(models.Model):
-    #nomo = models.CharField(max_length=60, unique=True)
-    #priskribo = models.TextField()
-    #kondicho = models.CharField(max_length=150)
-    #uzebla = models.BooleanField() # chu montri en la ghenerala listo
-    #launokte = models.BooleanField() # launokte au unufoje
-
-#class PersonKosto(models.Model):
-    #tipo = models.ForeignKey(PersonKostoTipo)
-    #kostosistemo = models.ForeignKey(KostoSistemo)
-    #maks_haveblaj = models.IntegerField()
-    #min_uzendaj = models.IntegerField()
-    #kosto_uzata = models.DecimalField(max_digits=8, decimal_places=2)
-    #kosto_neuzata = models.DecimalField(max_digits=8, decimal_places=2)
-
-#class Litonokto(models.Model): # XXX how is this supposed to work?
-    #chambro = models.ForeignKey(Chambro)
-    #litonumero = models.IntegerField()
-    #nokto_de = models.IntegerField()
-    #nokto_ghis = models.IntegerField()
-    #partopreno = models.IntegerField()
-    #rezervtipo = models.CharField(max_length=3)
-
-#class MalalighKondichSistemo(models.Model):
-    #nomo = models.CharField(max_length=60, unique=True)
-    #priskribo = models.TextField()
-    #alighkategorisistemo = models.ForeignKey(AlighKategoriSistemo)
-
-#class MalalighKondichoTipo(models.Model):
-    #nomo = models.CharField(max_length=60, unique=True)
-    #mallongigo = models.CharField(max_length=30)
-    #priskribo = models.TextField()
-    #funkcio = models.CharField(max_length=150)
-    #parametro = models.DecimalField(null=True, max_digits=8, decimal_places=2, blank=True)
-    #uzebla = models.BooleanField()
-
-#class MalalighKondicho(models.Model):
-    #sistemo = models.ForeignKey(MalalighKondichSistemo)
-    #alighkategorio = models.ForeignKey(AlighKategorio)
-    #kondichtipo = models.ForeignKey(MalalighKondichoTipo)
-
-
-#class NotojPorEntajpanto(models.Model): # shajne por ligi notojn kun uzulojn
-    #noto = models.ForeignKey(Noto)
-    #entajpanto = models.IntegerField(db_column='entajpantoID')
-
-#class ParttempKotizoSistemo(models.Model):
-    #baza_kotizosistemo = models.ForeignKey(KotizoSistemo)
-    #por_noktoj = models.IntegerField(unique=True)
-        ## tiom da noktoj oni rajtas resti en tiu tarifo
-    #kondicho = models.IntegerField(unique=True) # XXX what is this?
-        ## Tiu kondicho aldone devas esti plenumita
-        ## XXX Prob should be a foreign key to Kondicho
-    #faktoro = models.DecimalField(max_digits=8, decimal_places=2)
-        ## ni obligas la kotizojn de la elektita sistemo per tiu faktoro.
-    #sub_kotizosistemo = models.ForeignKey(KotizoSistemo)
-        ## la kotizoj de tiu sistemo estos uzataj
-
-#class Protokolo(models.Model):
-    #deveno = models.CharField(max_length=600)
-    #ilo = models.CharField(max_length=600)
-    #entajpanto = models.CharField(max_length=60)
-    #tempo = models.DateTimeField()
-    #ago = models.CharField(max_length=60)
-
-#class Teksto(models.Model):  # XXX temo (ekz. por retposhtajhoj)?
-    ##renkontigho = models.ForeignKey(Renkontigho)
-    #mesagho = models.CharField(max_length=90, unique=True)
-    #teksto = models.TextField()
-
-# -------------------------
-
-#class Monujo(models.Model): # XXX kio estas ties celo?
-    #renkontigho = models.ForeignKey(Renkontigho)
-    #kvanto = models.IntegerField()
-    #kauzo = models.CharField(max_length=600)
-    #tempo = models.DateTimeField()
-    #kvitanconumero = models.IntegerField()
-    #alkiu = models.CharField(max_length=60)
-    #kiamonujo = models.CharField(max_length=30)
-
-#class Renkkonfiguroj(models.Model):
-    #renkontigho = models.ForeignKey(Renkontighoj)
-    #opcioid = models.CharField(max_length=90, unique=True)
-        ## XXX what's an opcio?
-    #valoro = models.TextField()
-
-#class RenkontighaKonfiguro(models.Model): # XXX what for?
-    #renkontigho = models.ForeignKey(Renkontigho)
-    #tipo = models.CharField(max_length=60, unique=True)
-    #interna = models.CharField(max_length=60, unique=True)
-    #grupo = models.IntegerField()
-    #teksto = models.CharField(max_length=300)
-    #aldona_komento = models.CharField(max_length=300)
-
-#class Sercho(models.Model):
-    #nomo = models.CharField(max_length=150, unique=True)
-    #priskribo = models.TextField()
-    #sercho = models.TextField()
+## class SenditaOficialajho(models.Model):
+    ## pass
+##
+    ## def __unicode__(self):
+        ## pass
+##
+    ## class Meta:
+        ## verbose_name = eo('Sendita Oficialajxo')
+        ## verbose_name_plural = eo('Senditaj Oficialajxoj')
