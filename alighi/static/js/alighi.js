@@ -3,7 +3,7 @@
   var alighi_form;
 
   alighi_form = function() {
-    var $dateslider, $dateslider_container, $datesliderli, $gvidilo, $kotizoul, $tabs, DAY, NUMTABS, YEAR, activate_cb, c, curend, curstart, date_to_iso, datogamo_end, datogamo_start, id, iso_to_date, kotizeroj, kotizo, kotizo_selectors, liveri_aghon_lau_naskightago, nav_callback, numnotches, partoprenelektoj, selector, signo, tabwidth, tabwidths, widget_width, _i, _j, _k, _len, _len1, _ref, _ref1, _results;
+    var $dateslider, $dateslider_container, $datesliderli, $errorlis, $gvidilo, $kotizoul, $newerrorlist, $tabs, DAY, NUMTABS, YEAR, activate_cb, c, curend, curstart, date_to_iso, datogamo_end, datogamo_start, error, errorlist, id, iso_to_date, kotizeroj, kotizo, kotizo_selectors, liveri_aghon_lau_naskightago, nav_callback, newtab, numnotches, partoprenelektoj, selector, signo, tabwidth, tabwidths, widget_width, _i, _j, _k, _len, _len1, _ref, _ref1, _results;
     NUMTABS = 6;
     DAY = 1000 * 60 * 60 * 24;
     YEAR = DAY * 365.25;
@@ -83,7 +83,7 @@
       this.ekdato = iso_to_date((_ref = $('#id_ekde').val()) != null ? _ref : false);
       this.ghisdato = iso_to_date((_ref1 = $('#id_ghis').val()) != null ? _ref1 : false);
       this.naskighdato = iso_to_date((_ref2 = $('#id_naskighdato').val()) != null ? _ref2 : false);
-      this.chu_plentempa = this.ekdato === false ? null : this.ghisdato === false ? null : this.ekdato.getTime() === window.KOMENCA_DATO.getTime() && this.ghisdato.getTime() === window.FINIGHA_DATO.getTime();
+      this.chu_plentempa = this.ekdato === false || this.ghisdato === false ? null : this.ekdato.getTime() === window.KOMENCA_DATO.getTime() && this.ghisdato.getTime() === window.FINIGHA_DATO.getTime();
       this.loghkategorio = (_ref3 = $('input[name="loghkategorio"]:checked').val()) != null ? _ref3 : false;
       this.loghlando = (_ref4 = $('#id_loghlando :selected').val()) != null ? _ref4 : false;
       this.landokategorio = !this.loghlando ? false : window.landoj[this.loghlando];
@@ -120,6 +120,7 @@
       this.alighkategorio = (_ref5 = $('input[name="antaupagos_ghis"]:checked').val()) != null ? _ref5 : false;
       this.alighlimdato = this.alighkategorio ? window.limdatoj[this.alighkategorio] : false;
       this.tranoktoj = Math.floor((this.ghisdato - this.ekdato) / DAY);
+      this.relativa_partopreno = this.chu_plentempa ? 1 : (this.tranoktoj + 1) / 5;
       this.loghkosto = (function() {
         var base, _ref6;
         if (!(_this.loghkategorio !== false && (_this.chu_plentempa != null))) {
@@ -133,12 +134,15 @@
         }
       })();
       this.programkotizo = !((this.aghkategorio != null) && (this.landokategorio != null) && (this.alighkategorio != null)) ? null : this.aghkategorio === false || this.landokategorio === false || this.alighkategorio === false ? false : (_ref6 = window.programkotizoj[this.aghkategorio]) != null ? (_ref7 = _ref6[this.landokategorio]) != null ? _ref7[this.alighkategorio] : void 0 : void 0;
+      this.programkotizo *= this.relativa_partopreno;
+      this.programkotiza += this.aghaldona_pago ? this.aghaldona_pago : 0;
       manghokosto = 0;
       $('input[name="manghomendoj"]:checked').each(function() {
         return manghokosto += window.manghomendotipoj[$(this).val()];
       });
       this.manghokosto = isNaN(manghokosto) ? null : manghokosto;
       this.uearabato = !$('#id_chu_ueamembro').is(':checked') ? 0 : this.landokategorio != null ? this.landokategorio === !false ? window.uearabatoj[this.landokategorio] : false : null;
+      this.uearabato *= this.relativa_partopreno;
       this.chu_invitletero = $('#id_chu_bezonas_invitleteron').is(':checked');
       return this.chu_ekskurso = $('#id_chu_tuttaga_ekskurso').is(':checked');
     };
@@ -178,7 +182,7 @@
                   [rabato pro UEA-membreco] + [program-kotizo]
       */
 
-      var elektote, elektu, info, klarigo, klarigo_text, kosto, nedifinita, programkotizo;
+      var elektote, elektu, info, klarigo, klarigo_text, kosto, nedifinita;
       info = new partoprenelektoj;
       kosto = 0;
       nedifinita = '(nedifinita)';
@@ -216,16 +220,14 @@
         $('.programo-klarigo').text('programo');
       } else if (info.programkotizo != null) {
         klarigo = 'programo';
-        programkotizo = info.chu_plentempa ? info.programkotizo : (klarigo += " por " + (info.tranoktoj + 1) + " tagoj", info.programkotizo / 5 * (info.tranoktoj + 1));
-        if (info.aghaldona_pago) {
-          programkotizo += info.aghaldona_pago;
+        if (!info.chu_plentempa) {
+          klarigo += " por " + (info.tranoktoj + 1) + " tagoj";
         }
         $('.programo-klarigo').text(klarigo);
-        $('.programo-kosto').text(programkotizo);
+        $('.programo-kosto').text(info.programkotizo);
         kosto += programkotizo;
       } else {
         $('.programo-klarigo').text('programo');
-        $('.programo-klarigo').attr('title', "                alighkategorio: " + info.alighkategorio + ",                aghkategorio: " + info.aghkategorio + ",                landokategorio: " + info.landokategorio + ",                aghaldona_pago: " + info.aghaldona_pago);
         $('.programo-kosto').text(nedifinita);
       }
       if (info.chu_ekskurso) {
@@ -363,7 +365,21 @@
     numnotches = datogamo_end - datogamo_start + 2;
     curstart = (c = iso_to_date($('#id_ekde').val())) ? c.getDate() : datogamo_start;
     curend = (c = iso_to_date($('#id_ghis').val())) ? c.getDate() : datogamo_end;
+    errorlist = [];
     $('#id_ekde, #id_ghis').parent().hide();
+    $('#id_ekde .errorlist li, #id_ghis .errorlist li').each(function() {
+      return errorlist.push($(this).text());
+    });
+    $newerrorlist = $('<ul class="errorlist"></ul>');
+    $errorlis = (function() {
+      var _k, _len2, _results;
+      _results = [];
+      for (_k = 0, _len2 = errorlist.length; _k < _len2; _k++) {
+        error = errorlist[_k];
+        _results.push($("<li>" + error + "</li>").appendTo($newerrorlist));
+      }
+      return _results;
+    })();
     tabwidths = $('.tab').map(function() {
       return $(this).width();
     });
@@ -371,6 +387,9 @@
     widget_width = tabwidth - 300 - 14 * 2.5;
     $datesliderli = $('<li class="required">\
         <label for="id_datogamo">La daŭro de mia partopreno:</label></li>').insertAfter($('#id_ghis').parent());
+    if ($errorlis.length > 0) {
+      $datesliderli.prepend($newerrorlist);
+    }
     $dateslider_container = $('<div></div>').appendTo($datesliderli).width(widget_width);
     $gvidilo = $('<div id="datogamo-gvidilo"></div>').css({
       width: widget_width,
@@ -415,7 +434,7 @@
       }
     });
     $dateslider.slider('values', $dateslider.slider('values'));
-    return $("<div>la oficiala daŭro de IJK estas de la " + datogamo_start + "-a             ĝis la " + datogamo_end + "-a de aŭgusto, 2013</div>").appendTo($dateslider_container).css({
+    $("<div>la oficiala daŭro de IJK estas de la " + datogamo_start + "-a             ĝis la " + datogamo_end + "-a de aŭgusto, 2013</div>").appendTo($dateslider_container).css({
       width: widget_width * (numnotches - 2) / numnotches,
       height: '1em',
       fontSize: '80%',
@@ -427,6 +446,18 @@
       color: 'blue',
       textAlign: 'center'
     });
+    newtab = null;
+    $('.tab').each(function() {
+      if ($(this).find('.errorlist').length > 0) {
+        id = $(this).attr('id');
+        if (newtab == null) {
+          return newtab = parseInt(id.slice(id.indexOf('-') + 1));
+        }
+      }
+    });
+    if (newtab != null) {
+      return $tabs.tabs('option', 'active', newtab);
+    }
   };
 
   $(function() {

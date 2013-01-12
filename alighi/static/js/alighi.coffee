@@ -65,8 +65,7 @@ alighi_form = ->
 
         # chu_plentempa estas null kaj ne false se la ekdato au ghisdato
         # de la partoprenanto estas nedifinita
-        @chu_plentempa = if @ekdato is off then null
-        else if @ghisdato is off then null
+        @chu_plentempa = if @ekdato is off or @ghisdato is off then null
         else @ekdato.getTime() is window.KOMENCA_DATO.getTime() and
             @ghisdato.getTime() is window.FINIGHA_DATO.getTime()
 
@@ -106,6 +105,8 @@ alighi_form = ->
         else 
             off
         @tranoktoj = Math.floor((@ghisdato - @ekdato) / DAY)
+        @relativa_partopreno = if @chu_plentempa then 1
+        else (@tranoktoj + 1) / 5
         @loghkosto = do =>
             return off unless @loghkategorio isnt off and @chu_plentempa?
             base = window.loghkategorioj[@loghkategorio]?[if @chu_plentempa
@@ -117,6 +118,8 @@ alighi_form = ->
             else if @aghkategorio is off or
             @landokategorio is off or @alighkategorio is off then off
             else window.programkotizoj[@aghkategorio]?[@landokategorio]?[@alighkategorio]
+        @programkotizo *= @relativa_partopreno
+        @programkotiza += if @aghaldona_pago then @aghaldona_pago else 0
         manghokosto = 0
         $('input[name="manghomendoj"]:checked').each ->
             manghokosto += window.manghomendotipoj[$(this).val()]
@@ -128,6 +131,7 @@ alighi_form = ->
             else
                 off
         else null
+        @uearabato *= @relativa_partopreno
         @chu_invitletero = $('#id_chu_bezonas_invitleteron').is ':checked'
         @chu_ekskurso = $('#id_chu_tuttaga_ekskurso').is(':checked')
 
@@ -206,22 +210,13 @@ alighi_form = ->
             $('.programo-klarigo').text 'programo'
         else if info.programkotizo?
             klarigo = 'programo'
-            programkotizo = if info.chu_plentempa
-                info.programkotizo
-            else
+            if not info.chu_plentempa
                 klarigo += " por #{info.tranoktoj+1} tagoj"
-                info.programkotizo / 5 * (info.tranoktoj + 1)
-            programkotizo += info.aghaldona_pago if info.aghaldona_pago
             $('.programo-klarigo').text klarigo
-            $('.programo-kosto').text programkotizo
+            $('.programo-kosto').text info.programkotizo
             kosto += programkotizo
         else
             $('.programo-klarigo').text 'programo'
-            $('.programo-klarigo').attr 'title', "
-                alighkategorio: #{info.alighkategorio},
-                aghkategorio: #{info.aghkategorio},
-                landokategorio: #{info.landokategorio},
-                aghaldona_pago: #{info.aghaldona_pago}"
             $('.programo-kosto').text nedifinita
 
         if info.chu_ekskurso
@@ -348,7 +343,13 @@ alighi_form = ->
     curend = if c = iso_to_date $('#id_ghis').val() then c.getDate()
     else datogamo_end
     
+    errorlist = []
     $('#id_ekde, #id_ghis').parent().hide()
+    $('#id_ekde .errorlist li, #id_ghis .errorlist li').each ->
+        errorlist.push $(this).text()
+    $newerrorlist = $('<ul class="errorlist"></ul>')
+    $errorlis = for error in errorlist
+        $("<li>#{error}</li>").appendTo $newerrorlist
     tabwidths = $('.tab').map -> $(this).width()
     tabwidth = Math.max tabwidths...
     widget_width = tabwidth - 300 - 14*2.5
@@ -356,6 +357,7 @@ alighi_form = ->
     $datesliderli = $('<li class="required">
         <label for="id_datogamo">La daŭro de mia partopreno:</label></li>')
         .insertAfter $('#id_ghis').parent()
+    $datesliderli.prepend $newerrorlist if $errorlis.length > 0
     $dateslider_container = $('<div></div>').appendTo($datesliderli)
         .width(widget_width)
     $gvidilo = $('<div id="datogamo-gvidilo"></div>').css
@@ -404,5 +406,13 @@ alighi_form = ->
             color: 'blue'
             textAlign: 'center'
             
+    # ŝanĝu al la tab kun la unua eraro, se estas eraroj
+    newtab = null
+    $('.tab').each ->
+        if $(this).find('.errorlist').length > 0
+            id = $(this).attr('id')
+            newtab = parseInt id[id.indexOf('-')+1..] unless newtab?
+    if newtab? then $tabs.tabs 'option', 'active', newtab
+
 $ ->
     alighi_form()

@@ -428,7 +428,7 @@ class PartoprenantoForm(PartoprenantoFormBase):
             return
         ghis = self.cleaned_data['ghis']
         if ghis < KOMENCA_DATO:
-            raise ValidationError(u'Vi ne povas partopreni ghis dato antaŭ '
+            raise ValidationError(u'Vi ne povas partopreni ĝis dato antaŭ '
                                   u'la komenco de la kongreso')
         return ghis
     def clean(self):
@@ -586,6 +586,7 @@ tabs = mark_safe(
 #~ from django.views.decorators.csrf import csrf_exempt
 #~ @csrf_exempt
 def alighi(request):
+    has_errors = False
     if request.method == 'POST':
         mmform = ManghoMendoForm(request.POST)
         nform = NotoForm(request.POST)
@@ -610,6 +611,7 @@ def alighi(request):
                 retposhtajho.sendi(partoprenanto)
             return HttpResponseRedirect(reverse('gratulon'))
         else:
+            has_errors = True
             errors = mmform.errors.copy()
             errors.update(nform.errors)
             errors.update(ppform.errors)
@@ -623,7 +625,8 @@ def alighi(request):
     context = RequestContext(request,
             {'formdivs': pageforms,
              'JAVASCRIPT': all_javascript(),
-             'tabs': tabs})
+             'tabs': tabs,
+             'has_errors': has_errors})
     return render_to_response('alighi/alighi.html', context)
 
 def gratulon(request):

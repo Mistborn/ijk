@@ -32,5 +32,9 @@
 <div class="fakturo-placeholder"></div>
 <p><strong>Grave</strong>: La kotizoj enhavas nenian asekuron.</p>
 <input id="alighi-btn" type="submit" value="Mi aliĝas al IJK!" class="alighi">
+{% if has_errors %}
+    <div class="button-error">Estas eraroj en la formularo.
+        Bonvolu rekontroli!</div>
+{% endif %}
 </form>
 {% endblock %}

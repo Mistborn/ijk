@@ -111,9 +111,14 @@ h1 {
   color: #1e415a;
 }
 
-div, p, #alighi-btn, #form-tabs {
+div, p, #form-tabs {
   margin: 1em 0.5em;
   display: block;
+}
+
+#alighi-btn {
+  margin: 1em 0.5em;
+  display: inline-block;
 }
 
 strong {
@@ -140,6 +145,12 @@ textarea {
   margin-left: 50px;
 }
 .errorlist li {
+  display: inline-block;
+  font-weight: bold;
+  color: red;
+}
+
+.button-error {
   display: inline-block;
   font-weight: bold;
   color: red;

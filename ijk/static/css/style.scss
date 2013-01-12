@@ -13,6 +13,11 @@ $heading-height: 100px;
     font-weight: bold;
 }
 
+@mixin error-style {
+    font-weight: bold;
+    color: red;
+}
+
 @mixin shadow {
   -moz-box-shadow:    3px 3px 5px 6px #ccc;
   -webkit-box-shadow: 3px 3px 5px 6px #ccc;
@@ -128,9 +133,14 @@ h1 {
     }
 }
 
-div, p, #alighi-btn, #form-tabs {
+div, p, #form-tabs {
     margin: 1em 0.5em;
     display: block;
+}
+
+#alighi-btn {
+    margin: 1em 0.5em;
+    display: inline-block;
 }
 
 strong {
@@ -157,9 +167,13 @@ textarea {
     margin-left: $hanging-indent;
     li {
         display: inline-block;
-        font-weight: bold;
-        color: red;
+        @include error-style;
     }
+}
+
+.button-error {
+    display: inline-block;
+    @include error-style;
 }
 
 .form-nav { // antauen/reen-butonoj
