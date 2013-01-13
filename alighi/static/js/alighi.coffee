@@ -58,7 +58,7 @@ alighi_form = ->
         day = '0' + day if day < 10
         "#{year}-#{month}-#{day}"
 
-    partoprenelektoj = ->
+    window.partoprenelektoj = ->
         @ekdato = iso_to_date $('#id_ekde').val() ? off
         @ghisdato = iso_to_date $('#id_ghis').val() ? off
         @naskighdato = iso_to_date $('#id_naskighdato').val() ? off
@@ -126,12 +126,12 @@ alighi_form = ->
         @manghokosto = if isNaN manghokosto then null else manghokosto
         @uearabato = if not $('#id_chu_ueamembro').is(':checked') then 0
         else if @landokategorio?
-            if @landokategorio is not off
+            if @landokategorio isnt off
                 window.uearabatoj[@landokategorio]
             else
                 off
         else null
-        @uearabato *= @relativa_partopreno
+        @uearabato *= Math.min(@relativa_partopreno, 1)
         @chu_invitletero = $('#id_chu_bezonas_invitleteron').is ':checked'
         @chu_ekskurso = $('#id_chu_tuttaga_ekskurso').is(':checked')
 

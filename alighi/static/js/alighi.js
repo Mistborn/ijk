@@ -3,7 +3,7 @@
   var alighi_form;
 
   alighi_form = function() {
-    var $dateslider, $dateslider_container, $datesliderli, $errorlis, $gvidilo, $kotizoul, $newerrorlist, $tabs, DAY, NUMTABS, YEAR, activate_cb, c, curend, curstart, date_to_iso, datogamo_end, datogamo_start, error, errorlist, id, iso_to_date, kotizeroj, kotizo, kotizo_selectors, liveri_aghon_lau_naskightago, nav_callback, newtab, numnotches, partoprenelektoj, selector, signo, tabwidth, tabwidths, widget_width, _i, _j, _k, _len, _len1, _ref, _ref1, _results;
+    var $dateslider, $dateslider_container, $datesliderli, $errorlis, $gvidilo, $kotizoul, $newerrorlist, $tabs, DAY, NUMTABS, YEAR, activate_cb, c, curend, curstart, date_to_iso, datogamo_end, datogamo_start, error, errorlist, id, iso_to_date, kotizeroj, kotizo, kotizo_selectors, liveri_aghon_lau_naskightago, nav_callback, newtab, numnotches, selector, signo, tabwidth, tabwidths, widget_width, _i, _j, _k, _len, _len1, _ref, _ref1, _results;
     NUMTABS = 6;
     DAY = 1000 * 60 * 60 * 24;
     YEAR = DAY * 365.25;
@@ -77,7 +77,7 @@
       }
       return "" + year + "-" + month + "-" + day;
     };
-    partoprenelektoj = function() {
+    window.partoprenelektoj = function() {
       var limagho, manghokosto, minimum, result, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7,
         _this = this;
       this.ekdato = iso_to_date((_ref = $('#id_ekde').val()) != null ? _ref : false);
@@ -141,8 +141,8 @@
         return manghokosto += window.manghomendotipoj[$(this).val()];
       });
       this.manghokosto = isNaN(manghokosto) ? null : manghokosto;
-      this.uearabato = !$('#id_chu_ueamembro').is(':checked') ? 0 : this.landokategorio != null ? this.landokategorio === !false ? window.uearabatoj[this.landokategorio] : false : null;
-      this.uearabato *= this.relativa_partopreno;
+      this.uearabato = !$('#id_chu_ueamembro').is(':checked') ? 0 : this.landokategorio != null ? this.landokategorio !== false ? window.uearabatoj[this.landokategorio] : false : null;
+      this.uearabato *= Math.min(this.relativa_partopreno, 1);
       this.chu_invitletero = $('#id_chu_bezonas_invitleteron').is(':checked');
       return this.chu_ekskurso = $('#id_chu_tuttaga_ekskurso').is(':checked');
     };
