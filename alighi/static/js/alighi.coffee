@@ -118,8 +118,9 @@ alighi_form = ->
             else if @aghkategorio is off or
             @landokategorio is off or @alighkategorio is off then off
             else window.programkotizoj[@aghkategorio]?[@landokategorio]?[@alighkategorio]
-        @programkotizo *= @relativa_partopreno
-        @programkotiza += if @aghaldona_pago then @aghaldona_pago else 0
+        @programkotizo *= @relativa_partopreno if @programkotizo
+        if @programkotizo
+            @programkotizo += if @aghaldona_pago then @aghaldona_pago else 0
         manghokosto = 0
         $('input[name="manghomendoj"]:checked').each ->
             manghokosto += window.manghomendotipoj[$(this).val()]
@@ -131,9 +132,9 @@ alighi_form = ->
             else
                 off
         else null
-        @uearabato *= Math.min(@relativa_partopreno, 1)
+        @uearabato *= Math.min @relativa_partopreno, 1
         @chu_invitletero = $('#id_chu_bezonas_invitleteron').is ':checked'
-        @chu_ekskurso = $('#id_chu_tuttaga_ekskurso').is(':checked')
+        @chu_ekskurso = $('#id_chu_tuttaga_ekskurso').is ':checked'
 
     # konstruo de la strukturo de la kotizo-"fakturo"
     $('#js-active').val(1)
@@ -385,8 +386,8 @@ alighi_form = ->
             change: (e, ui) ->
                 #alert "event type is #{e.type}"
                 [ekde, ghis] = ui.values 
-                $('#id_ekde').val("2013-08-#{ekde}")
-                $('#id_ghis').val("2013-08-#{ghis}")
+                $('#id_ekde').val("2013-08-#{ekde}").change()
+                $('#id_ghis').val("2013-08-#{ghis}").change()
                 $('.datomarko').each ->
                     $(this).css fontWeight: 'normal'
                 $("#id_datomarko_#{ekde}, #id_datomarko_#{ghis}").css 

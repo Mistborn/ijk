@@ -134,8 +134,12 @@
         }
       })();
       this.programkotizo = !((this.aghkategorio != null) && (this.landokategorio != null) && (this.alighkategorio != null)) ? null : this.aghkategorio === false || this.landokategorio === false || this.alighkategorio === false ? false : (_ref6 = window.programkotizoj[this.aghkategorio]) != null ? (_ref7 = _ref6[this.landokategorio]) != null ? _ref7[this.alighkategorio] : void 0 : void 0;
-      this.programkotizo *= this.relativa_partopreno;
-      this.programkotiza += this.aghaldona_pago ? this.aghaldona_pago : 0;
+      if (this.programkotizo) {
+        this.programkotizo *= this.relativa_partopreno;
+      }
+      if (this.programkotizo) {
+        this.programkotizo += this.aghaldona_pago ? this.aghaldona_pago : 0;
+      }
       manghokosto = 0;
       $('input[name="manghomendoj"]:checked').each(function() {
         return manghokosto += window.manghomendotipoj[$(this).val()];
@@ -421,8 +425,8 @@
       change: function(e, ui) {
         var ekde, ghis, _ref2;
         _ref2 = ui.values, ekde = _ref2[0], ghis = _ref2[1];
-        $('#id_ekde').val("2013-08-" + ekde);
-        $('#id_ghis').val("2013-08-" + ghis);
+        $('#id_ekde').val("2013-08-" + ekde).change();
+        $('#id_ghis').val("2013-08-" + ghis).change();
         $('.datomarko').each(function() {
           return $(this).css({
             fontWeight: 'normal'
