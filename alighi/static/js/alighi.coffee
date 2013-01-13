@@ -214,7 +214,7 @@ alighi_form = ->
                 klarigo += " por #{info.tranoktoj+1} tagoj"
             $('.programo-klarigo').text klarigo
             $('.programo-kosto').text info.programkotizo
-            kosto += programkotizo
+            kosto += info.programkotizo
         else
             $('.programo-klarigo').text 'programo'
             $('.programo-kosto').text nedifinita
@@ -345,7 +345,7 @@ alighi_form = ->
     
     errorlist = []
     $('#id_ekde, #id_ghis').parent().hide()
-    $('#id_ekde .errorlist li, #id_ghis .errorlist li').each ->
+    $('#id_ekde, #id_ghis').prevAll('.errorlist').find('li').each ->
         errorlist.push $(this).text()
     $newerrorlist = $('<ul class="errorlist"></ul>')
     $errorlis = for error in errorlist

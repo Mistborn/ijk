@@ -225,7 +225,7 @@
         }
         $('.programo-klarigo').text(klarigo);
         $('.programo-kosto').text(info.programkotizo);
-        kosto += programkotizo;
+        kosto += info.programkotizo;
       } else {
         $('.programo-klarigo').text('programo');
         $('.programo-kosto').text(nedifinita);
@@ -367,7 +367,7 @@
     curend = (c = iso_to_date($('#id_ghis').val())) ? c.getDate() : datogamo_end;
     errorlist = [];
     $('#id_ekde, #id_ghis').parent().hide();
-    $('#id_ekde .errorlist li, #id_ghis .errorlist li').each(function() {
+    $('#id_ekde, #id_ghis').prevAll('.errorlist').find('li').each(function() {
       return errorlist.push($(this).text());
     });
     $newerrorlist = $('<ul class="errorlist"></ul>');
