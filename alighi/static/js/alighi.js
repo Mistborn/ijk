@@ -146,7 +146,9 @@
       });
       this.manghokosto = isNaN(manghokosto) ? null : manghokosto;
       this.uearabato = !$('#id_chu_ueamembro').is(':checked') ? 0 : this.landokategorio != null ? this.landokategorio !== false ? window.uearabatoj[this.landokategorio] : false : null;
-      this.uearabato *= Math.min(this.relativa_partopreno, 1);
+      if (this.uearabato) {
+        this.uearabato *= Math.min(this.relativa_partopreno, 1);
+      }
       this.chu_invitletero = $('#id_chu_bezonas_invitleteron').is(':checked');
       return this.chu_ekskurso = $('#id_chu_tuttaga_ekskurso').is(':checked');
     };
@@ -159,7 +161,7 @@
       id = kotizeroj[_i];
       signo = (function() {
         switch (id) {
-          case 'mangho':
+          case 'programo':
             return '';
           case 'uearabato':
             return '\u2013';
@@ -310,7 +312,9 @@
           $('body, html').animate({
             scrollTop: $('.alighi').offset().top
           }, 400, 'swing', function() {
-            return $('.alighi').effect('highlight').effect('shake');
+            return $('.alighi').effect('highlight', {
+              color: 'red'
+            });
           });
           return false;
         }

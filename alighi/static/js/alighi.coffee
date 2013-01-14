@@ -132,7 +132,7 @@ alighi_form = ->
             else
                 off
         else null
-        @uearabato *= Math.min @relativa_partopreno, 1
+        @uearabato *= Math.min @relativa_partopreno, 1 if @uearabato
         @chu_invitletero = $('#id_chu_bezonas_invitleteron').is ':checked'
         @chu_ekskurso = $('#id_chu_tuttaga_ekskurso').is ':checked'
 
@@ -145,7 +145,7 @@ alighi_form = ->
         'ekskurso', 'invitletero', 'uearabato', 'sumo']
     for id in kotizeroj
         signo = switch id
-                when 'mangho' then ''
+                when 'programo' then ''
                 when 'uearabato' then '\u2013'
                 when 'sumo' then '='
                 else '+'
@@ -292,11 +292,11 @@ alighi_form = ->
          
     nav_callback = (offset) -> ->
         active = $tabs.tabs 'option', 'active'
-        newtab = active+offset
+        newtab = active + offset
         if newtab >= NUMTABS
             $('body, html').animate scrollTop: $('.alighi').offset().top, 
                 400, 'swing', ->
-                    $('.alighi').effect('highlight').effect('shake')
+                    $('.alighi').effect 'highlight', color: 'red'
             return false
         return false if newtab < 0 or newtab >= NUMTABS
         $tabs.tabs 'option', 'active', newtab
