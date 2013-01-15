@@ -87,6 +87,8 @@ h1 {
     font-weight: bold;
 }
 
+@import 'menu';
+
 // heading
 #heading {
     margin: 15px auto;
@@ -105,19 +107,19 @@ h1 {
         text-transform: lowercase;
     }
     .menuo {
+        padding: 0; margin: 0;
         position: absolute;
-        top: $heading-height - 1.5 * $root-em / 0.8;
+        top: $heading-height - 2.5 * $root-em + 1px; // / 0.8;
         width: 100%;
         font-size: 1.5 * $root-em;
-        line-height: 1.5 * $root-em / 0.8;
-        height: 1.5 * $root-em / 0.8;
-        //border: 1px solid black;
-        list-style: none;
+        line-height: 1.5 * $root-em;
+        @include dropdown(
+            $cellpad: $root-em/2,
+            $cellheight: 1.5 * $root-em / 0.8
+        );
         li {
-            display: inline-block;
-            margin: 0 0.5em;
-            width: 100px;
-            text-align: center;
+//border: 1px solid black;
+            li { background-color: white; }
             text-transform: lowercase;
             border-radius: 7px 7px 0 0;
             a {
@@ -350,3 +352,4 @@ textarea {
         }
     }
 }
+

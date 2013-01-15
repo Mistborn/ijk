@@ -46,26 +46,30 @@ class Menu(object):
     def __init__(self):
         self.menu = OrderedDict() # mapping from parent url to Menu object
         self.mainpage = None
-    def add(self, item):
-        if item.url == u'/':
-            levels = []
+    @staticmethod
+    def get_levels(url):
+        if url == u'/':
+            return []
         else:
-            levels = item.url.strip('/').split('/')
-        self.additem(item, levels)
-    def additem(self, item, parent=None):
-        print 'adding {}, parent {}'.format(item, parent)
-        if not parent:
-            self.mainpage = item
+            return url.strip('/').split('/')
+    @staticmethod
+    def get_label(url, title):
+        return u'<a href="{}">{}</a>'.format(url, title)
+    def addfp(self, item):
+        self.add(item.url, item.title)
+    def add(self, url, title):
+        label = self.get_label(url, title)
+        levels = self.get_levels(url)
+        self.additem(label, levels)
+    def additem(self, label, levels=None):
+        if not levels:
+            self.mainpage = label
         else:
-            if parent[0] not in self.menu:
-                self.menu[parent[0]] = Menu()
-            self.menu[parent[0]].additem(item, parent[1:])
+            if levels[0] not in self.menu:
+                self.menu[levels[0]] = Menu()
+            self.menu[levels[0]].additem(label, levels[1:])
     def to_html(self, toplevel=True):
-        if self.mainpage is None:
-            label = u''
-        else:
-            label = u'<a href="{}">{}</a>'.format(self.mainpage.url,
-                                                  self.mainpage.title)
+        label = self.mainpage if self.mainpage is not None else u''
         items = [self.menu[key].to_html(toplevel=False)
                     for key in self.menu]
         if toplevel:
@@ -73,15 +77,14 @@ class Menu(object):
             label = u''
         if not items:
             return label
-        items = u'<ul{}>{}</ul>'.format(
-            u' class="menuo"' if toplevel else u'',
-            u''.join(u'<li>{}</li>'.format(item)
-                        for item in items))
+        items = u'<ul>{}</ul>'.format(u''.join(u'<li>{}</li>'.format(item)
+                                               for item in items))
         return label + items
 
 menu = Menu()
 for fp in FlatPage.objects.order_by('pk'):
-    menu.add(fp)
+    menu.addfp(fp)
+menu.add(u'/alighi/', u'Aliĝi!')
 menu_html = menu.to_html()
 def menu_context_processor(request):
     return {'MENUO': mark_safe(menu_html)}

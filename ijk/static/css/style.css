@@ -82,21 +82,85 @@ h1 {
   text-transform: lowercase;
 }
 #heading .menuo {
+  padding: 0;
+  margin: 0;
   position: absolute;
-  top: 73.75px;
+  top: 66px;
   width: 100%;
   font-size: 21px;
-  line-height: 26.25px;
-  height: 26.25px;
-  list-style: none;
+  line-height: 21px;
+  /* no margins, or it becomes hard to select subitems, because
+   * the submenus disappear when you move into the margins */
 }
 #heading .menuo li {
+  /* All menu items: */
   display: inline-block;
-  margin: 0 0.5em;
-  width: 100px;
-  text-align: center;
+  position: relative;
+  padding: 7px;
+  margin: 0;
+  border-width: 1px;
+}
+#heading .menuo li li {
+  height: 26.25px;
+  width: 150px;
+}
+#heading .menuo > ul > li {
+  width: auto;
+  height: 20px;
+  float: left;
+  /* root-level menu items, display them in a line */
+}
+#heading .menuo > ul > li > ul {
+  top: 100%;
+  margin-top: 0px;
+  left: 0;
+  margin-left: -1px;
+  /* compensate for the cell padding and height
+   * this is the first submenu, which we're putting
+   * directly under the root level element
+   * the parent li was floated, so the calculation is different
+   * than for deeper nested items */
+}
+#heading .menuo ul {
+  /* all menus and submenus of any level of nesting */
+  list-style: none;
+  /* no bullets */
+  padding-left: 0;
+  /* this keeps the submenus lined up correctly */
+}
+#heading .menuo ul ul {
+  /* all submenus, at least 1 level deep */
+  display: none;
+  /* hide submenus */
+  position: absolute;
+  /* keep the submenus from rearranging
+   * the positioning of the whole menu */
+  z-index: 10000;
+  /* keep the submenus from being covered
+   * by the rest of the menu */
+}
+#heading .menuo ul ul ul {
+  /* all sub-submenus (3rd level or greater)
+   * the 1st level is floated in a line,
+   * the 2nd level goes directly under its parent
+   * from the 3rd level here and deeper,
+   * we put it to the right of its parent */
+  left: 100%;
+  margin-left: 0px;
+  /* put 3rd level submenu to the right of its parent */
+  top: -1px;
+  /* put 3rd level submenu at the same height as its parent */
+}
+#heading .menuo ul li:hover > ul {
+  display: block;
+  /* show the submenu when we hover over its parent */
+}
+#heading .menuo li {
   text-transform: lowercase;
   border-radius: 7px 7px 0 0;
+}
+#heading .menuo li li {
+  background-color: white;
 }
 #heading .menuo li a {
   margin: 0;
