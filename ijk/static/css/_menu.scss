@@ -1,0 +1,66 @@
+@mixin dropdown ($cellpad : 10px, $cellborder : 1px,
+                 $rootcellwidth : auto, $rootcellheight : 20px,
+                 $cellwidth : 150px, $cellheight : auto, $float : true) {
+                 /* no margins, or it becomes hard to select subitems, because
+                  * the submenus disappear when you move into the margins */
+    li { /* All menu items: */
+        display: inline-block;
+        position: relative;
+        padding: $cellpad;
+        margin: 0;
+        border-width: $cellborder;
+        //@content;
+        li {
+            height: $cellheight;
+            width: $cellwidth;
+        }
+    }
+    > ul > li {
+        width: $rootcellwidth;
+        height: $rootcellheight;
+        @if $float {
+            float: left;
+        } @else {
+            display: inline-block; margin-left: -4px;
+        }
+        /* root-level menu items, display them in a line */
+        > ul {
+            //margin-top: $cellborder + $cellheight - 1;
+            top: 100%; margin-top: $cellborder - 1;
+            //margin-left: -$cellpad - $cellborder;
+            left: 0; margin-left: -$cellborder;
+            /* compensate for the cell padding and height
+             * this is the first submenu, which we're putting
+             * directly under the root level element
+             * the parent li was floated, so the calculation is different
+             * than for deeper nested items */
+        }
+    }
+    ul { /* all menus and submenus of any level of nesting */
+        list-style: none; /* no bullets */
+        padding-left: 0; /* this keeps the submenus lined up correctly */
+        ul { /* all submenus, at least 1 level deep */
+            display: none; /* hide submenus */
+            position: absolute; /* keep the submenus from rearranging
+                                 * the positioning of the whole menu */
+            z-index: 10000; /* keep the submenus from being covered
+                             * by the rest of the menu */
+            ul {
+                /* all sub-submenus (3rd level or greater)
+                 * the 1st level is floated in a line,
+                 * the 2nd level goes directly under its parent
+                 * from the 3rd level here and deeper,
+                 * we put it to the right of its parent */
+                left: 100%; margin-left: $cellborder - 1;
+                // left: $cellwidth + $cellborder + $cellpad*2;
+                    /* put 3rd level submenu to the right of its parent */
+                top: -$cellborder;
+                    /* put 3rd level submenu at the same height as its parent */
+            }
+        }
+        li:hover > ul {
+            display: block;
+            /* show the submenu when we hover over its parent */
+        }
+    }
+}
