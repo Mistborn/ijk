@@ -15,7 +15,9 @@ class EditorMedia:
     )
     css = {'all': ('/static/css/editor.css',)}
 
-# Force flatpages to default to the current site
+import reversion
+
+# Force flatpages to default to the current site, + revisions
 from django.forms import ModelMultipleChoiceField
 from django.contrib.flatpages.models import FlatPage
 from django.contrib.flatpages import admin as flatadmin, forms as flatforms
@@ -23,7 +25,7 @@ from django.contrib.sites.models import Site
 class NewFlatpageForm(flatforms.FlatpageForm):
     sites = ModelMultipleChoiceField(queryset=Site.objects.all(),
         initial=[Site.objects.get_current()])
-class NewFlatPageAdmin(flatadmin.FlatPageAdmin):
+class NewFlatPageAdmin(flatadmin.FlatPageAdmin, reversion.VersionAdmin):
     form = NewFlatpageForm
 admin.site.unregister(FlatPage)
 admin.site.register(FlatPage, NewFlatPageAdmin, Media=EditorMedia)

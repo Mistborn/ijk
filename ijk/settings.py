@@ -117,6 +117,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django.contrib.flatpages',
     'alighi',
+    'reversion',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
