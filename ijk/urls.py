@@ -7,29 +7,6 @@ if settings.DEBUG:
 from django.contrib import admin
 admin.autodiscover()
 
-# Rich text editor for flatpages
-class EditorMedia:
-    js = (
-        'https://ajax.googleapis.com/ajax/libs/dojo/1.6.0/dojo/dojo.xd.js',
-        '/static/js/editor.js',
-    )
-    css = {'all': ('/static/css/editor.css',)}
-
-import reversion
-
-# Force flatpages to default to the current site, + revisions
-from django.forms import ModelMultipleChoiceField
-from django.contrib.flatpages.models import FlatPage
-from django.contrib.flatpages import admin as flatadmin, forms as flatforms
-from django.contrib.sites.models import Site
-class NewFlatpageForm(flatforms.FlatpageForm):
-    sites = ModelMultipleChoiceField(queryset=Site.objects.all(),
-        initial=[Site.objects.get_current()])
-class NewFlatPageAdmin(flatadmin.FlatPageAdmin, reversion.VersionAdmin):
-    form = NewFlatpageForm
-admin.site.unregister(FlatPage)
-admin.site.register(FlatPage, NewFlatPageAdmin, Media=EditorMedia)
-
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'ijk.views.home', name='home'),

@@ -118,6 +118,8 @@ INSTALLED_APPS = (
     'django.contrib.flatpages',
     'alighi',
     'reversion',
+    'mptt',
+    #'south',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -128,7 +130,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
-    'alighi.utils.menu_context_processor'
+    'ijk.menu_context_processor'
 )
 
 # A sample logging configuration. The only tangible logging
