@@ -5,24 +5,36 @@ $label-width: 300px;
 $widget-width: 200px;
 $helptext-width: 300px;
 $content-width: $label-width + $widget-width + $helptext-width + 9 * $root-em;
-$style-color: #A6C9E2;
+$style-color: #2a3753; // #0b3e6f; //#A6C9E2;
 $heading-height: 100px;
+$base-color: #000000;
+$header-color: #ffffff;
+$border-radius: 10px;
+$active-color: #faa700;
+$link-color: #002BB8;
+$top-space: 15px;
+$alert-color: #cd0a0a;
 
 @mixin style-of-required {
-    color: red;
+    color: $alert-color;
     font-weight: bold;
 }
 
 @mixin error-style {
     font-weight: bold;
-    color: red;
+    color: $alert-color;
 }
 
+$shadow-color: #ccc;
+$shadow-blur: 2px;
+$shadow-spread: 3px;
+$shadow-def: 0 0 $shadow-blur $shadow-spread $shadow-color;
 @mixin shadow {
-  -moz-box-shadow:    3px 3px 5px 6px #ccc;
-  -webkit-box-shadow: 3px 3px 5px 6px #ccc;
-  box-shadow:         3px 3px 5px 6px #ccc;
+  -moz-box-shadow:    $shadow-def;
+  -webkit-box-shadow: $shadow-def;
+  box-shadow:         $shadow-def;
 }
+$text-shadow-def: 1px 1px 1px #777;
 
 /*! http://meyerweb.com/eric/tools/css/reset/
    v2.0 | 20110126
@@ -48,6 +60,7 @@ time, mark, audio, video {
     font-size: 100%;
     font: inherit;
     vertical-align: baseline;
+    color: $base-color;
 }
 // HTML5 display-role reset for older browsers
 article, aside, details, figcaption, figure,
@@ -87,26 +100,51 @@ h1 {
     font-weight: bold;
 }
 
+.main-heading {
+    text-shadow: $text-shadow-def;
+    margin: 0 $root-em;
+}
+
 @import 'menu';
+
+$menu-bg-color: white;
+$menu-border-size: 1px;
+$menu-border: $menu-border-size solid black;
+$menu-hover-color: #ccc;
 
 // heading
 #heading {
-    margin: 15px auto;
+    @include shadow;
+    margin: $top-space auto;
     position: relative;
     width: $content-width;
     height: $heading-height;
     vertical-align: middle;
     background: $style-color;
-    border-radius: 15px;
+    border-radius: $border-radius;
+    #tejo-logo {
+        position: relative;
+        top: -$top-space;
+    }
     #ijk-heading {
-        font-weight: bold;
-        font-size: $root-em * 2.5;
-        line-height: $heading-height;
+        a {
+            color: $header-color;
+            font-weight: bold;
+            font-size: $root-em * 2.5;
+            line-height: $heading-height;
+            text-decoration: none;
+            text-shadow: $text-shadow-def;
+        }
         position: absolute;
-        left: 50px;
+        left: 135px;
         text-transform: lowercase;
     }
     .menuo {
+        a {
+            text-shadow: $text-shadow-def;
+            font-weight: bold;
+        }
+        color: $header-color;
         padding: 0; margin: 0;
         position: absolute;
         top: $heading-height - 2.5 * $root-em + 1px; // / 0.8;
@@ -115,21 +153,75 @@ h1 {
         line-height: 1.5 * $root-em;
         @include dropdown(
             $cellpad: $root-em/2,
-            $cellheight: 1.5 * $root-em / 0.8
+            $cellheight: 1.5 * $root-em / 0.8,
+            $cellborder: $menu-border-size
         );
+        > ul {
+            position: relative;
+            left: $border-radius;
+            > li {
+                border-radius: $border-radius $border-radius 0 0;
+                > ul > li {
+                    border-radius: 0;
+                    border: {
+                        left: $menu-border;
+                        right: $menu-border;
+                    }
+                    &:first-child {
+                        border-radius: 0 $border-radius 0 0;
+                        border: {
+                            top: $menu-border;
+                            right: $menu-border;
+                            left: $menu-border;
+                        }
+                    }
+                    &:last-child {
+                        border-radius: 0 0 $border-radius $border-radius;
+                        border: {
+                            bottom: $menu-border;
+                            right: $menu-border;
+                            left: $menu-border;
+                        }
+                    }
+                    &:first-child:last-child {
+                        border-radius: 0 $border-radius $border-radius $border-radius;
+                        border: {
+                            border: $menu-border;
+                        }
+                    }
+                    li {
+                        position: relative;
+                        left: -$border-radius - 1px;
+                        border-radius: 0 $border-radius $border-radius 0;
+                        border: {
+                            top: $menu-border;
+                            right: $menu-border;
+                            bottom: $menu-border;
+                        }
+                    }
+                }
+            }
+        }
         li {
-//border: 1px solid black;
-            li { background-color: white; }
+            li {
+                background-color: $menu-bg-color;
+                // @include shadow;
+            }
             text-transform: lowercase;
-            border-radius: 7px 7px 0 0;
             a {
+                color: $header-color;
                 margin: 0; padding: 0;
                 text-decoration: none;
-                color: inherit;
+                // color: inherit;
             }
             &:hover {
-                background-color: white;
-                a { color: $style-color - #888; }
+                background-color: $menu-bg-color;
+                a {
+                    color: $style-color;  // - #888; }
+                    &:hover {
+                        color: $active-color;
+                    }
+                }
             }
         }
     }
@@ -138,6 +230,18 @@ h1 {
 div, p, #form-tabs {
     margin: 1em 0.5em;
     display: block;
+}
+
+#form-tabs {
+    @include shadow;
+    width: $content-width - 1.6 * $root-em;
+    .tab a {
+        text-shadow: $text-shadow-def;
+    }
+}
+
+.ui-button, .ui-button-text {
+    text-shadow: $text-shadow-def;
 }
 
 #alighi-btn {
@@ -302,6 +406,14 @@ textarea {
         padding: 0;
         li {
             margin-left: $left;
+        }
+        a {
+            color: $link-color;
+            text-decoration: none;
+            background: none;
+            &:hover { text-decoration: underline; }
+            &:visited { color: #5A3696; }
+            &:active { color: $active-color; }
         }
     }
     .helptext-below {

@@ -331,7 +331,9 @@
     activate_cb = function(e, ui) {
       var tab, _ref;
       tab = (_ref = ui.newTab) != null ? _ref : ui.tab;
-      return $('.reen').button('option', 'disabled', tab.index() === 0);
+      $('.reen').button('option', 'disabled', tab.index() === 0);
+      $(this).css('height', 'auto');
+      return $(this).css('overflow', 'visible');
     };
     $tabs = $('#form-tabs').tabs({
       hide: {
@@ -344,6 +346,8 @@
       },
       beforeActivate: function(e, ui) {
         var hide_dir, show_dir, slide_dirs, tabdiff, _ref;
+        $(this).css('height', $(this).height());
+        $(this).css('overflow', 'hidden');
         tabdiff = ui.newTab.index() - ui.oldTab.index();
         if (Math.abs(tabdiff) === 1) {
           slide_dirs = ['left', 'right'];
@@ -446,13 +450,14 @@
       width: widget_width * (numnotches - 2) / numnotches,
       height: '1em',
       fontSize: '80%',
-      borderTop: '3px dotted blue',
+      borderTop: '3px dotted #2a3753',
       margin: 0,
       position: 'relative',
       padding: 0,
       left: widget_width / numnotches + 14,
-      color: 'blue',
-      textAlign: 'center'
+      color: '#2a3753',
+      textAlign: 'center',
+      fontWeight: 'bold'
     });
     newtab = null;
     $('.tab').each(function() {

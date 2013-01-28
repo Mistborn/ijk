@@ -21,6 +21,7 @@ time, mark, audio, video {
   font-size: 100%;
   font: inherit;
   vertical-align: baseline;
+  color: black;
 }
 
 article, aside, details, figcaption, figure,
@@ -64,24 +65,42 @@ h1 {
   font-weight: bold;
 }
 
+.main-heading {
+  text-shadow: 1px 1px 1px #777777;
+  margin: 0 14px;
+}
+
 #heading {
+  -moz-box-shadow: 0 0 2px 3px #cccccc;
+  -webkit-box-shadow: 0 0 2px 3px #cccccc;
+  box-shadow: 0 0 2px 3px #cccccc;
   margin: 15px auto;
   position: relative;
   width: 926px;
   height: 100px;
   vertical-align: middle;
-  background: #a6c9e2;
-  border-radius: 15px;
+  background: #2a3753;
+  border-radius: 10px;
+}
+#heading #tejo-logo {
+  position: relative;
+  top: -15px;
 }
 #heading #ijk-heading {
+  position: absolute;
+  left: 135px;
+  text-transform: lowercase;
+}
+#heading #ijk-heading a {
+  color: white;
   font-weight: bold;
   font-size: 35px;
   line-height: 100px;
-  position: absolute;
-  left: 50px;
-  text-transform: lowercase;
+  text-decoration: none;
+  text-shadow: 1px 1px 1px #777777;
 }
 #heading .menuo {
+  color: white;
   padding: 0;
   margin: 0;
   position: absolute;
@@ -91,6 +110,10 @@ h1 {
   line-height: 21px;
   /* no margins, or it becomes hard to select subitems, because
    * the submenus disappear when you move into the margins */
+}
+#heading .menuo a {
+  text-shadow: 1px 1px 1px #777777;
+  font-weight: bold;
 }
 #heading .menuo li {
   /* All menu items: */
@@ -155,29 +178,81 @@ h1 {
   display: block;
   /* show the submenu when we hover over its parent */
 }
+#heading .menuo > ul {
+  position: relative;
+  left: 10px;
+}
+#heading .menuo > ul > li {
+  border-radius: 10px 10px 0 0;
+}
+#heading .menuo > ul > li > ul > li {
+  border-radius: 0;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+}
+#heading .menuo > ul > li > ul > li:first-child {
+  border-radius: 0 10px 0 0;
+  border-top: 1px solid black;
+  border-right: 1px solid black;
+  border-left: 1px solid black;
+}
+#heading .menuo > ul > li > ul > li:last-child {
+  border-radius: 0 0 10px 10px;
+  border-bottom: 1px solid black;
+  border-right: 1px solid black;
+  border-left: 1px solid black;
+}
+#heading .menuo > ul > li > ul > li:first-child:last-child {
+  border-radius: 0 10px 10px 10px;
+  border-border: 1px solid black;
+}
+#heading .menuo > ul > li > ul > li li {
+  position: relative;
+  left: -11px;
+  border-radius: 0 10px 10px 0;
+  border-top: 1px solid black;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+}
 #heading .menuo li {
   text-transform: lowercase;
-  border-radius: 7px 7px 0 0;
 }
 #heading .menuo li li {
   background-color: white;
 }
 #heading .menuo li a {
+  color: white;
   margin: 0;
   padding: 0;
   text-decoration: none;
-  color: inherit;
 }
 #heading .menuo li:hover {
   background-color: white;
 }
 #heading .menuo li:hover a {
-  color: #1e415a;
+  color: #2a3753;
+}
+#heading .menuo li:hover a:hover {
+  color: #faa700;
 }
 
 div, p, #form-tabs {
   margin: 1em 0.5em;
   display: block;
+}
+
+#form-tabs {
+  -moz-box-shadow: 0 0 2px 3px #cccccc;
+  -webkit-box-shadow: 0 0 2px 3px #cccccc;
+  box-shadow: 0 0 2px 3px #cccccc;
+  width: 903.6px;
+}
+#form-tabs .tab a {
+  text-shadow: 1px 1px 1px #777777;
+}
+
+.ui-button, .ui-button-text {
+  text-shadow: 1px 1px 1px #777777;
 }
 
 #alighi-btn {
@@ -199,7 +274,7 @@ textarea {
 }
 */
 .style-of-required {
-  color: red;
+  color: #cd0a0a;
   font-weight: bold;
 }
 
@@ -211,13 +286,13 @@ textarea {
 .errorlist li {
   display: inline-block;
   font-weight: bold;
-  color: red;
+  color: #cd0a0a;
 }
 
 .button-error {
   display: inline-block;
   font-weight: bold;
-  color: red;
+  color: #cd0a0a;
 }
 
 .form-nav {
@@ -265,7 +340,7 @@ textarea {
 }
 .tab > ul .required > label:before {
   content: "* ";
-  color: red;
+  color: #cd0a0a;
   font-weight: bold;
   display: inline-block;
   width: 14px;
@@ -344,6 +419,20 @@ textarea {
 .tab .helptext li, .tab .helptext-below li {
   margin-left: 14px;
 }
+.tab .helptext a, .tab .helptext-below a {
+  color: #002bb8;
+  text-decoration: none;
+  background: none;
+}
+.tab .helptext a:hover, .tab .helptext-below a:hover {
+  text-decoration: underline;
+}
+.tab .helptext a:visited, .tab .helptext-below a:visited {
+  color: #5A3696;
+}
+.tab .helptext a:active, .tab .helptext-below a:active {
+  color: #faa700;
+}
 .tab .helptext-below {
   width: auto;
   display: block;
@@ -355,10 +444,10 @@ textarea {
 
 .fakturo {
   white-space: nowrap;
-  border: 5px ridge #a6c9e2;
-  -moz-box-shadow: 3px 3px 5px 6px #ccc;
-  -webkit-box-shadow: 3px 3px 5px 6px #ccc;
-  box-shadow: 3px 3px 5px 6px #ccc;
+  border: 5px ridge #2a3753;
+  -moz-box-shadow: 0 0 2px 3px #cccccc;
+  -webkit-box-shadow: 0 0 2px 3px #cccccc;
+  box-shadow: 0 0 2px 3px #cccccc;
   display: inline-block;
   padding: 0.5em;
 }

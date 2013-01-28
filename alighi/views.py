@@ -580,8 +580,9 @@ for (i, (tag, division)) in enumerate(formdivisions):
 
 tabs = mark_safe(
     u'<ul>{}</ul>'.format(
-        u''.join(u'<li><a href="#tab-{}">{}</a></li>'.format(i, tab)
-            for (i, tab) in enumerate(tablist))))
+        u''.join(
+            u'<li class="tab"><a href="#tab-{}">{}</a></li>'.format(i, tab)
+                for (i, tab) in enumerate(tablist))))
 
 #~ from django.views.decorators.csrf import csrf_exempt
 #~ @csrf_exempt

@@ -310,6 +310,9 @@ alighi_form = ->
     activate_cb = (e, ui) ->
         tab = ui.newTab ? ui.tab
         $('.reen').button 'option', 'disabled', tab.index() is 0
+        # set the height back to auto and overflow to visible
+        $(this).css 'height', 'auto'
+        $(this).css 'overflow', 'visible'
     $tabs = $('#form-tabs').tabs
         hide:
             effect: 'slide'
@@ -318,6 +321,10 @@ alighi_form = ->
             effect: 'slide'
             direction: 'right'
         beforeActivate: (e, ui) ->
+            # keep the height constant while transitioning
+            $(this).css 'height', $(this).height()
+            $(this).css 'overflow', 'hidden'
+            
             tabdiff = ui.newTab.index() - ui.oldTab.index()
             if Math.abs(tabdiff) is 1
                 slide_dirs = ['left', 'right']
@@ -399,13 +406,14 @@ alighi_form = ->
             width: widget_width * (numnotches-2) / numnotches
             height: '1em'
             fontSize: '80%'
-            borderTop: '3px dotted blue'
+            borderTop: '3px dotted #2a3753'
             margin: 0#'auto'
             position: 'relative'
             padding: 0
             left: widget_width / numnotches + 14
-            color: 'blue'
+            color: '#2a3753'
             textAlign: 'center'
+            fontWeight: 'bold'
             
     # ŝanĝu al la tab kun la unua eraro, se estas eraroj
     newtab = null
