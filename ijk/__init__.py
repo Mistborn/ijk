@@ -38,7 +38,7 @@ show_in_menu.contribute_to_class(FlatPage, u'show_in_menu')
 # create a key for ordering the menu
 sort_key = fields.IntegerField(u'Ordiga ŝlosilo',
     help_text=u'Ŝlosilo por ordigi menuerojn kun sama patro '
-    u'unu rilate al la alia', blank=True, null=True)
+    u'unu rilate al la alia', blank=False, null=False, default=0)
 sort_key.contribute_to_class(FlatPage, u'sort_key')
 
 # MPTT for flat pages
