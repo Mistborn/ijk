@@ -395,7 +395,7 @@
     tabwidths = $('.tab').map(function() {
       return $(this).width();
     });
-    tabwidth = Math.max.apply(Math, tabwidths);
+    tabwidth = Math.max.apply(Math, $.makeArray(tabwidths));
     widget_width = tabwidth - 300 - 14 * 2.5;
     $datesliderli = $('<li class="required">\
         <label for="id_datogamo">La daŭro de mia partopreno:</label></li>').insertAfter($('#id_ghis').parent());

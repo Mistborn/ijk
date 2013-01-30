@@ -359,7 +359,7 @@ alighi_form = ->
     $errorlis = for error in errorlist
         $("<li>#{error}</li>").appendTo $newerrorlist
     tabwidths = $('.tab').map -> $(this).width()
-    tabwidth = Math.max tabwidths...
+    tabwidth = Math.max $.makeArray(tabwidths)...
     widget_width = tabwidth - 300 - 14*2.5
     
     $datesliderli = $('<li class="required">
