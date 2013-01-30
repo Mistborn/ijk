@@ -204,7 +204,7 @@ h1 {
 }
 #heading .menuo > ul > li > ul > li:first-child:last-child {
   border-radius: 0 10px 10px 10px;
-  border-border: 1px solid black;
+  border: 1px solid black;
 }
 #heading .menuo > ul > li > ul > li li {
   position: relative;
