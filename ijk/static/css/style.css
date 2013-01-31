@@ -65,9 +65,46 @@ h1 {
   font-weight: bold;
 }
 
+h2 {
+  display: block;
+  font-size: 175%;
+  font-weight: bold;
+}
+
+h3 {
+  display: block;
+  font-size: 150%;
+  font-weight: bold;
+}
+
+h4 {
+  display: block;
+  font-size: 133%;
+  font-weight: bold;
+}
+
+h5 {
+  display: block;
+  font-size: 125%;
+  font-weight: bold;
+}
+
+h6 {
+  display: block;
+  font-size: 115%;
+  font-weight: bold;
+}
+
+b, strong {
+  font-weight: bold;
+}
+
+i, em {
+  font-style: italic;
+}
+
 .main-heading {
   text-shadow: 1px 1px 1px #777777;
-  margin: 0 14px;
 }
 
 #heading {
@@ -204,7 +241,7 @@ h1 {
 }
 #heading .menuo > ul > li > ul > li:first-child:last-child {
   border-radius: 0 10px 10px 10px;
-  border: 1px solid black;
+  border-border: 1px solid black;
 }
 #heading .menuo > ul > li > ul > li li {
   position: relative;
@@ -237,7 +274,7 @@ h1 {
 }
 
 div, p, #form-tabs {
-  margin: 1em 0.5em;
+  margin: 1em 0;
   display: block;
 }
 
@@ -245,7 +282,7 @@ div, p, #form-tabs {
   -moz-box-shadow: 0 0 2px 3px #cccccc;
   -webkit-box-shadow: 0 0 2px 3px #cccccc;
   box-shadow: 0 0 2px 3px #cccccc;
-  width: 903.6px;
+  width: 917.6px;
 }
 #form-tabs .tab a {
   text-shadow: 1px 1px 1px #777777;

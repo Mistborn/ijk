@@ -5,6 +5,7 @@ from collections import OrderedDict
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import fields
+from django.db import DatabaseError
 from django.utils.safestring import mark_safe
 
 import reversion
@@ -58,9 +59,14 @@ treemanager = mptt.managers.TreeManager()
 treemanager._base_manager = None
 treemanager.contribute_to_class(FlatPage, 'treemanager')
 
+try:
+    initial_site = [Site.objects.get_current()]
+except DatabaseError:
+    initial_site = []
+    
 class NewFlatpageForm(flatforms.FlatpageForm, MPTTAdminForm):
     sites = ModelMultipleChoiceField(queryset=Site.objects.all(),
-        initial=[Site.objects.get_current()])
+        initial=initial_site)
 
 class NewFlatPageAdmin(flatadmin.FlatPageAdmin,
                        reversion.VersionAdmin,

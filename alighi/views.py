@@ -627,7 +627,8 @@ def alighi(request):
             {'formdivs': pageforms,
              'JAVASCRIPT': all_javascript(),
              'tabs': tabs,
-             'has_errors': has_errors})
+             'has_errors': has_errors,
+             'scripts': ['js/alighi.js']})
     return render_to_response('alighi/alighi.html', context)
 
 def gratulon(request):
