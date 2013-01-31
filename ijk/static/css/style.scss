@@ -265,6 +265,15 @@ $menu-hover-color: #ccc;
     }
 }
 
+.fakturo {
+    .kotizo-signo {
+        margin: 0 0.5em;
+    }
+    .label {
+        margin-right: 0.5em;
+    }
+}
+
 div, p, #form-tabs {
     margin: 1em 0;
     display: block;
