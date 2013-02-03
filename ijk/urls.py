@@ -20,7 +20,6 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^alighi/', include('alighi.urls')),
-    url(r'^bazo/', 'alighi.views.bazo'),
     url('^', include('django.contrib.flatpages.urls')),
 )
 
