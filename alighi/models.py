@@ -810,6 +810,10 @@ class SenditaRetposhtajho(models.Model):
     traceback = models.TextField(blank=True, editable=False)
     dato = models.DateField(auto_now_add=True, editable=False)
 
+    @property
+    def chu_sukcese(self):
+        return not self.traceback
+
     def __unicode__(self):
         return u'"{}" al <{}>'.format(self.temo, self.ricevanto)
 

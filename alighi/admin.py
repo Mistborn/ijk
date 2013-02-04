@@ -44,6 +44,19 @@ admin.site.register(Nomshildo)
 admin.site.register(Noto)
 admin.site.register(UEARabato)
 
+class SenditaRetposhtajhoAdmin(admin.ModelAdmin):
+    readonly_fields = (
+        'temo',
+        'teksto',
+        'sendadreso',
+        'ricevanto',
+        'partoprenanto',
+        'retposhtajho',
+        'chu_sukcese',
+        'dato',
+    )
+admin.site.register(SenditaRetposhtajho, SenditaRetposhtajhoAdmin)
+
 #class UEAValidecoAdmin(admin.ModelAdmin):
     #readonly_fields = ('kodo', 'lando', 'rezulto')
 #admin.site.register(UEAValideco, UEAValidecoAdmin)
