@@ -110,7 +110,7 @@ INSTALLED_APPS = (
     'alighi',
     'reversion',
     'mptt',
-    #'south',
+    'south',
     'dosiero',
 )
 
