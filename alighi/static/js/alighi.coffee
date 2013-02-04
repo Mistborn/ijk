@@ -423,5 +423,14 @@ alighi_form = ->
             newtab = parseInt id[id.indexOf('-')+1..] unless newtab?
     if newtab? then $tabs.tabs 'option', 'active', newtab
 
+    # avertu la uzanton, se li-ŝi provas foriri de la paĝo antaŭ ĝia alsendo
+    onbeforeunload = (e) ->
+        e.returnValue = 'Vi estas pleniganta la aliĝformularon por IJK. Se vi forlasas la paĝon, la informoj jam donitaj de vi perdiĝos!'
+    $('input, select, textarea').change ->
+        window.onbeforeunload = onbeforeunload
+    $('#alighi-btn').click ->
+        window.onbeforeunload = null
+    if $('.button-error').length then window.onbeforeunload = onbeforeunload
+
 $ ->
     alighi_form()

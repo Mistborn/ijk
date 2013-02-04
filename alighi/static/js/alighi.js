@@ -3,7 +3,7 @@
   var alighi_form;
 
   alighi_form = function() {
-    var $dateslider, $dateslider_container, $datesliderli, $errorlis, $gvidilo, $kotizoul, $newerrorlist, $tabs, DAY, NUMTABS, YEAR, activate_cb, c, curend, curstart, date_to_iso, datogamo_end, datogamo_start, error, errorlist, id, iso_to_date, kotizeroj, kotizo, kotizo_selectors, liveri_aghon_lau_naskightago, nav_callback, newtab, numnotches, selector, signo, tabwidth, tabwidths, widget_width, _i, _j, _k, _len, _len1, _ref, _ref1, _results;
+    var $dateslider, $dateslider_container, $datesliderli, $errorlis, $gvidilo, $kotizoul, $newerrorlist, $tabs, DAY, NUMTABS, YEAR, activate_cb, c, curend, curstart, date_to_iso, datogamo_end, datogamo_start, error, errorlist, id, iso_to_date, kotizeroj, kotizo, kotizo_selectors, liveri_aghon_lau_naskightago, nav_callback, newtab, numnotches, onbeforeunload, selector, signo, tabwidth, tabwidths, widget_width, _i, _j, _k, _len, _len1, _ref, _ref1, _results;
     NUMTABS = 6;
     DAY = 1000 * 60 * 60 * 24;
     YEAR = DAY * 365.25;
@@ -469,7 +469,19 @@
       }
     });
     if (newtab != null) {
-      return $tabs.tabs('option', 'active', newtab);
+      $tabs.tabs('option', 'active', newtab);
+    }
+    onbeforeunload = function(e) {
+      return e.returnValue = 'Vi estas pleniganta la aliĝformularon por IJK. Se vi forlasas la paĝon, la informoj jam donitaj de vi perdiĝos!';
+    };
+    $('input, select, textarea').change(function() {
+      return window.onbeforeunload = onbeforeunload;
+    });
+    $('#alighi-btn').click(function() {
+      return window.onbeforeunload = null;
+    });
+    if ($('.button-error').length) {
+      return window.onbeforeunload = onbeforeunload;
     }
   };
 
