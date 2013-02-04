@@ -18,6 +18,10 @@ from django.conf import settings
 
 from utils import eo, KOMENCA_DATO, FINIGHA_DATO, SEKSOJ, json_default, esperanteca_dato
 
+# south
+from south.modelsinspector import add_introspection_rules
+add_introspection_rules([], [r'^alighi\.models\.NeEstontecaDato'])
+
 class Respondeco(models.Model):
     '''Respondeculo por iu afero, por aŭtomataj sciigoj'''
     rolo = models.CharField(max_length=50)
@@ -663,8 +667,11 @@ class NeEstontecaDato(models.DateField):
 class Pago(models.Model):
     '''Unuopa pago de unuopa partoprenanto'''
     partoprenanto = models.ForeignKey(Partoprenanto)
-    uzanto = models.ForeignKey(User,
+    respondeculo = models.ForeignKey(User, related_name='pago-respondeculo',
         help_text=eo('Respondeculo, kiu ricevis/notis la pagon'))
+    kreinto = models.ForeignKey(User, related_name='pago-kreinto',
+        help_text=eo('Uzanto, kiu kreis la rikordon de tiu cxi pago'),
+        null=True, blank=True, editable=False)
     pagmaniero = models.ForeignKey(Pagmaniero,
         help_text=eo('Kiamaniere ni ricevis la pagon'))
     pagtipo = models.ForeignKey(Pagtipo,
@@ -677,6 +684,9 @@ class Pago(models.Model):
         u'Pago ne povas esti en la estonteco.'})
     rimarko = models.CharField(blank=True, max_length=255,
         help_text=eo('Ekz. por indiki peranton, konto por UEA gxiro, ktp'))
+
+    def save(self):
+        super(Pago, self).save()
 
     def __unicode__(self):
         return eo(u'{} {} ({}) de {} je {}'.format(

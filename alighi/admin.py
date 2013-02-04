@@ -23,11 +23,20 @@ admin.site.register(Retposhtajho)
 admin.site.register(MembrighaKategorio)
 admin.site.register(SurlokaMembrigho)
 admin.site.register(Chambro)
+
 class PartoprenantoAdmin(admin.ModelAdmin):
     '''Unuopa partoprenanto en la kongreso'''
     readonly_fields = ('id', 'alighdato',)
 admin.site.register(Partoprenanto, PartoprenantoAdmin)
-admin.site.register(Pago)
+
+class PagoAdmin(admin.ModelAdmin):
+    readonly_fields = ('kreinto',)
+    def save_model(self, request, obj, form, change):
+        if not change and not obj.kreinto:
+            obj.kreinto = request.user
+        super(PagoAdmin, self).save_model(request, obj, form, change)
+        
+admin.site.register(Pago, PagoAdmin)
 admin.site.register(Pagtipo)
 admin.site.register(MinimumaAntaupago)
 admin.site.register(KrompagTipo)
