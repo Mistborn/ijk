@@ -54,7 +54,7 @@ class Kurzo(models.Model):
 class AghKategorio(models.Model):
     '''Kategorio de aĝo por kalkulado de kotizo'''
     nomo = models.CharField(unique=True, max_length=50)
-    priskribo = models.TextField(blank=True)
+    priskribo = models.CharField(blank=True, max_length=250)
     limagho = models.IntegerField(eo('Limagxo'),
         help_text=eo('Partoprenanto kun agxo malpli ol tiu cxi agxo '
                      'eniras tiun cxi kategorion'))
@@ -104,7 +104,7 @@ class AghKategorio(models.Model):
 class AlighKategorio(models.Model):
     '''Kategorio de aliĝo laŭ dato, por kalkulado de kotizo'''
     nomo = models.CharField(unique=True, max_length=50)
-    priskribo = models.TextField(blank=True)
+    priskribo = models.CharField(blank=True, max_length=250)
     #sistemo = models.ForeignKey(AlighKategoriSistemo)
     limdato = models.DateField(unique=True,
         help_text=eo('Partoprenanto, kiu aligxas gxis tiu cxi dato '
@@ -137,7 +137,7 @@ class AlighKategorio(models.Model):
 class LandoKategorio(models.Model):
     '''Kategorio de lando, por kalkulado de kotizo'''
     nomo = models.CharField(unique=True, max_length=50)
-    priskribo = models.TextField(blank=True)
+    priskribo = models.CharField(blank=True, max_length=255)
     #sistemo = models.ForeignKey(LandoKategoriSistemo)
 
     @staticmethod
@@ -172,7 +172,7 @@ class Lando(models.Model):
 class LoghKategorio(models.Model):
     '''Elektebla loĝkategorio'''
     nomo = models.CharField(unique=True, max_length=50)
-    priskribo = models.TextField(blank=True)
+    priskribo = models.CharField(blank=True, max_length=250)
     plena_kosto = models.DecimalField(max_digits=8, decimal_places=2,
         help_text=eo('Kosto por logxo dum la tuta kongreso'))
     unutaga_kosto = models.DecimalField(max_digits=8, decimal_places=2,
@@ -267,7 +267,7 @@ class Pagmaniero(models.Model):
     '''maniero transdoni monon,
     ekz. per peranto, surloke, unuopula rabato, ktp'''
     nomo = models.CharField(unique=True, max_length=50)
-    priskribo = models.TextField(blank=True,
+    priskribo = models.CharField(blank=True, max_length=250,
         verbose_name=eo('Publika priskribo'))
     komenta_etikedo = models.CharField(blank=True, max_length=250,
         verbose_name=eo('Komenta etikedo'), default=u'',
@@ -810,9 +810,10 @@ class SenditaRetposhtajho(models.Model):
     traceback = models.TextField(blank=True, editable=False)
     dato = models.DateField(auto_now_add=True, editable=False)
 
-    @property
     def chu_sukcese(self):
         return not self.traceback
+    chu_sukcese.boolean = True
+    chu_sukcese.short_description = 'Ĉu sukcese'
 
     def __unicode__(self):
         return u'"{}" al <{}>'.format(self.temo, self.ricevanto)
