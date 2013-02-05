@@ -420,7 +420,7 @@ class Chambro(models.Model):
         verbose_name_plural = eo('Cxambroj')
 
 class UEARabato(models.Model):
-    landokategorio = models.ForeignKey(LandoKategorio, unique=True)
+    landokategorio = models.OneToOneField(LandoKategorio)
     sumo = models.DecimalField(max_digits=8, decimal_places=2,
         help_text=eo('Rabato pro UEA-membreco en tiu cxi landokategorio'))
 
@@ -701,7 +701,6 @@ class Pago(models.Model):
 
 class MinimumaAntaupago(models.Model):
     '''Minimuma antaŭpago por partopreni'''
-    #kotizosistemo = models.ForeignKey(KotizoSistemo)
     landokategorio = models.ForeignKey(LandoKategorio)
     oficiala_antaupago = models.DecimalField(eo('Oficiala antauxpago'),
         max_digits=8, decimal_places=2,
@@ -732,7 +731,6 @@ class Nomshildo(models.Model):
     titolo_esperante = models.CharField(max_length=50)
     #funkcio_lokalingve = models.CharField()
     #funkcio_esperante = models.CharField()
-    #renkontigho = models.ForeignKey(Renkontigho)
     chu_havasnomshildon = models.BooleanField(eo('Cxu havas nomsxildon'),
         default=False)
     def __unicode__(self):
