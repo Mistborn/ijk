@@ -845,7 +845,7 @@ class SenditaOficialajho(models.Model):
         
     def save(self):
         self.set_priskribo()
-        super(Dosiero, self).save()
+        super(SenditaOficialajho, self).save()
 
     def delete(self):
         with open(self.dosiero.path, 'rb') as f:

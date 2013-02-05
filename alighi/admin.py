@@ -54,6 +54,9 @@ class KurzoInline(admin.TabularInline):
 class SenditaRetposhtajhoInline(admin.TabularInline):
     model = SenditaRetposhtajho
     extra = 0
+class OficialajhoInline(admin.TabularInline):
+    model = SenditaOficialajho
+    extra = 0
 
 class RespondecoAdmin(reversion.VersionAdmin):
     #fields = (('rolo', 'uzanto'),)
@@ -208,7 +211,8 @@ class PartoprenantoAdmin(reversion.VersionAdmin):
         'deziras_loghi_kun__persona_nomo',
         'deziras_loghi_kun__familia_nomo',
         'pagmaniera_komento', 'uea_kodo',)
-    inlines = (PagoInline, NotoInline,) #SenditaRetposhtajhoInline)
+    inlines = (PagoInline, NotoInline, OficialajhoInline)
+        #SenditaRetposhtajhoInline)
 
 class PagtipoAdmin(reversion.VersionAdmin):
     search_fields = ('nomo',)
@@ -279,6 +283,26 @@ class SenditaRetposhtajhoAdmin(reversion.VersionAdmin):
     def has_delete_permission(self, request, obj=None): return False
     actions = None
 
+class SenditaOficialajhoAdmin(reversion.VersionAdmin):
+    #readonly_fields = ('alshutinto',)
+    list_display = ('priskribo', 'dosiero', 'partoprenanto', 'alshutinto')
+    list_filter = ('partoprenanto', 'alshutinto')
+    search_fields = ('priskribo', 'dosiero__name')
+    actions = None
+    
+    def get_readonly_fields(self, request, obj=None):
+        if obj is None:
+            return ('alshutinto',)
+        return ('dosiero', 'alshutinto')
+
+    def has_delete_permission(self, request, obj=None): return False
+        
+    def save_model(self, request, obj, form, change):
+        if not change and not obj.alshutinto:
+            obj.alshutinto = request.user
+        super(SenditaOficialajhoAdmin, self).save_model(
+                request, obj, form, change)
+    
 #class UEAValidecoAdmin(admin.ModelAdmin):
     #readonly_fields = ('kodo', 'lando', 'rezulto')
 #admin.site.register(UEAValideco, UEAValidecoAdmin)
@@ -309,3 +333,4 @@ admin.site.register(Noto, NotoAdmin)
 admin.site.register(UEARabato, UEARabatoAdmin)
 admin.site.register(SenditaRetposhtajho, SenditaRetposhtajhoAdmin)
 admin.site.register(Partoprenanto, PartoprenantoAdmin)
+admin.site.register(SenditaOficialajho, SenditaOficialajhoAdmin)
