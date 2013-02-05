@@ -1,65 +1,120 @@
 from django.contrib import admin
-
+import reversion
 from alighi.models import *
 
-class RespondecoAdmin(admin.ModelAdmin):
+# inline additions to User
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
+#from alighi.models import Respondeco, Pago, Noto
+
+class UserRespondecoInline(admin.TabularInline):
+    model = Respondeco
+    extra = 0
+    #can_delete = False
+    #verbose_name_plural = 'profile'
+class UserPagoInline(admin.TabularInline):
+    model = Pago
+    fk_name = 'respondeculo'
+    extra = 0
+class UserNotoInline(admin.TabularInline):
+    model = Noto
+    extra = 0
+
+class NewUserAdmin(UserAdmin, reversion.VersionAdmin):
+    inlines = (UserRespondecoInline, UserNotoInline, UserPagoInline)
+
+admin.site.unregister(User)
+admin.site.register(User, NewUserAdmin)
+
+# inlines
+class ProgramKotizoInline(admin.TabularInline):
+    model = ProgramKotizo
+    extra = 0
+class ChambroInline(admin.TabularInline):
+    model = Chambro
+    extra = 0
+class LandoInline(admin.TabularInline):
+    model = Lando
+    extra = 0
+class UEARabatoInline(admin.TabularInline):
+    model = UEARabato
+    extra = 0
+class SurlokaMembrighoInline(admin.TabularInline):
+    model = SurlokaMembrigho
+    extra = 0
+class PagoInline(admin.TabularInline):
+    model = Pago
+    extra = 0
+class NotoInline(admin.TabularInline):
+    model = Noto
+    extra = 0
+class KurzoInline(admin.TabularInline):
+    model = Kurzo
+    extra = 0
+class SenditaRetposhtajhoInline(admin.TabularInline):
+    model = SenditaRetposhtajho
+    extra = 0
+
+class RespondecoAdmin(reversion.VersionAdmin):
     #fields = (('rolo', 'uzanto'),)
     list_display = ('rolo', 'uzanto')
     list_editable = ('uzanto',)
     #save_as = True
     list_filter = ('rolo', 'uzanto')
-admin.site.register(Respondeco, RespondecoAdmin)
 
-class ValutoAdmin(admin.ModelAdmin):
+class ValutoAdmin(reversion.VersionAdmin):
     #fields = (('kodo', 'nomo'),)
     list_display = ('kodo', 'nomo')
     list_editable = ('nomo',)
-admin.site.register(Valuto, ValutoAdmin)
-
-class KurzoAdmin(admin.ModelAdmin):
+    search_fields = ('nomo',)
+    inlines = (KurzoInline,)
+    
+class KurzoAdmin(reversion.VersionAdmin):
     list_display = ('valuto', 'dato', 'kurzo')
     list_editable = ('dato', 'kurzo')
-    list_filter = ('valuto',)
-admin.site.register(Kurzo, KurzoAdmin)
-
-class AghKategorioAdmin(admin.ModelAdmin):
+    list_filter = ('valuto', 'dato')
+    
+class AghKategorioAdmin(reversion.VersionAdmin):
     list_display = ('nomo', 'priskribo', 'limagho', 'aldona_kotizo')
     list_editable = ('priskribo', 'limagho', 'aldona_kotizo')
-admin.site.register(AghKategorio, AghKategorioAdmin)
+    search_fields = ('nomo', 'priskribo')
+    inlines = (ProgramKotizoInline,)
 
-class AlighKategorioAdmin(admin.ModelAdmin):
+class AlighKategorioAdmin(reversion.VersionAdmin):
     list_display = ('nomo', 'priskribo', 'limdato')
     list_editable = ('priskribo', 'limdato')
-admin.site.register(AlighKategorio, AlighKategorioAdmin)
+    search_fields = ('nomo', 'priskribo')
+    inlines = (ProgramKotizoInline,)
 
-class LandoKategorioAdmin(admin.ModelAdmin):
+class LandoKategorioAdmin(reversion.VersionAdmin):
     list_display = ('nomo', 'priskribo')
     list_editable = ('priskribo',)
-admin.site.register(LandoKategorio, LandoKategorioAdmin)
+    search_fields = ('nomo', 'priskribo')
+    inlines = (LandoInline, ProgramKotizoInline, UEARabatoInline)
 
-class LandoAdmin(admin.ModelAdmin):
+class LandoAdmin(reversion.VersionAdmin):
     list_display = ('nomo', 'kodo', 'kategorio')
     list_editable = ('kategorio',)
     list_filter = ('kategorio',)
-admin.site.register(Lando, LandoAdmin)
+    search_fields = ('nomo',)
 
-class LoghKategorioAdmin(admin.ModelAdmin):
+class LoghKategorioAdmin(reversion.VersionAdmin):
     list_display = ('nomo', 'priskribo', 'plena_kosto', 'unutaga_kosto')
     list_editable = list_display[1:]
-admin.site.register(LoghKategorio, LoghKategorioAdmin)
+    search_fields = ('nomo', 'priskribo')
+    inlines = (ChambroInline,)
 
-class ManghoMendoTipoAdmin(admin.ModelAdmin):
+class ManghoMendoTipoAdmin(reversion.VersionAdmin):
     list_display = ('nomo', 'priskribo', 'kosto')
     list_editable = list_display[1:]
-admin.site.register(ManghoMendoTipo, ManghoMendoTipoAdmin)
+    search_fields = ('nomo', 'priskribo')
 
-class ManghoMendoAdmin(admin.ModelAdmin):
-    list_display = ('partoprenanto', 'tipo')
-    #list_editable = list_display[1:]
-    list_filter = list_display
-admin.site.register(ManghoMendo, ManghoMendoAdmin)
+#class ManghoMendoAdmin(reversion.VersionAdmin):
+    #list_display = ('partoprenanto', 'tipo')
+    ##list_editable = list_display[1:]
+    #list_filter = list_display
 
-class ManghoTipoAdmin(admin.ModelAdmin):
+class ManghoTipoAdmin(reversion.VersionAdmin):
     #def model_unicode(self, obj):
         #return unicode(obj)
     #model_unicode.short_description = 'Ero'
@@ -67,47 +122,44 @@ class ManghoTipoAdmin(admin.ModelAdmin):
     #list_display_links = ('model_unicode',)
     #list_editable = list_display[1:]
     pass
-admin.site.register(ManghoTipo, ManghoTipoAdmin)
 
-class ProgramKotizoAdmin(admin.ModelAdmin):
+class ProgramKotizoAdmin(reversion.VersionAdmin):
     fields = (('aghkategorio', 'landokategorio', 'alighkategorio'), 'kotizo')
     list_display = ('aghkategorio', 'landokategorio',
                     'alighkategorio', 'kotizo')
     list_display_links = fields[0]
     list_editable = ('kotizo',)
     list_filter = ('aghkategorio', 'landokategorio', 'alighkategorio')
-admin.site.register(ProgramKotizo, ProgramKotizoAdmin)
 
-class PagmanieroAdmin(admin.ModelAdmin):
+class PagmanieroAdmin(reversion.VersionAdmin):
     list_display = ('nomo', 'priskribo', 'komenta_etikedo',
                     'chu_publika', 'chu_nurisraela')
     list_editable = list_display[1:]
     list_filter = ('chu_publika', 'chu_nurisraela')
-admin.site.register(Pagmaniero, PagmanieroAdmin)
+    search_fields = ('nomo', 'priskribo', 'komenta_etikedo')
 
-class RetposhtajhoAdmin(admin.ModelAdmin):
+class RetposhtajhoAdmin(reversion.VersionAdmin):
     list_display = ('nomo', 'sendadreso', 'temo', 'teksto')
     list_editable = list_display[1:]
     list_filter = ('sendadreso',)
-admin.site.register(Retposhtajho, RetposhtajhoAdmin)
+    search_fields = ('nomo', 'temo', 'teksto')
 
-class MembrighaKategorioAdmin(admin.ModelAdmin):
-    pass
-admin.site.register(MembrighaKategorio, MembrighaKategorioAdmin)
+class MembrighaKategorioAdmin(reversion.VersionAdmin):
+    search_fields = ('nomo',)
+    inlines = (SurlokaMembrighoInline,)
 
-class SurlokaMembrighoAdmin(admin.ModelAdmin):
+class SurlokaMembrighoAdmin(reversion.VersionAdmin):
     list_display = ('partoprenanto', 'kategorio', 'kotizo', 'valuto')
     #list_editable = list_display[1:]
     list_filter = ('partoprenanto', 'kategorio', 'kotizo', 'valuto')
-admin.site.register(SurlokaMembrigho, SurlokaMembrighoAdmin)
 
-class ChambroAdmin(admin.ModelAdmin):
+class ChambroAdmin(reversion.VersionAdmin):
     list_display = ('nomo', 'litonombro', 'loghkategorio', 'rimarko')
     list_editable = list_display[1:]
     list_filter = ('litonombro', 'loghkategorio',)
-admin.site.register(Chambro, ChambroAdmin)
+    search_fields = ('nomo',)
 
-class PartoprenantoAdmin(admin.ModelAdmin):
+class PartoprenantoAdmin(reversion.VersionAdmin):
     '''Unuopa partoprenanto en la kongreso'''
     fields = (
         ('persona_nomo', 'familia_nomo', 'shildnomo',),
@@ -122,7 +174,8 @@ class PartoprenantoAdmin(admin.ModelAdmin):
         'programa_kontribuo', 'organiza_kontribuo',
         ('loghkategorio', 'deziras_loghi_kun_nomo', 'deziras_loghi_kun',),
         ('chu_preferas_unuseksan_chambron', 'chu_malnoktemulo',
-            'chambro', 'manghotipo',),
+            'chambro',),
+        ('manghotipo', 'manghomendoj'),
         ('antaupagos_ghis', 'pagmaniero', 'pagmaniera_komento',),
         ('chu_ueamembro', 'uea_kodo',),
         'chu_kontrolita',
@@ -141,63 +194,72 @@ class PartoprenantoAdmin(admin.ModelAdmin):
         'chu_tuttaga_ekskurso', 'chu_unua_dua_ijk', 'chu_komencanto',
         'chu_interesighas_pri_kurso', 'loghkategorio',
         'chu_preferas_unuseksan_chambron', 'chu_malnoktemulo', 'chambro',
-        'manghotipo', 'antaupagos_ghis', 'pagmaniero',
+        'manghomendoj', 'manghotipo', 'antaupagos_ghis', 'pagmaniero',
         'chu_ueamembro',
         'chu_kontrolita',
         'unua_konfirmilo_sendita', 'dua_konfirmilo_sendita',
         'alighdato', 'malalighdato',
         'chu_alvenis', 'chu_havasmanghkuponon', 'chu_havasnomshildon',)
-admin.site.register(Partoprenanto, PartoprenantoAdmin)
+    search_fields = ('persona_nomo', 'familia_nomo', 'shildnomo',
+        'retposhtadreso', 'adreso', 'urbo', 'loghlando__nomo', 'shildlando',
+        'skype', 'facebook', 'mesaghiloj', 'alveno', 'foriro',
+        'programa_kontribuo', 'organiza_kontribuo',
+        'deziras_loghi_kun_nomo',
+        'deziras_loghi_kun__persona_nomo',
+        'deziras_loghi_kun__familia_nomo',
+        'pagmaniera_komento', 'uea_kodo',)
+    inlines = (PagoInline, NotoInline,) #SenditaRetposhtajhoInline)
 
-class PagoAdmin(admin.ModelAdmin):
+class PagtipoAdmin(reversion.VersionAdmin):
+    search_fields = ('nomo',)
+
+class PagoAdmin(reversion.VersionAdmin):
     list_display = ('partoprenanto', 'respondeculo', 'pagmaniero',
                     'pagtipo', 'valuto', 'sumo', 'dato', 'rimarko',)
-    readonly_fields = ('kreinto',)
+    readonly_fields = ('kreinto', 'lasta_redaktanto')
     list_editable = ('respondeculo', 'pagmaniero', 'pagtipo', 'valuto',
                      'rimarko',)
-    list_filter = ('partoprenanto', 'respondeculo', 'kreinto', 'pagmaniero',
-                   'pagtipo', 'valuto')
+    list_filter = ('partoprenanto', 'respondeculo', 'kreinto',
+                   'lasta_redaktanto', 'pagmaniero',
+                   'pagtipo', 'valuto', 'dato')
+    search_fields = ('rimarko',)
     def save_model(self, request, obj, form, change):
         if not change and not obj.kreinto:
             obj.kreinto = request.user
+        obj.lasta_redaktanto = request.user
         super(PagoAdmin, self).save_model(request, obj, form, change)
-admin.site.register(Pago, PagoAdmin)
 
-class PagtipoAdmin(admin.ModelAdmin):
-    pass
-admin.site.register(Pagtipo, PagtipoAdmin)
-
-class MinimumaAntaupagoAdmin(admin.ModelAdmin):
+class MinimumaAntaupagoAdmin(reversion.VersionAdmin):
     list_display = ('landokategorio', 'oficiala_antaupago')
     list_editable = list_display[1:]
     list_filter = ('landokategorio',)
-admin.site.register(MinimumaAntaupago, MinimumaAntaupagoAdmin)
 
-class KrompagTipoAdmin(admin.ModelAdmin):
+class KrompagTipoAdmin(reversion.VersionAdmin):
     list_display = ('nomo', 'sumo')
     list_editable = list_display[1:]
-admin.site.register(KrompagTipo, KrompagTipoAdmin)
+    search_fields = ('nomo',)
 
-class NomshildoAdmin(admin.ModelAdmin):
+class NomshildoAdmin(reversion.VersionAdmin):
     list_display = ('nomo', 'titolo_lokalingve', 'titolo_esperante',
                     'chu_havasnomshildon')
     list_editable = list_display[1:]
     list_filter = ('chu_havasnomshildon',)
-admin.site.register(Nomshildo, NomshildoAdmin)
+    search_fields = list_display[:-1]
 
-class NotoAdmin(admin.ModelAdmin):
+class NotoAdmin(reversion.VersionAdmin):
     list_display = ('partoprenanto', 'uzanto', 'dato', 'enhavo',
                     'chu_prilaborita', 'revidu')
     list_editable = ('uzanto', 'chu_prilaborita', 'revidu')
-    list_filter = ('partoprenanto', 'uzanto', 'chu_prilaborita',)
-admin.site.register(Noto, NotoAdmin)
+    list_filter = ('partoprenanto', 'uzanto', 'dato', 'chu_prilaborita',
+                   'revidu')
+    search_fields = ('enhavo',)
 
-class UEARabatoAdmin(admin.ModelAdmin):
+class UEARabatoAdmin(reversion.VersionAdmin):
     list_display = ('landokategorio', 'sumo',)
     list_editable = list_display[1:]
-admin.site.register(UEARabato, UEARabatoAdmin)
+    list_filter = ('landokategorio',)
 
-class SenditaRetposhtajhoAdmin(admin.ModelAdmin):
+class SenditaRetposhtajhoAdmin(reversion.VersionAdmin):
     readonly_fields = (
         'temo',
         'teksto',
@@ -211,12 +273,39 @@ class SenditaRetposhtajhoAdmin(admin.ModelAdmin):
     list_display = readonly_fields
     list_filter = ('sendadreso', 'ricevanto', 'partoprenanto',
                    'retposhtajho', 'dato', 'temo',)
+    search_fields = ('temo', 'teksto')
     def has_add_permission(self, request): return False
     #def has_change_permission(self, request, obj=None): return False
     def has_delete_permission(self, request, obj=None): return False
     actions = None
-admin.site.register(SenditaRetposhtajho, SenditaRetposhtajhoAdmin)
 
 #class UEAValidecoAdmin(admin.ModelAdmin):
     #readonly_fields = ('kodo', 'lando', 'rezulto')
 #admin.site.register(UEAValideco, UEAValidecoAdmin)
+
+admin.site.register(Respondeco, RespondecoAdmin)
+admin.site.register(Valuto, ValutoAdmin)
+admin.site.register(Kurzo, KurzoAdmin)
+admin.site.register(AghKategorio, AghKategorioAdmin)
+admin.site.register(AlighKategorio, AlighKategorioAdmin)
+admin.site.register(LandoKategorio, LandoKategorioAdmin)
+admin.site.register(Lando, LandoAdmin)
+admin.site.register(LoghKategorio, LoghKategorioAdmin)
+admin.site.register(ManghoMendoTipo, ManghoMendoTipoAdmin)
+#admin.site.register(ManghoMendo, ManghoMendoAdmin)
+admin.site.register(ManghoTipo, ManghoTipoAdmin)
+admin.site.register(ProgramKotizo, ProgramKotizoAdmin)
+admin.site.register(Pagmaniero, PagmanieroAdmin)
+admin.site.register(Retposhtajho, RetposhtajhoAdmin)
+admin.site.register(MembrighaKategorio, MembrighaKategorioAdmin)
+admin.site.register(SurlokaMembrigho, SurlokaMembrighoAdmin)
+admin.site.register(Chambro, ChambroAdmin)
+admin.site.register(Pago, PagoAdmin)
+admin.site.register(Pagtipo, PagtipoAdmin)
+admin.site.register(MinimumaAntaupago, MinimumaAntaupagoAdmin)
+admin.site.register(KrompagTipo, KrompagTipoAdmin)
+admin.site.register(Nomshildo, NomshildoAdmin)
+admin.site.register(Noto, NotoAdmin)
+admin.site.register(UEARabato, UEARabatoAdmin)
+admin.site.register(SenditaRetposhtajho, SenditaRetposhtajhoAdmin)
+admin.site.register(Partoprenanto, PartoprenantoAdmin)
