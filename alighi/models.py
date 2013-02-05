@@ -832,6 +832,7 @@ class SenditaOficialajho(models.Model):
     partoprenanto = models.ForeignKey(Partoprenanto, null=True,
         help_text=u'Partoprenanto, al kiu tiu ĉi dosiero rilatas '
                   u'(se ĝi rilatas al partoprenanto)')
+    alshutinto = models.ForeignKey(User, null=True)
 
     def set_priskribo(self):
         if self.priskribo:
