@@ -459,6 +459,26 @@ class PartoprenantoWrapper(object):
             attr = 'jes' if attr else 'ne'
         return attr
 
+class ManghoMendoTipo(models.Model):
+    '''Tipo de manĝo kiun oni povas mendi (matenmanĝo, tagmanĝo, ktp)'''
+    nomo = models.CharField(unique=True, max_length=50)
+    priskribo = models.TextField(blank=True)
+    kosto = models.DecimalField(max_digits=8, decimal_places=2)
+    # memzorge/matenmangho/tagmangho/vespermangho
+
+    @classmethod
+    def javascript(cls):
+        d = {obj.id: obj.kosto for obj in cls.objects.all()}
+        return '''window.manghomendotipoj = {}'''.format(json.dumps(d,
+            default=json_default))
+
+    def __unicode__(self):
+        return eo(u'{} je {} €'.format(self.nomo, self.kosto))
+
+    class Meta:
+        verbose_name = eo('Mangxomendotipo')
+        verbose_name_plural = eo('Mangxomendotipoj')
+        
 class Partoprenanto(models.Model):
     '''Partoprenanto en la kongreso'''
     persona_nomo = models.CharField(max_length=50)
@@ -520,6 +540,8 @@ class Partoprenanto(models.Model):
         verbose_name=eo('Cxambro'), null=True, blank=True)
     manghotipo = models.ForeignKey(ManghoTipo, verbose_name=eo('Mangxotipo'),
         help_text=eo('Tipo de mangxo, ekz. vegetare, viande, ktp'))
+    manghomendoj = models.ManyToManyField(ManghoMendoTipo,
+        verbose_name=eo('Mangxomendoj'))
     antaupagos_ghis = models.ForeignKey(AlighKategorio,
         verbose_name=eo('Antauxpagos gxis'), null=True,
         help_text=eo('Kio estis enigita en la alighformularo'))
@@ -544,8 +566,8 @@ class Partoprenanto(models.Model):
     chu_havasnomshildon = models.BooleanField(
         eo('Cxu havas nomsxildon'), default=False) #*
 
-    def manghomendoj(self):
-        return ManghoMendo.objects.filter(partoprenanto=self)
+    #def manghomendoj(self):
+        #return ManghoMendo.objects.filter(partoprenanto=self)
 
     def chu_plentempa(self):
         return self.ekde == KOMENCA_DATO and self.ghis == FINIGHA_DATO
@@ -599,26 +621,6 @@ class Partoprenanto(models.Model):
     class Meta:
         verbose_name_plural = eo('Partoprenantoj')
         ordering = ('familia_nomo',)
-
-class ManghoMendoTipo(models.Model):
-    '''Tipo de manĝo kiun oni povas mendi (matenmanĝo, tagmanĝo, ktp)'''
-    nomo = models.CharField(unique=True, max_length=50)
-    priskribo = models.TextField(blank=True)
-    kosto = models.DecimalField(max_digits=8, decimal_places=2)
-    # memzorge/matenmangho/tagmangho/vespermangho
-
-    @classmethod
-    def javascript(cls):
-        d = {obj.id: obj.kosto for obj in cls.objects.all()}
-        return '''window.manghomendotipoj = {}'''.format(json.dumps(d,
-            default=json_default))
-
-    def __unicode__(self):
-        return eo(u'{} je {} €'.format(self.nomo, self.kosto))
-
-    class Meta:
-        verbose_name = eo('Mangxomendotipo')
-        verbose_name_plural = eo('Mangxomendotipoj')
 
 class ManghoMendo(models.Model):
     '''Unuopa manĝomendo de partoprenanto'''
