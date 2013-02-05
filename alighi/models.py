@@ -39,6 +39,11 @@ class Valuto(models.Model):
     class Meta:
         verbose_name_plural = eo('Valutoj')
 
+try:
+    EUR = Valuto.objects.get(kodo='EUR')
+except Valuto.DoesNotExist:
+    EUR = None
+
 class Kurzo(models.Model):
     valuto = models.ForeignKey(Valuto)
     dato = models.DateField()
@@ -105,7 +110,6 @@ class AlighKategorio(models.Model):
     '''Kategorio de aliĝo laŭ dato, por kalkulado de kotizo'''
     nomo = models.CharField(unique=True, max_length=50)
     priskribo = models.CharField(blank=True, max_length=250)
-    #sistemo = models.ForeignKey(AlighKategoriSistemo)
     limdato = models.DateField(unique=True,
         help_text=eo('Partoprenanto, kiu aligxas gxis tiu cxi dato '
                      'eniras tiun cxi kategorion'))
@@ -138,7 +142,6 @@ class LandoKategorio(models.Model):
     '''Kategorio de lando, por kalkulado de kotizo'''
     nomo = models.CharField(unique=True, max_length=50)
     priskribo = models.CharField(blank=True, max_length=255)
-    #sistemo = models.ForeignKey(LandoKategoriSistemo)
 
     @staticmethod
     def liveri_kategorion(lando):   # for consistency
@@ -667,16 +670,19 @@ class NeEstontecaDato(models.DateField):
 class Pago(models.Model):
     '''Unuopa pago de unuopa partoprenanto'''
     partoprenanto = models.ForeignKey(Partoprenanto)
-    respondeculo = models.ForeignKey(User, related_name='pago-respondeculo',
+    respondeculo = models.ForeignKey(User, related_name='pagorespondeculo',
         help_text=eo('Respondeculo, kiu ricevis/notis la pagon'))
-    kreinto = models.ForeignKey(User, related_name='pago-kreinto',
+    kreinto = models.ForeignKey(User, related_name='pagokreinto',
         help_text=eo('Uzanto, kiu kreis la rikordon de tiu cxi pago'),
         null=True, blank=True, editable=False)
+    lasta_redaktanto = models.ForeignKey(User, related_name='pagoredaktanto',
+        help_text=eo('Uzanto, kiu laste redaktis tiun cxi pagon',
+        null=True, blank=True, editable=False),
     pagmaniero = models.ForeignKey(Pagmaniero,
         help_text=eo('Kiamaniere ni ricevis la pagon'))
     pagtipo = models.ForeignKey(Pagtipo,
         help_text=eo(u'Tipo de pago, ekz. subvencio, antauxpago, ktp'))
-    valuto = models.ForeignKey(Valuto) # XXX default should be euro
+    valuto = models.ForeignKey(Valuto, default=EUR)
     sumo = models.DecimalField(max_digits=8, decimal_places=2,
         help_text=eo(u'Rabaton enigu kiel normalan pagon, krompagon '
                      u'enigu kiel minusan sumon'))
@@ -684,9 +690,6 @@ class Pago(models.Model):
         u'Pago ne povas esti en la estonteco.'})
     rimarko = models.CharField(blank=True, max_length=255,
         help_text=eo('Ekz. por indiki peranton, konto por UEA gxiro, ktp'))
-
-    def save(self):
-        super(Pago, self).save()
 
     def __unicode__(self):
         return eo(u'{} {} ({}) de {} je {}'.format(
