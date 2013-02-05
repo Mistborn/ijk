@@ -676,8 +676,8 @@ class Pago(models.Model):
         help_text=eo('Uzanto, kiu kreis la rikordon de tiu cxi pago'),
         null=True, blank=True, editable=False)
     lasta_redaktanto = models.ForeignKey(User, related_name='pagoredaktanto',
-        help_text=eo('Uzanto, kiu laste redaktis tiun cxi pagon',
-        null=True, blank=True, editable=False),
+        help_text=eo('Uzanto, kiu laste redaktis tiun cxi pagon'),
+        null=True, blank=True, editable=False)
     pagmaniero = models.ForeignKey(Pagmaniero,
         help_text=eo('Kiamaniere ni ricevis la pagon'))
     pagtipo = models.ForeignKey(Pagtipo,
