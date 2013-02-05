@@ -825,12 +825,40 @@ class SenditaRetposhtajho(models.Model):
         verbose_name = eo('Sendita Retposxtajxo')
         verbose_name_plural = eo('Senditaj Retposxtajxoj')
 
-## class SenditaOficialajho(models.Model):
-    ## pass
-##
-    ## def __unicode__(self):
-        ## pass
-##
-    ## class Meta:
-        ## verbose_name = eo('Sendita Oficialajxo')
-        ## verbose_name_plural = eo('Senditaj Oficialajxoj')
+class SenditaOficialajho(models.Model):
+    priskribo = models.CharField(max_length=250, blank=True,
+        help_text=u'Ricevos la nomon de la dosiero se vi lasos ĝin malplena.')
+    dosiero = models.FileField(upload_to=u'oficialajhoj')
+    partoprenanto = models.ForeignKey(Partoprenanto, null=True,
+        help_text=u'Partoprenanto, al kiu tiu ĉi dosiero rilatas '
+                  u'(se ĝi rilatas al partoprenanto)')
+
+    def set_priskribo(self):
+        if self.priskribo:
+            return
+        self.priskribo = self.dosiero.name
+
+    @property
+    def basename(self):
+        return os.path.basename(self.dosiero.name)
+        
+    def save(self):
+        self.set_priskribo()
+        super(Dosiero, self).save()
+
+    def delete(self):
+        with open(self.dosiero.path, 'rb') as f:
+            hash = hashlib.sha256(f.read()).hexdigest()
+        newpath = os.path.join(
+            settings.BACKUP_DIR,
+            u'dosiero',
+            u'{}.{}'.format(hash, self.basename))
+        shutil.move(self.dosiero.path, newpath)
+        super(Dosiero, self).delete()
+        
+    def __unicode__(self):
+        return self.priskribo
+
+    class Meta:
+        verbose_name = eo('Sendita Oficialajxo')
+        verbose_name_plural = eo('Senditaj Oficialajxoj')
