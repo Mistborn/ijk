@@ -16,14 +16,15 @@ class DosieroAdmin(admin.ModelAdmin):
             return u'Nekonata dosierformato'
     antaurigardo.allow_tags = True
 
+    readonly_fields = ('ligilo', 'antaurigardo')
     def get_readonly_fields(self, request, obj=None):
         if obj is None:
-            return ()
+            return ('ligilo', 'antaurigardo')
         return ('dosiero', 'ligilo', 'antaurigardo')
 
     def get_list_display(self, request):
         return ('priskribo', 'ligilo',)
         
-    list_fields = ('priskribo', 'dosiero', 'ligilo', 'antaurigardo')
+    fields = ('priskribo', 'dosiero', 'ligilo', 'antaurigardo')
     
 admin.site.register(Dosiero, DosieroAdmin)
