@@ -8,18 +8,15 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding M2M table for field manghomendoj on 'Partoprenanto'
-        db.create_table('alighi_partoprenanto_manghomendoj', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('partoprenanto', models.ForeignKey(orm['alighi.partoprenanto'], null=False)),
-            ('manghomendotipo', models.ForeignKey(orm['alighi.manghomendotipo'], null=False))
-        ))
-        db.create_unique('alighi_partoprenanto_manghomendoj', ['partoprenanto_id', 'manghomendotipo_id'])
+        # Adding field 'SenditaOficialajho.alshutinto'
+        db.add_column('alighi_senditaoficialajho', 'alshutinto',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True),
+                      keep_default=False)
 
 
     def backwards(self, orm):
-        # Removing M2M table for field manghomendoj on 'Partoprenanto'
-        db.delete_table('alighi_partoprenanto_manghomendoj')
+        # Deleting field 'SenditaOficialajho.alshutinto'
+        db.delete_column('alighi_senditaoficialajho', 'alshutinto_id')
 
 
     models = {
@@ -233,6 +230,14 @@ class Migration(SchemaMigration):
             'sendadreso': ('django.db.models.fields.EmailField', [], {'default': "u'ijk@tejo.org'", 'max_length': '75'}),
             'teksto': ('django.db.models.fields.TextField', [], {}),
             'temo': ('django.db.models.fields.CharField', [], {'max_length': '100'})
+        },
+        'alighi.senditaoficialajho': {
+            'Meta': {'object_name': 'SenditaOficialajho'},
+            'alshutinto': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True'}),
+            'dosiero': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'partoprenanto': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['alighi.Partoprenanto']", 'null': 'True'}),
+            'priskribo': ('django.db.models.fields.CharField', [], {'max_length': '250', 'blank': 'True'})
         },
         'alighi.senditaretposhtajho': {
             'Meta': {'object_name': 'SenditaRetposhtajho'},
