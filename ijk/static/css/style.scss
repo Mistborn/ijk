@@ -138,6 +138,10 @@ i, em {
     font-style: italic;
 }
 
+table, caption, tbody, tfoot, thead, tr, th, td {
+    vertical-align: inherit;
+}
+
 .main-heading {
     text-shadow: $text-shadow-def;
     // margin: 0; // $root-em;
@@ -160,6 +164,19 @@ $menu-hover-color: #ccc;
     vertical-align: middle;
     background: $style-color;
     border-radius: $border-radius;
+    #lingvoj {
+        position: absolute;
+        right: $root-em;
+        top: $heading-height / 2 - $root-em * 3;
+        a {
+            display: block;
+            color: $header-color;
+            font-weight: bold;
+            font-size: 1.5 * $root-em;
+            text-decoration: none;
+            text-shadow: $text-shadow-def;
+        }
+    }
     #tejo-logo {
         position: relative;
         top: -$top-space;
