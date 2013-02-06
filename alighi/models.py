@@ -829,10 +829,12 @@ class SenditaOficialajho(models.Model):
     priskribo = models.CharField(max_length=250, blank=True,
         help_text=u'Ricevos la nomon de la dosiero se vi lasos ĝin malplena.')
     dosiero = models.FileField(upload_to=u'oficialajhoj')
-    partoprenanto = models.ForeignKey(Partoprenanto, null=True,
+    partoprenanto = models.ForeignKey(Partoprenanto, null=True, blank=True,
         help_text=u'Partoprenanto, al kiu tiu ĉi dosiero rilatas '
                   u'(se ĝi rilatas al partoprenanto)')
-    alshutinto = models.ForeignKey(User, null=True)
+    alshutinto = models.ForeignKey(User, null=True, editable=False,
+        verbose_name=eo('alsxutinto'))
+    alshutodato = models.DateField(eo('Alsxutodato'), auto_now_add=True)
 
     def set_priskribo(self):
         if self.priskribo:
