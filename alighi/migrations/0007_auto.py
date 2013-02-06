@@ -8,7 +8,7 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding M2M table for field fuckyoutohighhell on 'Partoprenanto'
+        # Adding M2M table for field manghomendoj on 'Partoprenanto'
         db.create_table('alighi_partoprenanto_manghomendoj', (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
             ('partoprenanto', models.ForeignKey(orm['alighi.partoprenanto'], null=False)),
@@ -18,7 +18,7 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
-        # Removing M2M table for field fuckyoutohighhell on 'Partoprenanto'
+        # Removing M2M table for field manghomendoj on 'Partoprenanto'
         db.delete_table('alighi_partoprenanto_manghomendoj')
 
 
