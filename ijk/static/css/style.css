@@ -178,7 +178,7 @@ table, caption, tbody, tfoot, thead, tr, th, td {
   border-width: 1px;
 }
 #heading .menuo li li {
-  height: 26.25px;
+  height: auto;
   width: 150px;
 }
 #heading .menuo > ul > li {

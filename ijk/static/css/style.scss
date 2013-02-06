@@ -208,7 +208,7 @@ $menu-hover-color: #ccc;
         line-height: 1.5 * $root-em;
         @include dropdown(
             $cellpad: $root-em/2,
-            $cellheight: 1.5 * $root-em / 0.8,
+            // $cellheight: 1.5 * $root-em / 0.8,
             $cellborder: $menu-border-size
         );
         > ul {
