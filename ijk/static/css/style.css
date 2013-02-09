@@ -126,15 +126,16 @@ table, caption, tbody, tfoot, thead, tr, th, td {
 #heading #lingvoj {
   position: absolute;
   right: 14px;
-  top: 8px;
+  top: 17.8px;
 }
 #heading #lingvoj a {
   display: block;
-  color: white;
   font-weight: bold;
-  font-size: 21px;
   text-decoration: none;
   text-shadow: 1px 1px 1px #777777;
+  color: #ccc;
+  font-family: tahoma;
+  font-size: 115%;
 }
 #heading #tejo-logo {
   position: relative;

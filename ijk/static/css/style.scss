@@ -167,14 +167,17 @@ $menu-hover-color: #ccc;
     #lingvoj {
         position: absolute;
         right: $root-em;
-        top: $heading-height / 2 - $root-em * 3;
+        top: $heading-height / 2 - $root-em * 2.3;
         a {
             display: block;
-            color: $header-color;
+            // color: $header-color;
             font-weight: bold;
-            font-size: 1.5 * $root-em;
+            // font-size: 1.5 * $root-em;
             text-decoration: none;
             text-shadow: $text-shadow-def;
+            color: #ccc;
+            font-family: tahoma;
+            font-size: 115%;
         }
     }
     #tejo-logo {
