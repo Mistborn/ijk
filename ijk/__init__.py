@@ -63,7 +63,7 @@ try:
     initial_site = [Site.objects.get_current()]
 except DatabaseError:
     initial_site = []
-    
+
 class NewFlatpageForm(flatforms.FlatpageForm, MPTTAdminForm):
     sites = ModelMultipleChoiceField(queryset=Site.objects.all(),
         initial=initial_site)

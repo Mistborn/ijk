@@ -15,6 +15,7 @@ from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.core.mail import send_mail
 from django.conf import settings
+from django.db.utils import DatabaseError
 
 from utils import eo, KOMENCA_DATO, FINIGHA_DATO, SEKSOJ, json_default, esperanteca_dato
 
@@ -41,7 +42,7 @@ class Valuto(models.Model):
 
 try:
     EUR = Valuto.objects.get(kodo='EUR')
-except Valuto.DoesNotExist:
+except (Valuto.DoesNotExist, DatabaseError):
     EUR = None
 
 class Kurzo(models.Model):
@@ -478,7 +479,7 @@ class ManghoMendoTipo(models.Model):
     class Meta:
         verbose_name = eo('Mangxomendotipo')
         verbose_name_plural = eo('Mangxomendotipoj')
-        
+
 class Partoprenanto(models.Model):
     '''Partoprenanto en la kongreso'''
     persona_nomo = models.CharField(max_length=50)
@@ -844,7 +845,7 @@ class SenditaOficialajho(models.Model):
     @property
     def basename(self):
         return os.path.basename(self.dosiero.name)
-        
+
     def save(self):
         self.set_priskribo()
         super(SenditaOficialajho, self).save()
@@ -858,7 +859,7 @@ class SenditaOficialajho(models.Model):
             u'{}.{}'.format(hash, self.basename))
         shutil.move(self.dosiero.path, newpath)
         super(Dosiero, self).delete()
-        
+
     def __unicode__(self):
         return self.priskribo
 
