@@ -1,12 +1,11 @@
 # -*- encoding: utf-8 -*-
 
-from collections import OrderedDict
-
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import fields
 from django.db import DatabaseError
 from django.utils.safestring import mark_safe
+from django.conf import settings
 
 import reversion
 
@@ -99,7 +98,8 @@ def _mkmenu(node):
         u'<ul>{}</ul>'.format(u''.join(sublist)) if sublist else u'')
 
 _menu = [_mkmenu(node) for node in _roots]
-_menu.append(u'<li><a href="{}">Aliĝi!</a></li>'.format(reverse('alighi')))
+if not settings.HIDE_ALIGHILO:
+    _menu.append(u'<li><a href="{}">Aliĝi!</a></li>'.format(reverse('alighi')))
 menu_html = u'<ul>{}</ul>'.format(u''.join(_menu))
 
 def menu_context_processor(request):
