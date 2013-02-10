@@ -4,9 +4,6 @@ import os.path
 
 from private_settings import *
 
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
-
 ADMINS = (
     ('Adam Mesha', 'adam@mesha.org'),
 )

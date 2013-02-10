@@ -43,6 +43,8 @@ class Valuto(models.Model):
 try:
     EUR = Valuto.objects.get(kodo='EUR')
 except (Valuto.DoesNotExist, DatabaseError):
+    from django.db import connection
+    connection._rollback()
     EUR = None
 
 class Kurzo(models.Model):
