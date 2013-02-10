@@ -62,6 +62,8 @@ treemanager.contribute_to_class(FlatPage, 'treemanager')
 try:
     initial_site = [Site.objects.get_current()]
 except DatabaseError:
+    from django.db import connection
+    connection._rollback()
     initial_site = []
 
 class NewFlatpageForm(flatforms.FlatpageForm, MPTTAdminForm):
