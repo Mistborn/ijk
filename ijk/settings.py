@@ -120,7 +120,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
-    'ijk.menu_context_processor'
+    'ijk.menu_context_processor',
+    'ijk.ga_context_processor',
 )
 
 # A sample logging configuration. The only tangible logging
