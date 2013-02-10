@@ -150,7 +150,11 @@ class PagoAdmin(reversion.VersionAdmin):
 class PagoInline(admin.TabularInline):
     model = Pago
     extra = 0
-    #can_delete = False
+    readonly_fields = PagoAdmin.readonly_fields + ('dato',
+            'pagmaniero', 'pagtipo', 'valuto', 'sumo')
+    fields = [f for f in PagoAdmin.list_display]# if f != 'respondeculo']
+    can_delete = False
+    def has_add_permission(self, request): return False
 
 class NotoAdmin(reversion.VersionAdmin):
     list_display = ('partoprenanto', 'uzanto', 'dato', 'enhavo',

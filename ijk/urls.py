@@ -27,6 +27,8 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^mastrumilo/', include(admin.site.urls)),
 
+    url(r'^grappelli/', include('grappelli.urls')),
+
     url(r'^alighi/', include('alighi.urls')),
     url('^', include('django.contrib.flatpages.urls')),
 )
