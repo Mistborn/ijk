@@ -154,3 +154,5 @@ LOGGING = {
         },
     }
 }
+
+GRAPPELLI_ADMIN_TITLE = 'IJK-mastrumilo'

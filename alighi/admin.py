@@ -273,6 +273,7 @@ class PartoprenantoAdmin(reversion.VersionAdmin):
         'unua_konfirmilo_sendita', 'dua_konfirmilo_sendita',
         'alighdato', 'malalighdato',
         'chu_alvenis', 'chu_havasmanghkuponon', 'chu_havasnomshildon',)
+    change_list_template = "admin/change_list_filter_sidebar.html"
     search_fields = ('persona_nomo', 'familia_nomo', 'shildnomo',
         'retposhtadreso', 'adreso', 'urbo', 'loghlando__nomo', 'shildlando',
         'skype', 'facebook', 'mesaghiloj', 'alveno', 'foriro',
