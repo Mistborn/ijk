@@ -193,7 +193,7 @@ class PagoAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
         if not change and not obj.kreinto:
             obj.kreinto = request.user
         obj.lasta_redaktanto = request.user
-        super(PagoAdminBase, self).save_model(request, obj, form, change)
+        super(PagoAdmin, self).save_model(request, obj, form, change)
 class PagoInline(ViewPermissionAdmin, admin.TabularInline):
     model = Pago
     extra = 0
