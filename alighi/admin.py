@@ -1,105 +1,152 @@
 # -*- encoding: utf-8 -*-
 
-from django.forms import MediaDefiningClass
 from django.contrib import admin
+from django.core.exceptions import PermissionDenied
 import reversion
 from alighi.models import *
 
+from django.contrib.admin.views.main import ChangeList
+class ReadOnlyChangeList(ChangeList):
+    def __init__(self, request, model, list_display, list_display_links,
+            list_filter, date_hierarchy, search_fields, list_select_related,
+            list_per_page, list_max_show_all, list_editable, model_admin):
+        if model_admin.is_readonly(request):
+            list_editable = []
+        super(ReadOnlyChangeList, self).__init__(
+            request, model, list_display, list_display_links,
+            list_filter, date_hierarchy, search_fields, list_select_related,
+            list_per_page, list_max_show_all, list_editable, model_admin)
+    
+class ViewPermissionAdmin(admin.options.BaseModelAdmin):
+    def get_view_permission(self):
+        for (perm, desc) in self.model._meta.permissions:
+            if perm.startswith('view_'):
+                return perm
+        return None
+    def is_readonly(self, request):
+        view_perm = 'alighi.{}'.format(self.get_view_permission())
+        change_perm = 'alighi.{}'.format(
+            self.model._meta.get_change_permission())
+        r =  (request.user.has_perm(view_perm) and not
+                request.user.has_perm(change_perm))
+        return r
+    def get_readonly_fields(self, request, obj=None):
+        if self.is_readonly(request):
+            return [o.name for o in self.model._meta.fields]
+        return super(ViewPermissionAdmin, self).get_readonly_fields(
+            request, obj)
+    def has_change_permission(self, request, obj=None):
+        sup = super(ViewPermissionAdmin, self).has_change_permission(
+            request, obj)
+        return sup or request.user.has_perm(
+            'alighi.{}'.format(self.get_view_permission()))
+    def get_changelist(self, request, **kw):
+        return ReadOnlyChangeList
+    def changelist_view(self, request, extra_context=None):
+        if self.is_readonly(request) and request.method == 'POST':
+            raise PermissionDenied
+        return super(ViewPermissionAdmin, self).changelist_view(
+            request, extra_context=extra_context)
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        if self.is_readonly(request) and request.method == 'POST':
+            raise PermissionDenied
+        return super(ViewPermissionAdmin, self).change_view(
+            request, object_id, extra_context=extra_context)
 
-class RespondecoAdmin(reversion.VersionAdmin):
+class ChambroAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
+    list_display = ('nomo', 'litonombro', 'loghkategorio', 'rimarko')
+    list_editable = list_display[1:]
+    list_filter = ('litonombro', 'loghkategorio',)
+    search_fields = ('nomo',)
+class ChambroInline(ViewPermissionAdmin, admin.TabularInline):
+    model = Chambro
+    extra = 0
+
+class RespondecoAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
     #fields = (('rolo', 'uzanto'),)
     list_display = ('rolo', 'uzanto')
     list_editable = ('uzanto',)
     #save_as = True
     list_filter = ('rolo', 'uzanto')
 
-class KurzoAdmin(reversion.VersionAdmin):
+class KurzoAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
     list_display = ('valuto', 'dato', 'kurzo')
     list_editable = ('dato', 'kurzo')
     list_filter = ('valuto', 'dato')
-class KurzoInline(admin.TabularInline):
+class KurzoInline(ViewPermissionAdmin, admin.TabularInline):
     model = Kurzo
     extra = 0
 
-class ValutoAdmin(reversion.VersionAdmin):
+class ValutoAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
     #fields = (('kodo', 'nomo'),)
     list_display = ('kodo', 'nomo')
     list_editable = ('nomo',)
     search_fields = ('nomo',)
     inlines = (KurzoInline,)
 
-class ProgramKotizoAdmin(reversion.VersionAdmin):
+class ProgramKotizoAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
     fields = (('aghkategorio', 'landokategorio', 'alighkategorio'), 'kotizo')
     list_display = ('aghkategorio', 'landokategorio',
                     'alighkategorio', 'kotizo')
     list_display_links = fields[0]
     list_editable = ('kotizo',)
     list_filter = ('aghkategorio', 'landokategorio', 'alighkategorio')
-class ProgramKotizoInline(admin.TabularInline,):
+class ProgramKotizoInline(ViewPermissionAdmin, admin.TabularInline,):
     model = ProgramKotizo
     extra = 0
 
-class AghKategorioAdmin(reversion.VersionAdmin):
+class AghKategorioAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
     list_display = ('nomo', 'priskribo', 'limagho', 'aldona_kotizo')
     list_editable = ('priskribo', 'limagho', 'aldona_kotizo')
     search_fields = ('nomo', 'priskribo')
     inlines = (ProgramKotizoInline,)
 
-class AlighKategorioAdmin(reversion.VersionAdmin):
+class AlighKategorioAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
     list_display = ('nomo', 'priskribo', 'limdato')
     list_editable = ('priskribo', 'limdato')
     search_fields = ('nomo', 'priskribo')
     inlines = (ProgramKotizoInline,)
 
-class LandoAdmin(reversion.VersionAdmin):
+class LandoAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
     list_display = ('nomo', 'kodo', 'kategorio')
     list_editable = ('kategorio',)
     list_filter = ('kategorio',)
     search_fields = ('nomo',)
-class LandoInline(admin.TabularInline):
+class LandoInline(ViewPermissionAdmin, admin.TabularInline):
     model = Lando
     extra = 0
 
-class UEARabatoAdmin(reversion.VersionAdmin):
+class UEARabatoAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
     list_display = ('landokategorio', 'sumo',)
     list_editable = list_display[1:]
     list_filter = ('landokategorio',)
-class UEARabatoInline(admin.TabularInline):
+class UEARabatoInline(ViewPermissionAdmin, admin.TabularInline):
     model = UEARabato
     extra = 0
 
-class LandoKategorioAdmin(reversion.VersionAdmin):
+class LandoKategorioAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
     list_display = ('nomo', 'priskribo')
     list_editable = ('priskribo',)
     search_fields = ('nomo', 'priskribo')
     inlines = (ProgramKotizoInline, UEARabatoInline, LandoInline,)
 
-class ChambroAdmin(reversion.VersionAdmin):
-    list_display = ('nomo', 'litonombro', 'loghkategorio', 'rimarko')
-    list_editable = list_display[1:]
-    list_filter = ('litonombro', 'loghkategorio',)
-    search_fields = ('nomo',)
-class ChambroInline(admin.TabularInline):
-    model = Chambro
-    extra = 0
-
-class LoghKategorioAdmin(reversion.VersionAdmin):
+class LoghKategorioAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
     list_display = ('nomo', 'priskribo', 'plena_kosto', 'unutaga_kosto')
     list_editable = list_display[1:]
     search_fields = ('nomo', 'priskribo')
     inlines = (ChambroInline,)
 
-class ManghoMendoTipoAdmin(reversion.VersionAdmin):
+class ManghoMendoTipoAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
     list_display = ('nomo', 'priskribo', 'kosto')
     list_editable = list_display[1:]
     search_fields = ('nomo', 'priskribo')
 
-#class ManghoMendoAdmin(reversion.VersionAdmin):
+#class ManghoMendoAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
     #list_display = ('partoprenanto', 'tipo')
     ##list_editable = list_display[1:]
     #list_filter = list_display
 
-class ManghoTipoAdmin(reversion.VersionAdmin):
+class ManghoTipoAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
     #def model_unicode(self, obj):
         #return unicode(obj)
     #model_unicode.short_description = 'Ero'
@@ -108,32 +155,32 @@ class ManghoTipoAdmin(reversion.VersionAdmin):
     #list_editable = list_display[1:]
     pass
 
-class PagmanieroAdmin(reversion.VersionAdmin):
+class PagmanieroAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
     list_display = ('nomo', 'priskribo', 'komenta_etikedo',
                     'chu_publika', 'chu_nurisraela')
     list_editable = list_display[1:]
     list_filter = ('chu_publika', 'chu_nurisraela')
     search_fields = ('nomo', 'priskribo', 'komenta_etikedo')
 
-class RetposhtajhoAdmin(reversion.VersionAdmin):
+class RetposhtajhoAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
     list_display = ('nomo', 'sendadreso', 'temo', 'teksto')
     list_editable = list_display[1:]
     list_filter = ('sendadreso',)
     search_fields = ('nomo', 'temo', 'teksto',)
 
-class SurlokaMembrighoAdmin(reversion.VersionAdmin):
+class SurlokaMembrighoAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
     list_display = ('partoprenanto', 'kategorio', 'kotizo', 'valuto')
     #list_editable = list_display[1:]
     list_filter = ('kategorio', 'kotizo', 'valuto', 'partoprenanto',)
-class SurlokaMembrighoInline(admin.TabularInline):
+class SurlokaMembrighoInline(ViewPermissionAdmin, admin.TabularInline):
     model = SurlokaMembrigho
     extra = 0
 
-class MembrighaKategorioAdmin(reversion.VersionAdmin):
+class MembrighaKategorioAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
     search_fields = ('nomo',)
     inlines = (SurlokaMembrighoInline,)
 
-class PagoAdmin(reversion.VersionAdmin):
+class PagoAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
     list_display = ('partoprenanto', 'respondeculo', 'pagmaniero',
                     'pagtipo', 'valuto', 'sumo', 'dato', 'rimarko',)
     readonly_fields = ('kreinto', 'lasta_redaktanto')
@@ -147,7 +194,7 @@ class PagoAdmin(reversion.VersionAdmin):
             obj.kreinto = request.user
         obj.lasta_redaktanto = request.user
         super(PagoAdminBase, self).save_model(request, obj, form, change)
-class PagoInline(admin.TabularInline):
+class PagoInline(ViewPermissionAdmin, admin.TabularInline):
     model = Pago
     extra = 0
     readonly_fields = PagoAdmin.readonly_fields + ('dato',
@@ -156,14 +203,14 @@ class PagoInline(admin.TabularInline):
     can_delete = False
     def has_add_permission(self, request): return False
 
-class NotoAdmin(reversion.VersionAdmin):
+class NotoAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
     list_display = ('partoprenanto', 'uzanto', 'dato', 'enhavo',
                     'chu_prilaborita', 'revidu')
     list_editable = ('uzanto', 'chu_prilaborita', 'revidu')
     list_filter = ('uzanto', 'dato', 'chu_prilaborita', 'revidu',
                    'partoprenanto',)
     search_fields = ('enhavo',)
-class NotoInline(admin.TabularInline):
+class NotoInline(ViewPermissionAdmin, admin.TabularInline):
     model = Noto
     extra = 0
 
@@ -184,7 +231,7 @@ class OficialajhoAdminBase(object):
         super(OficialajhoAdminBase, self).save_model(
                 request, obj, form, change)
 
-class SenditaOficialajhoAdmin(reversion.VersionAdmin, OficialajhoAdminBase):
+class SenditaOficialajhoAdmin(ViewPermissionAdmin, reversion.VersionAdmin, OficialajhoAdminBase):
     #readonly_fields = ('alshutinto',)
     list_display = ('priskribo', 'elshuto', 'partoprenanto',
         'alshutinto', 'alshutodato')
@@ -194,7 +241,7 @@ class SenditaOficialajhoAdmin(reversion.VersionAdmin, OficialajhoAdminBase):
     readonly_fields = ('alshutinto', 'alshutodato', 'elshuto',)
     fields = ('priskribo', 'dosiero', 'alshutinto', 'alshutodato', 'elshuto',
               'partoprenanto')
-class OficialajhoInline(admin.TabularInline, OficialajhoAdminBase):
+class OficialajhoInline(ViewPermissionAdmin, admin.TabularInline, OficialajhoAdminBase):
     extra = 0
     can_delete = False
     readonly_fields = SenditaOficialajhoAdmin.readonly_fields
@@ -202,7 +249,7 @@ class OficialajhoInline(admin.TabularInline, OficialajhoAdminBase):
     model = SenditaOficialajho
     def has_add_permission(self, request, obj=None): return False
 
-class SenditaRetposhtajhoAdmin(reversion.VersionAdmin):
+class SenditaRetposhtajhoAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
     readonly_fields = (
         'temo',
         'teksto',
@@ -222,7 +269,7 @@ class SenditaRetposhtajhoAdmin(reversion.VersionAdmin):
     def has_delete_permission(self, request, obj=None): return False
     actions = None
     can_delete = False
-class SenditaRetposhtajhoInline(admin.TabularInline):
+class SenditaRetposhtajhoInline(ViewPermissionAdmin, admin.TabularInline):
     model = SenditaRetposhtajho
     extra = 0
     def has_delete_permission(self, request, obj=None): return False
@@ -231,7 +278,7 @@ class SenditaRetposhtajhoInline(admin.TabularInline):
     actions = None
     can_delete = False
 
-class PartoprenantoAdmin(reversion.VersionAdmin):
+class PartoprenantoAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
     '''Unuopa partoprenanto en la kongreso'''
     fields = (
         ('persona_nomo', 'familia_nomo', 'shildnomo',),
@@ -304,20 +351,20 @@ class PartoprenantoAdmin(reversion.VersionAdmin):
     inlines = (PagoInline, NotoInline, OficialajhoInline,
         SenditaRetposhtajhoInline)
 
-class PagtipoAdmin(reversion.VersionAdmin):
+class PagtipoAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
     search_fields = ('nomo',)
 
-class MinimumaAntaupagoAdmin(reversion.VersionAdmin):
+class MinimumaAntaupagoAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
     list_display = ('landokategorio', 'oficiala_antaupago')
     list_editable = list_display[1:]
     list_filter = ('landokategorio',)
 
-class KrompagTipoAdmin(reversion.VersionAdmin):
+class KrompagTipoAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
     list_display = ('nomo', 'sumo')
     list_editable = list_display[1:]
     search_fields = ('nomo',)
 
-class NomshildoAdmin(reversion.VersionAdmin):
+class NomshildoAdmin(ViewPermissionAdmin, reversion.VersionAdmin):
     list_display = ('nomo', 'titolo_lokalingve', 'titolo_esperante',
                     'chu_havasnomshildon')
     list_editable = list_display[1:]
@@ -329,17 +376,17 @@ class NomshildoAdmin(reversion.VersionAdmin):
 #admin.site.register(UEAValideco, UEAValidecoAdmin)
 
 # inlines
-class UserRespondecoInline(admin.TabularInline):
+class UserRespondecoInline(ViewPermissionAdmin, admin.TabularInline):
     model = Respondeco
     extra = 0
     #can_delete = False
     #verbose_name_plural = 'profile'
-class UserPagoInline(admin.TabularInline):
+class UserPagoInline(ViewPermissionAdmin, admin.TabularInline):
     model = Pago
     fk_name = 'respondeculo'
     extra = 0
 
-#class OficialajhoInline(admin.TabularInline):
+#class OficialajhoInline(ViewPermissionAdmin, admin.TabularInline):
     #model = SenditaOficialajho
     #extra = 0
 
@@ -347,11 +394,14 @@ class UserPagoInline(admin.TabularInline):
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
-class NewUserAdmin(UserAdmin, reversion.VersionAdmin):
+class NewUserAdmin(UserAdmin, ViewPermissionAdmin, reversion.VersionAdmin):
     inlines = (UserRespondecoInline, NotoInline,
                UserPagoInline, OficialajhoInline)
 
-admin.site.unregister(User)
+try:
+    admin.site.unregister(User)
+except admin.sites.NotRegistered:
+    pass
 admin.site.register(User, NewUserAdmin)
 
 admin.site.register(Respondeco, RespondecoAdmin)
