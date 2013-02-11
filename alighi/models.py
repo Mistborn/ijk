@@ -676,7 +676,7 @@ class Partoprenanto(models.Model):
                 u'Rajtas ŝanĝi ĉambron de partoprenanto'),
             (u'change_partoprenanto_chu_ueamembro',
                 u'Rajtas ŝanĝi "ĉu uea-membro" de partoprenanto'),
-            (u'change_partoprenanto_ueakodo',
+            (u'change_partoprenanto_uea_kodo',
                 u'Rajtas ŝanĝi UEA-kodon de partoprenanto'),
         )
 
