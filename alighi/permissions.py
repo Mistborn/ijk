@@ -88,7 +88,7 @@ class SpecialPermissionsAdmin(admin.options.BaseModelAdmin):
         if change and obj.pk and not self.can_change_all(request):
             old_obj = obj.__class__.objects.get(pk=obj.pk)
             field_diff = [field
-                    for field in obj._meta.get_all_field_names()
+                    for field in obj._meta.fields
                     if getattr(obj, field) != getattr(old_obj, field)]
             if set(field_diff) - set(self.get_changeable_fields(request, obj)):
                 raise PermissionDenied

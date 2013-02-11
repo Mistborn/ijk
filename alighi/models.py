@@ -640,7 +640,11 @@ class Partoprenanto(models.Model):
         if name.endswith('_jn'):
             val = getattr(self, name[:-3])
             return 'jes' if val else 'ne'
-        return super(Partoprenanto, self).__getattr__(name)
+        sup = super(Partoprenanto, self)
+            if hasattr(sup, '__getattr__'):
+                return sup.__getattr__(name)
+            else:
+                raise AttributeError('no attribute {}'.format(name))
 
     def __unicode__(self):
         return u'{} {}'.format(self.persona_nomo, self.familia_nomo)
