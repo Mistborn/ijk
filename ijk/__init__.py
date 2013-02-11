@@ -86,21 +86,26 @@ admin.site.register(FlatPage, NewFlatPageAdmin, Media=EditorMedia)
 
 from django.core.urlresolvers import reverse
 
-_roots = FlatPage.treemanager.root_nodes()
+try:
+    _roots = FlatPage.treemanager.root_nodes()
 
-def _mkmenu(node):
-    '''Return a <li> that links to the item at node and
-    includes a submenu of all its descendants'''
-    sublist = [_mkmenu(child) for child in node.get_children()]
-    return u'''<li><a href="{}">{}</a>{}</li>'''.format(
-        node.get_absolute_url(),
-        node.menu_title.strip() or node.title,
-        u'<ul>{}</ul>'.format(u''.join(sublist)) if sublist else u'')
+    def _mkmenu(node):
+        '''Return a <li> that links to the item at node and
+        includes a submenu of all its descendants'''
+        sublist = [_mkmenu(child) for child in node.get_children()]
+        return u'''<li><a href="{}">{}</a>{}</li>'''.format(
+            node.get_absolute_url(),
+            node.menu_title.strip() or node.title,
+            u'<ul>{}</ul>'.format(u''.join(sublist)) if sublist else u'')
 
-_menu = [_mkmenu(node) for node in _roots]
-if not settings.HIDE_ALIGHILO:
-    _menu.append(u'<li><a href="{}">Aliĝi!</a></li>'.format(reverse('alighi')))
-menu_html = u'<ul>{}</ul>'.format(u''.join(_menu))
+    _menu = [_mkmenu(node) for node in _roots]
+    if not settings.HIDE_ALIGHILO:
+        _menu.append(u'<li><a href="{}">Aliĝi!</a></li>'.format(reverse('alighi')))
+    menu_html = u'<ul>{}</ul>'.format(u''.join(_menu))
+except DatabaseError:
+    from django.db import connection
+    connection._rollback()
+    menu_html = u''
 
 def menu_context_processor(request):
     return {'MENUO': mark_safe(menu_html)}
