@@ -640,7 +640,11 @@ class Partoprenanto(models.Model):
         if name.endswith('_jn'):
             val = getattr(self, name[:-3])
             return 'jes' if val else 'ne'
-        return getattr(super(Partoprenanto, self), name)
+        sup = super(Partoprenanto, self)
+        if hasattr(sup, '__getattr__'):
+            return sup.__getattr__(name)
+        else:
+            raise AttributeError('no attribute {}'.format(name))
 
     def __unicode__(self):
         return u'{} {}'.format(self.persona_nomo, self.familia_nomo)
@@ -648,8 +652,33 @@ class Partoprenanto(models.Model):
     class Meta:
         verbose_name_plural = eo('Partoprenantoj')
         ordering = ('familia_nomo',)
-        permissions = ( (u"view_partoprenanto",
-                         u"Rajtas vidi partoprenanton"), )
+        permissions = (
+            (u"view_partoprenanto",  u"Rajtas vidi partoprenanton"),
+            (u"change_partoprenanto_adreso",
+                u'Rajtas ŝanĝi adreson de partoprenantoj'),
+            (u'change_partoprenanto_urbo',
+                u'Rajtas ŝanĝi urbon de partoprenanto'),
+            (u'change_partoprenanto_poshtkodo',
+                u'Rajtas ŝanĝi poŝtkodon de partoprenanto'),
+            (u'change_partoprenanto_loghlando',
+                u'Rajtas ŝanĝi loĝlandon de partoprenanto'),
+            (u'change_partoprenanto_chu_bezonas_invitleteron',
+                u'Rajtas ŝanĝi "ĉu bezonas invitleteron" de ppnto'),
+            (u'change_partoprenanto_chu_invitletero_sendita',
+                u'Rajtas ŝanĝi "ĉu invitletero sendita" de ppnto'),
+            (u'change_partoprenanto_loghkategorio',
+                u'Rajtas ŝanĝi loĝkategorion de partoprenanto'),
+            (u'change_partoprenanto_deziras_loghi_kun',
+                u'Rajtas ŝanĝi "deziras loĝi kun" de partoprenanto'),
+            (u'change_partoprenanto_deziras_loghi_kun_nomo',
+                u'Rajtas ŝanĝi "deziras loĝi kun nomo" de ppnto'),
+            (u'change_partoprenanto_chambro',
+                u'Rajtas ŝanĝi ĉambron de partoprenanto'),
+            (u'change_partoprenanto_chu_ueamembro',
+                u'Rajtas ŝanĝi "ĉu uea-membro" de partoprenanto'),
+            (u'change_partoprenanto_uea_kodo',
+                u'Rajtas ŝanĝi UEA-kodon de partoprenanto'),
+        )
 
 #class ManghoMendo(models.Model):
     #'''Unuopa manĝomendo de partoprenanto'''
