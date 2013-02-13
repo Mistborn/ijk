@@ -18,8 +18,8 @@ urlpatterns = patterns('',
     url(r'^(?P<url>.*[^/])$',
         lambda request, url: redirect('/'+url.strip('/')+'/')),
     # actually we want to call the admin mastrumilo
-    url(r'^admin(?P<url>.*)$',
-        lambda request, url: redirect('/mastrumilo'+url)),
+    #url(r'^admin(?P<url>.*)$',
+        #lambda request, url: redirect('/mastrumilo'+url)),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     url(r'^mastrumilo/doc/', include('django.contrib.admindocs.urls')),
