@@ -53,8 +53,15 @@ TreeForeignKey(FlatPage, verbose_name='patro',
 
 mptt.register(FlatPage, order_insertion_by=[u'sort_key', u'url'])
 
+class MenuManager(mptt.managers.TreeManager):
+    def get_menu_children(self, parent=None):
+        if parent is None:
+            return self.root_nodes().filter(show_in_menu=True)
+        else:
+            return parent.get_children().filter(show_in_menu=True)
+
 # For some reason, FlatPage.tree is an ordinary manager, not a TreeManager
-treemanager = mptt.managers.TreeManager()
+treemanager = MenuManager()
 treemanager._base_manager = None
 treemanager.contribute_to_class(FlatPage, 'treemanager')
 
@@ -88,12 +95,13 @@ from django.core.urlresolvers import reverse
 
 _menu = [u'<li><a href="/#nove">Novaĵoj</a></li>']
 try:
-    _roots = FlatPage.treemanager.root_nodes()
+    _roots = FlatPage.treemanager.get_menu_children(None)
 
     def _mkmenu(node):
         '''Return a <li> that links to the item at node and
         includes a submenu of all its descendants'''
-        sublist = [_mkmenu(child) for child in node.get_children()]
+        sublist = [_mkmenu(child)
+                for child in FlatPage.treemanager.get_menu_children(node)]
         return u'''<li><a href="{}">{}</a>{}</li>'''.format(
             node.get_absolute_url(),
             node.menu_title.strip() or node.title,
