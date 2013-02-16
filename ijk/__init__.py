@@ -86,6 +86,7 @@ admin.site.register(FlatPage, NewFlatPageAdmin, Media=EditorMedia)
 
 from django.core.urlresolvers import reverse
 
+_menu = [u'<li><a href="/#nove">Novaĵoj</a></li>']
 try:
     _roots = FlatPage.treemanager.root_nodes()
 
@@ -98,9 +99,10 @@ try:
             node.menu_title.strip() or node.title,
             u'<ul>{}</ul>'.format(u''.join(sublist)) if sublist else u'')
 
-    _menu = [_mkmenu(node) for node in _roots]
+    _menu.extend(_mkmenu(node) for node in _roots)
     if not settings.HIDE_ALIGHILO:
-        _menu.append(u'<li><a href="{}">Aliĝi!</a></li>'.format(reverse('alighi')))
+        _menu.append(u'<li><a href="{}">Aliĝi!</a></li>'.format(
+            reverse('alighi')))
     menu_html = u'<ul>{}</ul>'.format(u''.join(_menu))
 except DatabaseError:
     from django.db import connection
