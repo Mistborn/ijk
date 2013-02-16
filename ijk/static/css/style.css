@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /* http://meyerweb.com/eric/tools/css/reset/
    v2.0 | 20110126
    License: none (public domain)
@@ -289,6 +290,24 @@ table, caption, tbody, tfoot, thead, tr, th, td {
 }
 #heading .menuo li:hover a:hover {
   color: #faa700;
+}
+
+#korpo a[href], #korpo a[href] i, #korpo a[href] em {
+  color: #050;
+}
+#korpo a[target] {
+  text-decoration: none;
+  border-bottom: solid 1px #050;
+  padding-bottom: 1px;
+}
+#korpo a[target]:after {
+  content: "⁺";
+  color: #777;
+  border-bottom: solid 1px #fff;
+  padding-bottom: 1px;
+}
+#korpo i a[target]:after, #korpo em a[target]:after {
+  margin-left: 2px;
 }
 
 .fakturo .kotizo-signo {
