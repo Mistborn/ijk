@@ -28,3 +28,8 @@ def update_live():
 def scss():
     with lcd('/home/amesha/projects/ijk/ijk/static/css'):
         local('sass -t expanded --update style.scss:style.css')
+
+def coffee():
+    with lcd('/home/amesha/projects/ijk/alighi/static/js'):
+        local('coffee -c alighi.coffee')
+
