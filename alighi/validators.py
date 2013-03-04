@@ -34,9 +34,9 @@ def naskighdato(date):
         raise ValidationError(
             u'La naskiĝdato ne povas esti antaŭ la 1-a de januaro, 1914',
             code=u'naskighdato')
-    if date > datetime.date(2007, 12, 31):
+    if date > datetime.date(2011, 12, 31):
         raise ValidationError(
-            u'La naskiĝdato ne povas esti post 2007',
+            u'La naskiĝdato ne povas esti post 2011',
             code=u'naskighdato')
 
 ueakodo_validator = RegexValidator(r'^[a-zA-Z]{4}\-[a-zA-Z]$',

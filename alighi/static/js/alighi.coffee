@@ -33,7 +33,7 @@ alighi_form = ->
         changeMonth: yes
         changeYear: yes
         defaultDate: new Date window.KOMENCA_DATO - YEAR*25
-        yearRange: "c-74:c+19"
+        yearRange: "-100:-2"
             
         # new Date 2003, 7, 19
 

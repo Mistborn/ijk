@@ -36,7 +36,7 @@
       changeMonth: true,
       changeYear: true,
       defaultDate: new Date(window.KOMENCA_DATO - YEAR * 25),
-      yearRange: "c-74:c+19"
+      yearRange: "-100:-2"
     });
     liveri_aghon_lau_naskightago = function(dato) {
       if (dato) {
