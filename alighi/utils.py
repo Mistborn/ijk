@@ -4,6 +4,8 @@ import datetime
 from decimal import Decimal
 KOMENCA_DATO = datetime.date(2013, 8, 19)
 FINIGHA_DATO = datetime.date(2013, 8, 26)
+PLEJFRUA_DATO = datetime.date(2013, 8, 16)
+PLEJMALFRUA_DATO = datetime.date(2013, 8, 26)
 
 SEKSOJ = (
     ('v', u"♂ vira"),

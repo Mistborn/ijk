@@ -516,7 +516,7 @@ class MultiField(forms.Field):
             #return mark_safe(u'<li><span class="info">'
                              #u'{}</span></li>'.format(val))
     #return FormInfo
-
+vianda_kosto = models.KrompagTipo.liveri_koston('viando')
 formdivisions = [
     ('Personaj informoj', [
         ['persona_nomo', 'familia_nomo', 'shildnomo',],
@@ -552,7 +552,9 @@ formdivisions = [
         ['loghkategorio', 'chu_preferas_unuseksan_chambron',
         'chu_malnoktemulo', 'deziras_loghi_kun_nomo',]
     ]),
-    (eo('Mangxado'), [   ManghoMendoForm, ['manghotipo',]    ]),
+    (eo('Mangxado'), [ManghoMendoForm, ['manghotipo', ],
+        # FormInfo.make_form(u'Kromkosto por viando: {} €'.format(vianda_kosto))
+        ]),
     (eo('Pago'), [
         ['chu_ueamembro'], FormInfo.make_form(u'<p>{}</p><p>{}</p>'.format(
             u'Individuaj membroj de TEJO/UEA ricevas rabaton ĉe IJK '

@@ -25,10 +25,12 @@ alighi_form = ->
             "jul", "aŭg", "sep", "okt", "nov", "dec"]
     $('#id_ekde').datepicker
         defaultDate: window.KOMENCA_DATO
+        minDate: window.PLEJFRUA_DATO
         maxDate: window.FINIGHA_DATO
     $('#id_ghis').datepicker
         defaultDate: window.FINIGHA_DATO
         minDate: window.KOMENCA_DATO
+        maxDate: window.PLEJMALFRUA_DATO
     $('#id_naskighdato').datepicker
         changeMonth: yes
         changeYear: yes
@@ -66,8 +68,8 @@ alighi_form = ->
         # chu_plentempa estas null kaj ne false se la ekdato au ghisdato
         # de la partoprenanto estas nedifinita
         @chu_plentempa = if @ekdato is off or @ghisdato is off then null
-        else @ekdato.getTime() is window.KOMENCA_DATO.getTime() and
-            @ghisdato.getTime() is window.FINIGHA_DATO.getTime()
+        else @ekdato.getTime() <= window.KOMENCA_DATO.getTime() and
+            @ghisdato.getTime() >= window.FINIGHA_DATO.getTime()
 
         @loghkategorio = $('input[name="loghkategorio"]:checked').val() ? off
         @loghlando = $('#id_loghlando :selected').val() ? off
@@ -104,29 +106,52 @@ alighi_form = ->
             window.limdatoj[@alighkategorio] 
         else 
             off
-        @tranoktoj = Math.floor((@ghisdato - @ekdato) / DAY)
+        # unua kaj lasta tagoj de la kongreso mem:
+        @unuatago = Math.max(@ektago, window.KOMENCA_DATO)
+        @lastatago = Math.min(@ghistago, window.FINIGHA_DATO)
+        # @tranoktoj estas la kvanto de tranoktoj dum la kongreso mem
+        # kaj @aldonaj_tranoktoj estas la kvanto de tranokto 
+        # antaŭ/post la kongreso
+        @tranoktoj = Math.floor((@unuatago - @lastatago) / DAY)
+        @superaj_tranoktoj = do =>
+            antauaj = Math.floor @ektago - @unuatago / DAY
+            postaj = Math.floor @lastatago - @ghistago / DAY
+            return antauaj + postaj
+        @partoprentagoj = Math.floor((@unuatago - @duatago) / DAY) + 1
         @relativa_partopreno = if @chu_plentempa then 1
-        else (@tranoktoj + 1) / 5
+        else (@partoprentagoj) / 5
         @loghkosto = do =>
+            return 0 if @agho isnt off and @agho <= 5
             return off unless @loghkategorio isnt off and @chu_plentempa?
-            base = window.loghkategorioj[@loghkategorio]?[if @chu_plentempa
-            then 0 else 1]
-            if @chu_plentempa then base
-            else base * @tranoktoj
-        @programkotizo = unless @aghkategorio? and @landokategorio? and
+            [@plentempa, @eksterkongresa] = window.loghkategorioj[@loghkategorio]?[0]
+            # @plentempa estas la plena kosto de dumkongresa loĝado
+            # @eksterkongresa estas la kosto de unu nokto eksterkongrese
+            if @chu_plentempa
+                return @plentempa + @superaj_tranoktoj * @eksterkongresaj
+            else
+                return (@tranoktoj + @superaj_tranoktoj) * @eksterkongresaj
+        @programkotizo = if @agho isnt off and @agho <= 12 then 0
+        else unless @aghkategorio? and @landokategorio? and 
             @alighkategorio? then null
-            else if @aghkategorio is off or
+        else if @aghkategorio is off or
             @landokategorio is off or @alighkategorio is off then off
-            else window.programkotizoj[@aghkategorio]?[@landokategorio]?[@alighkategorio]
+        else window.programkotizoj[@aghkategorio]?[@landokategorio]?[@alighkategorio]
         @programkotizo *= @relativa_partopreno if @programkotizo
         if @programkotizo
             @programkotizo += if @aghaldona_pago then @aghaldona_pago else 0
+        @chu_viando = do =>
+            return null unless window.krompagtipoj.viando?
+            tipo_id = $('[name="manghotipo"]:checked').attr 'id'
+            tipo = $("label[for='#{tipo_id}']").text().toLowerCase()
+            return -1 isnt tipo.indexOf 'viand'
         manghokosto = 0
         $('input[name="manghomendoj"]:checked').each ->
             manghokosto += window.manghomendotipoj[$(this).val()]
         @manghokosto = if isNaN manghokosto then null else manghokosto
+        if @manghokosto? and @chu_viando
+            @manghokosto += window.krompagtipoj.viando 
         @uearabato = if not $('#id_chu_ueamembro').is(':checked') then 0
-        else if @landokategorio?
+        else if @landokategorio? and @programkotizo > 0
             if @landokategorio isnt off
                 window.uearabatoj[@landokategorio]
             else
@@ -186,6 +211,10 @@ alighi_form = ->
             # $('#mangho-klarigo').text('manĝokosto')
             $('.mangho-kosto').text info.manghokosto
             kosto += info.manghokosto
+            if info.chu_viando
+                $('.mangho-klarigo').text 'manĝado (viande)'
+            else
+                $('.mangho-klarigo').text 'manĝado'
         else
             $('.mangho-kosto').text nedifinita
 
@@ -194,8 +223,15 @@ alighi_form = ->
             $('.loghado-klarigo').text 'loĝado'
         else if info.loghkosto?
             kosto += info.loghkosto
-            klarigo_text = if info.chu_plentempa then 'plentempa loĝado'
-            else "loĝado por #{info.tranoktoj} noktoj"
+            klarigo_text = do ->
+                if info.chu_plentempa 
+                    if info.superaj_tranoktoj is 0
+                        return 'plentempa loĝado'
+                    else
+                        return "plentempa loĝado kaj #{info.superaj_tranoktoj} 
+                                aldonaj tranoktoj"
+                else "loĝado por #{info.tranoktoj + info.superaj_tranoktoj} 
+                      noktoj"
             $('.loghado-kosto').text info.loghkosto
             $('.loghado-klarigo').text klarigo_text
         else
@@ -212,7 +248,7 @@ alighi_form = ->
         else if info.programkotizo?
             klarigo = 'programo'
             if not info.chu_plentempa
-                klarigo += " por #{info.tranoktoj+1} tagoj"
+                klarigo += " por #{info.partoprentagoj} tagoj"
             $('.programo-klarigo').text klarigo
             $('.programo-kosto').text info.programkotizo
             kosto += info.programkotizo
@@ -257,7 +293,8 @@ alighi_form = ->
         #$('#kotizo').text("Kotizo: #{kosto} #{klarigo}")
 
     kotizo_selectors = ['#id_naskighdato', '#id_loghlando'
-        'input[name="loghkategorio"]', 'input[name="manghomendoj"]'
+        'input[name="loghkategorio"]' 
+        'input[name="manghomendoj"]', '[name="manghotipo"]'
         '#id_chu_ueamembro', '#id_ekde', '#id_ghis',
         '#id_chu_bezonas_invitleteron', '#id_chu_tuttaga_ekskurso'
         'input[name="antaupagos_ghis"]']
@@ -343,13 +380,15 @@ alighi_form = ->
         create: activate_cb
     
     # glitilo por elekti la gamon de datoj de partoprenado
-    datogamo_start = window.KOMENCA_DATO.getDate()
-    datogamo_end = window.FINIGHA_DATO.getDate()
-    numnotches = datogamo_end - datogamo_start + 2
+    kongreso_start = window.KOMENCA_DATO.getDate()
+    kongreso_end = window.FINIGHA_DATO.getDate()
+    datogamo_start = window.PLEJFRUA_DATO.getDate()
+    datogamo_end = window.PLEJMALFRUA_DATO.getDate()
+    numnotches = datogamo_end - datogamo_start
     curstart = if c = iso_to_date $('#id_ekde').val() then c.getDate()
-    else datogamo_start
+    else kongreso_start
     curend = if c = iso_to_date $('#id_ghis').val() then c.getDate()
-    else datogamo_end
+    else kongreso_end
     
     errorlist = []
     $('#id_ekde, #id_ghis').parent().hide()
@@ -360,7 +399,7 @@ alighi_form = ->
         $("<li>#{error}</li>").appendTo $newerrorlist
     tabwidths = $('.tab').map -> $(this).width()
     tabwidth = Math.max $.makeArray(tabwidths)...
-    widget_width = tabwidth - 300 - 14*2.5
+    widget_width = tabwidth - 300 - 14*6#2.5
     
     $datesliderli = $('<li class="required">
         <label for="id_datogamo">La daŭro de mia partopreno:</label></li>')
@@ -372,7 +411,7 @@ alighi_form = ->
         width: widget_width
         margin: 'auto', padding: 0
         whiteSpace: 'nowrap';
-    $.each [datogamo_start-1..datogamo_end+1], (i, v) ->
+    $.each [datogamo_start..datogamo_end], (i, v) ->
         $("<div class=\"datomarko\" id=\"id_datomarko_#{v}\">#{v}</div>")
             .css
                 display: 'inline-block'
@@ -385,9 +424,11 @@ alighi_form = ->
         .css
             width: widget_width
             clear: 'both'
+            #position: relative
+            left: '8px'
         .slider
-            min: datogamo_start - 1
-            max: datogamo_end + 1
+            min: datogamo_start
+            max: datogamo_end
             range: on
             values: [curstart, curend]
             change: (e, ui) ->
@@ -400,17 +441,17 @@ alighi_form = ->
                 $("#id_datomarko_#{ekde}, #id_datomarko_#{ghis}").css 
                     fontWeight: 'bold'
     $dateslider.slider 'values', $dateslider.slider('values')
-    $("<div>la oficiala daŭro de IJK estas de la #{datogamo_start}-a 
-            ĝis la #{datogamo_end}-a de aŭgusto, 2013</div>")
+    $("<div>la oficiala daŭro de IJK estas de la #{kongreso_start}-a 
+            ĝis la #{kongreso_end}-a de aŭgusto, 2013</div>")
         .appendTo($dateslider_container).css
-            width: widget_width * (numnotches-2) / numnotches
+            width: widget_width*(kongreso_end - kongreso_start)/numnotches
             height: '1em'
             fontSize: '80%'
             borderTop: '3px dotted #2a3753'
             margin: 0#'auto'
             position: 'relative'
             padding: 0
-            left: widget_width / numnotches + 14
+            left: 14 + (kongreso_start - datogamo_start) * widget_width / numnotches
             color: '#2a3753'
             textAlign: 'center'
             fontWeight: 'bold'

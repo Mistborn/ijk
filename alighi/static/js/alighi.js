@@ -3,7 +3,7 @@
   var alighi_form;
 
   alighi_form = function() {
-    var $dateslider, $dateslider_container, $datesliderli, $errorlis, $gvidilo, $kotizoul, $newerrorlist, $tabs, DAY, NUMTABS, YEAR, activate_cb, c, curend, curstart, date_to_iso, datogamo_end, datogamo_start, error, errorlist, id, iso_to_date, kotizeroj, kotizo, kotizo_selectors, liveri_aghon_lau_naskightago, nav_callback, newtab, numnotches, onbeforeunload, selector, signo, tabwidth, tabwidths, widget_width, _i, _j, _k, _len, _len1, _ref, _ref1, _results;
+    var $dateslider, $dateslider_container, $datesliderli, $errorlis, $gvidilo, $kotizoul, $newerrorlist, $tabs, DAY, NUMTABS, YEAR, activate_cb, c, curend, curstart, date_to_iso, datogamo_end, datogamo_start, error, errorlist, id, iso_to_date, kongreso_end, kongreso_start, kotizeroj, kotizo, kotizo_selectors, liveri_aghon_lau_naskightago, nav_callback, newtab, numnotches, onbeforeunload, selector, signo, tabwidth, tabwidths, widget_width, _i, _j, _k, _len, _len1, _results;
     NUMTABS = 6;
     DAY = 1000 * 60 * 60 * 24;
     YEAR = DAY * 365.25;
@@ -26,11 +26,13 @@
     });
     $('#id_ekde').datepicker({
       defaultDate: window.KOMENCA_DATO,
+      minDate: window.PLEJFRUA_DATO,
       maxDate: window.FINIGHA_DATO
     });
     $('#id_ghis').datepicker({
       defaultDate: window.FINIGHA_DATO,
-      minDate: window.KOMENCA_DATO
+      minDate: window.KOMENCA_DATO,
+      maxDate: window.PLEJMALFRUA_DATO
     });
     $('#id_naskighdato').datepicker({
       changeMonth: true,
@@ -83,7 +85,7 @@
       this.ekdato = iso_to_date((_ref = $('#id_ekde').val()) != null ? _ref : false);
       this.ghisdato = iso_to_date((_ref1 = $('#id_ghis').val()) != null ? _ref1 : false);
       this.naskighdato = iso_to_date((_ref2 = $('#id_naskighdato').val()) != null ? _ref2 : false);
-      this.chu_plentempa = this.ekdato === false || this.ghisdato === false ? null : this.ekdato.getTime() === window.KOMENCA_DATO.getTime() && this.ghisdato.getTime() === window.FINIGHA_DATO.getTime();
+      this.chu_plentempa = this.ekdato === false || this.ghisdato === false ? null : this.ekdato.getTime() <= window.KOMENCA_DATO.getTime() && this.ghisdato.getTime() >= window.FINIGHA_DATO.getTime();
       this.loghkategorio = (_ref3 = $('input[name="loghkategorio"]:checked').val()) != null ? _ref3 : false;
       this.loghlando = (_ref4 = $('#id_loghlando :selected').val()) != null ? _ref4 : false;
       this.landokategorio = !this.loghlando ? false : window.landoj[this.loghlando];
@@ -119,33 +121,57 @@
 
       this.alighkategorio = (_ref5 = $('input[name="antaupagos_ghis"]:checked').val()) != null ? _ref5 : false;
       this.alighlimdato = this.alighkategorio ? window.limdatoj[this.alighkategorio] : false;
-      this.tranoktoj = Math.floor((this.ghisdato - this.ekdato) / DAY);
-      this.relativa_partopreno = this.chu_plentempa ? 1 : (this.tranoktoj + 1) / 5;
+      this.unuatago = Math.max(this.ektago, window.KOMENCA_DATO);
+      this.lastatago = Math.min(this.ghistago, window.FINIGHA_DATO);
+      this.tranoktoj = Math.floor((this.unuatago - this.lastatago) / DAY);
+      this.superaj_tranoktoj = (function() {
+        var antauaj, postaj;
+        antauaj = Math.floor(_this.ektago - _this.unuatago / DAY);
+        postaj = Math.floor(_this.lastatago - _this.ghistago / DAY);
+        return antauaj + postaj;
+      })();
+      this.partoprentagoj = Math.floor((this.unuatago - this.duatago) / DAY) + 1;
+      this.relativa_partopreno = this.chu_plentempa ? 1 : this.partoprentagoj / 5;
       this.loghkosto = (function() {
-        var base, _ref6;
+        var _ref6, _ref7;
+        if (_this.agho !== false && _this.agho <= 5) {
+          return 0;
+        }
         if (!(_this.loghkategorio !== false && (_this.chu_plentempa != null))) {
           return false;
         }
-        base = (_ref6 = window.loghkategorioj[_this.loghkategorio]) != null ? _ref6[_this.chu_plentempa ? 0 : 1] : void 0;
+        _ref7 = (_ref6 = window.loghkategorioj[_this.loghkategorio]) != null ? _ref6[0] : void 0, _this.plentempa = _ref7[0], _this.eksterkongresa = _ref7[1];
         if (_this.chu_plentempa) {
-          return base;
+          return _this.plentempa + _this.superaj_tranoktoj * _this.eksterkongresaj;
         } else {
-          return base * _this.tranoktoj;
+          return (_this.tranoktoj + _this.superaj_tranoktoj) * _this.eksterkongresaj;
         }
       })();
-      this.programkotizo = !((this.aghkategorio != null) && (this.landokategorio != null) && (this.alighkategorio != null)) ? null : this.aghkategorio === false || this.landokategorio === false || this.alighkategorio === false ? false : (_ref6 = window.programkotizoj[this.aghkategorio]) != null ? (_ref7 = _ref6[this.landokategorio]) != null ? _ref7[this.alighkategorio] : void 0 : void 0;
+      this.programkotizo = this.agho !== false && this.agho <= 12 ? 0 : !((this.aghkategorio != null) && (this.landokategorio != null) && (this.alighkategorio != null)) ? null : this.aghkategorio === false || this.landokategorio === false || this.alighkategorio === false ? false : (_ref6 = window.programkotizoj[this.aghkategorio]) != null ? (_ref7 = _ref6[this.landokategorio]) != null ? _ref7[this.alighkategorio] : void 0 : void 0;
       if (this.programkotizo) {
         this.programkotizo *= this.relativa_partopreno;
       }
       if (this.programkotizo) {
         this.programkotizo += this.aghaldona_pago ? this.aghaldona_pago : 0;
       }
+      this.chu_viando = (function() {
+        var tipo, tipo_id;
+        if (window.krompagtipoj.viando == null) {
+          return null;
+        }
+        tipo_id = $('[name="manghotipo"]:checked').attr('id');
+        tipo = $("label[for='" + tipo_id + "']").text().toLowerCase();
+        return -1 !== tipo.indexOf('viand');
+      })();
       manghokosto = 0;
       $('input[name="manghomendoj"]:checked').each(function() {
         return manghokosto += window.manghomendotipoj[$(this).val()];
       });
       this.manghokosto = isNaN(manghokosto) ? null : manghokosto;
-      this.uearabato = !$('#id_chu_ueamembro').is(':checked') ? 0 : this.landokategorio != null ? this.landokategorio !== false ? window.uearabatoj[this.landokategorio] : false : null;
+      if ((this.manghokosto != null) && this.chu_viando) {
+        this.manghokosto += window.krompagtipoj.viando;
+      }
+      this.uearabato = !$('#id_chu_ueamembro').is(':checked') ? 0 : (this.landokategorio != null) && this.programkotizo > 0 ? this.landokategorio !== false ? window.uearabatoj[this.landokategorio] : false : null;
       if (this.uearabato) {
         this.uearabato *= Math.min(this.relativa_partopreno, 1);
       }
@@ -196,6 +222,11 @@
       if (info.manghokosto != null) {
         $('.mangho-kosto').text(info.manghokosto);
         kosto += info.manghokosto;
+        if (info.chu_viando) {
+          $('.mangho-klarigo').text('manĝado (viande)');
+        } else {
+          $('.mangho-klarigo').text('manĝado');
+        }
       } else {
         $('.mangho-kosto').text(nedifinita);
       }
@@ -204,7 +235,17 @@
         $('.loghado-klarigo').text('loĝado');
       } else if (info.loghkosto != null) {
         kosto += info.loghkosto;
-        klarigo_text = info.chu_plentempa ? 'plentempa loĝado' : "loĝado por " + info.tranoktoj + " noktoj";
+        klarigo_text = (function() {
+          if (info.chu_plentempa) {
+            if (info.superaj_tranoktoj === 0) {
+              return 'plentempa loĝado';
+            } else {
+              return "plentempa loĝado kaj " + info.superaj_tranoktoj + "                                 aldonaj tranoktoj";
+            }
+          } else {
+            return "loĝado por " + (info.tranoktoj + info.superaj_tranoktoj) + "                       noktoj";
+          }
+        })();
         $('.loghado-kosto').text(info.loghkosto);
         $('.loghado-klarigo').text(klarigo_text);
       } else {
@@ -227,7 +268,7 @@
       } else if (info.programkotizo != null) {
         klarigo = 'programo';
         if (!info.chu_plentempa) {
-          klarigo += " por " + (info.tranoktoj + 1) + " tagoj";
+          klarigo += " por " + info.partoprentagoj + " tagoj";
         }
         $('.programo-klarigo').text(klarigo);
         $('.programo-kosto').text(info.programkotizo);
@@ -267,7 +308,7 @@
       }
       return $('.sumo-kosto').text("" + kosto + " €");
     };
-    kotizo_selectors = ['#id_naskighdato', '#id_loghlando', 'input[name="loghkategorio"]', 'input[name="manghomendoj"]', '#id_chu_ueamembro', '#id_ekde', '#id_ghis', '#id_chu_bezonas_invitleteron', '#id_chu_tuttaga_ekskurso', 'input[name="antaupagos_ghis"]'];
+    kotizo_selectors = ['#id_naskighdato', '#id_loghlando', 'input[name="loghkategorio"]', 'input[name="manghomendoj"]', '[name="manghotipo"]', '#id_chu_ueamembro', '#id_ekde', '#id_ghis', '#id_chu_bezonas_invitleteron', '#id_chu_tuttaga_ekskurso', 'input[name="antaupagos_ghis"]'];
     for (_j = 0, _len1 = kotizo_selectors.length; _j < _len1; _j++) {
       selector = kotizo_selectors[_j];
       $(selector).change(kotizo);
@@ -372,11 +413,13 @@
       activate: activate_cb,
       create: activate_cb
     });
-    datogamo_start = window.KOMENCA_DATO.getDate();
-    datogamo_end = window.FINIGHA_DATO.getDate();
-    numnotches = datogamo_end - datogamo_start + 2;
-    curstart = (c = iso_to_date($('#id_ekde').val())) ? c.getDate() : datogamo_start;
-    curend = (c = iso_to_date($('#id_ghis').val())) ? c.getDate() : datogamo_end;
+    kongreso_start = window.KOMENCA_DATO.getDate();
+    kongreso_end = window.FINIGHA_DATO.getDate();
+    datogamo_start = window.PLEJFRUA_DATO.getDate();
+    datogamo_end = window.PLEJMALFRUA_DATO.getDate();
+    numnotches = datogamo_end - datogamo_start;
+    curstart = (c = iso_to_date($('#id_ekde').val())) ? c.getDate() : kongreso_start;
+    curend = (c = iso_to_date($('#id_ghis').val())) ? c.getDate() : kongreso_end;
     errorlist = [];
     $('#id_ekde, #id_ghis').parent().hide();
     $('#id_ekde, #id_ghis').prevAll('.errorlist').find('li').each(function() {
@@ -396,7 +439,7 @@
       return $(this).width();
     });
     tabwidth = Math.max.apply(Math, $.makeArray(tabwidths));
-    widget_width = tabwidth - 300 - 14 * 2.5;
+    widget_width = tabwidth - 300 - 14 * 6;
     $datesliderli = $('<li class="required">\
         <label for="id_datogamo">La daŭro de mia partopreno:</label></li>').insertAfter($('#id_ghis').parent());
     if ($errorlis.length > 0) {
@@ -411,7 +454,7 @@
     });
     $.each((function() {
       _results = [];
-      for (var _k = _ref = datogamo_start - 1, _ref1 = datogamo_end + 1; _ref <= _ref1 ? _k <= _ref1 : _k >= _ref1; _ref <= _ref1 ? _k++ : _k--){ _results.push(_k); }
+      for (var _k = datogamo_start; datogamo_start <= datogamo_end ? _k <= datogamo_end : _k >= datogamo_end; datogamo_start <= datogamo_end ? _k++ : _k--){ _results.push(_k); }
       return _results;
     }).apply(this), function(i, v) {
       return $("<div class=\"datomarko\" id=\"id_datomarko_" + v + "\">" + v + "</div>").css({
@@ -424,15 +467,16 @@
     $dateslider_container.append($gvidilo);
     $dateslider = $('<div class="datogamo" id="id_datogamo"></div>').appendTo($dateslider_container).css({
       width: widget_width,
-      clear: 'both'
+      clear: 'both',
+      left: '8px'
     }).slider({
-      min: datogamo_start - 1,
-      max: datogamo_end + 1,
+      min: datogamo_start,
+      max: datogamo_end,
       range: true,
       values: [curstart, curend],
       change: function(e, ui) {
-        var ekde, ghis, _ref2;
-        _ref2 = ui.values, ekde = _ref2[0], ghis = _ref2[1];
+        var ekde, ghis, _ref;
+        _ref = ui.values, ekde = _ref[0], ghis = _ref[1];
         $('#id_ekde').val("2013-08-" + ekde).change();
         $('#id_ghis').val("2013-08-" + ghis).change();
         $('.datomarko').each(function() {
@@ -446,15 +490,15 @@
       }
     });
     $dateslider.slider('values', $dateslider.slider('values'));
-    $("<div>la oficiala daŭro de IJK estas de la " + datogamo_start + "-a             ĝis la " + datogamo_end + "-a de aŭgusto, 2013</div>").appendTo($dateslider_container).css({
-      width: widget_width * (numnotches - 2) / numnotches,
+    $("<div>la oficiala daŭro de IJK estas de la " + kongreso_start + "-a             ĝis la " + kongreso_end + "-a de aŭgusto, 2013</div>").appendTo($dateslider_container).css({
+      width: widget_width * (kongreso_end - kongreso_start) / numnotches,
       height: '1em',
       fontSize: '80%',
       borderTop: '3px dotted #2a3753',
       margin: 0,
       position: 'relative',
       padding: 0,
-      left: widget_width / numnotches + 14,
+      left: 14 + (kongreso_start - datogamo_start) * widget_width / numnotches,
       color: '#2a3753',
       textAlign: 'center',
       fontWeight: 'bold'
