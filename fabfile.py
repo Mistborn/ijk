@@ -32,4 +32,5 @@ def scss():
 def coffee():
     with lcd('/home/amesha/projects/ijk/alighi/static/js'):
         local('coffee -c alighi.coffee')
+        local('yui-compressor -o alighi.min.js alighi.js')
 
