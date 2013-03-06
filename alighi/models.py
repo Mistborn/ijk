@@ -31,7 +31,7 @@ class Respondeco(models.Model):
         return self.rolo
     class Meta:
         verbose_name_plural = eo('Respondecoj')
-        permissions = ( ("view_respondeco", "Rajtas vidi respondecojn"), )
+        permissions = (("view_respondeco", "Rajtas vidi respondecojn"),)
 
 class Valuto(models.Model):
     kodo = models.CharField(max_length=3)
@@ -40,7 +40,7 @@ class Valuto(models.Model):
         return self.kodo
     class Meta:
         verbose_name_plural = eo('Valutoj')
-        permissions = ( ("view_valuto", "Rajtas vidi valutojn"), )
+        permissions = (("view_valuto", "Rajtas vidi valutojn"),)
 
 try:
     EUR = Valuto.objects.get(kodo='EUR')
@@ -60,7 +60,7 @@ class Kurzo(models.Model):
     class Meta:
         unique_together = ('valuto', 'dato')
         verbose_name_plural = eo('Kurzoj')
-        permissions = ( ("view_kurzo", "Rajtas vidi kurzojn"), )
+        permissions = (("view_kurzo", "Rajtas vidi kurzojn"),)
 
 class AghKategorio(models.Model):
     '''Kategorio de aĝo por kalkulado de kotizo'''
@@ -111,7 +111,7 @@ class AghKategorio(models.Model):
     class Meta:
         verbose_name = eo('Agxkategorio')
         verbose_name_plural = eo('Agxkategorioj')
-        permissions = ( ("view_aghkategorio", u"Rajtas vidi aĝkategoriojn"), )
+        permissions = (("view_aghkategorio", u"Rajtas vidi aĝkategoriojn"),)
 
 class AlighKategorio(models.Model):
     '''Kategorio de aliĝo laŭ dato, por kalkulado de kotizo'''
@@ -138,14 +138,14 @@ class AlighKategorio(models.Model):
         return rset[0] if rset else None
 
     def __unicode__(self):
-        #return self.limdato
+        # return self.limdato
         return eo(u'Aligxkategorio {} gxis {}'.format(self.nomo, self.limdato))
 
     class Meta:
         verbose_name = eo('Aligxkategorio')
         verbose_name_plural = eo('Aligxkategorioj')
-        permissions = ( ("view_alighkategorio",
-                         u"Rajtas vidi aliĝkategoriojn"), )
+        permissions = (("view_alighkategorio",
+                         u"Rajtas vidi aliĝkategoriojn"),)
 
 class LandoKategorio(models.Model):
     '''Kategorio de lando, por kalkulado de kotizo'''
@@ -153,7 +153,7 @@ class LandoKategorio(models.Model):
     priskribo = models.CharField(blank=True, max_length=255)
 
     @staticmethod
-    def liveri_kategorion(lando):   # for consistency
+    def liveri_kategorion(lando):  # for consistency
         return lando.kategorio
 
     def __unicode__(self):
@@ -162,8 +162,8 @@ class LandoKategorio(models.Model):
     class Meta:
         verbose_name = eo('Landokategorio')
         verbose_name_plural = eo('Landokategorioj')
-        permissions = ( ("view_landokategorio",
-                         "Rajtas vidi landokategoriojn"), )
+        permissions = (("view_landokategorio",
+                         "Rajtas vidi landokategoriojn"),)
 
 class Lando(models.Model):
     '''Loĝlando de partoprenanto'''
@@ -178,11 +178,11 @@ class Lando(models.Model):
                     json.dumps(obj, default=json_default))
 
     def __unicode__(self):
-        #return self.nomo
+        # return self.nomo
         return u'{} ({})'.format(self.nomo, self.kategorio)
     class Meta:
         verbose_name_plural = eo('Landoj')
-        permissions = ( (u"view_lando", u"Rajtas vidi landojn"), )
+        permissions = ((u"view_lando", u"Rajtas vidi landojn"),)
 
 class LoghKategorio(models.Model):
     '''Elektebla loĝkategorio'''
@@ -218,14 +218,14 @@ class LoghKategorio(models.Model):
 
     def __unicode__(self):
         return self.nomo
-        #~ return u'{} - plentempe: {} €, partatempe: {} € por tago'.format(
-            #~ self.nomo, self.plena_kosto, self.unutaga_kosto)
+        # ~ return u'{} - plentempe: {} €, partatempe: {} € por tago'.format(
+            # ~ self.nomo, self.plena_kosto, self.unutaga_kosto)
 
     class Meta:
         verbose_name = eo('Logxkategorio')
         verbose_name_plural = eo('Logxkategorioj')
-        permissions = ( (u"view_loghkategoriojn",
-                         u"Rajtas vidi loĝkategoriojn"), )
+        permissions = ((u"view_loghkategoriojn",
+                         u"Rajtas vidi loĝkategoriojn"),)
 
 class ManghoTipo(models.Model):
     '''Tipo de manĝo, ekz. vegetare, koŝere, ktp'''
@@ -238,8 +238,8 @@ class ManghoTipo(models.Model):
     class Meta:
         verbose_name = eo('Mangxotipo')
         verbose_name_plural = eo('Mangxotipoj')
-        permissions = ( (u"view_manghotipo",
-                         u"Rajtas vidi manĝotipojn"), )
+        permissions = ((u"view_manghotipo",
+                         u"Rajtas vidi manĝotipojn"),)
 
 class ProgramKotizo(models.Model):
     '''Kotizo por la programo mem, kalkulita lau aĝo, lando, kaj aliĝdato'''
@@ -281,8 +281,8 @@ class ProgramKotizo(models.Model):
         verbose_name = eo('Programkotizo')
         verbose_name_plural = eo('Programkotizoj')
         unique_together = ('aghkategorio', 'landokategorio', 'alighkategorio')
-        permissions = ( (u"view_programkotizo",
-                         u"Rajtas vidi programkotizojn"), )
+        permissions = ((u"view_programkotizo",
+                         u"Rajtas vidi programkotizojn"),)
 
 class Pagmaniero(models.Model):
     '''maniero transdoni monon,
@@ -311,7 +311,7 @@ class Pagmaniero(models.Model):
                                                 else u'')
     class Meta:
         verbose_name_plural = eo('Pagmanieroj')
-        permissions = ( (u"view_pagmaniero", u"Rajtas vidi pagmanierojn"), )
+        permissions = ((u"view_pagmaniero", u"Rajtas vidi pagmanierojn"),)
 
 class KrompagTipo(models.Model):
     '''Aldonaj pagoj por diversaj aferoj, kiel ekz. ekskurso, invitletero'''
@@ -338,7 +338,7 @@ class KrompagTipo(models.Model):
     class Meta:
         verbose_name = eo('KrompagTipo')
         verbose_name_plural = eo('KrompagTipoj')
-        permissions = ( (u"view_krompagtipo", u"Rajtas vidi krompagtipojn"), )
+        permissions = ((u"view_krompagtipo", u"Rajtas vidi krompagtipojn"),)
 
 class Retposhtajho(models.Model):
     '''Retpoŝta mesaĝo, por amasa/aŭtomata sendo'''
@@ -369,7 +369,7 @@ class Retposhtajho(models.Model):
             result = yes
         else:
             result = no
-        return re.sub(r'\\([?:\\])', r'\1', result.strip())
+        return re.sub(ur'\\([?:\\])', ur'\1', result.strip())
 
     def cond_interpolate(self, partoprenanto):
         '''interpolate directives like
@@ -382,7 +382,7 @@ class Retposhtajho(models.Model):
         return sub(self.temo), sub(self.teksto)
 
     def interpolate(self, partoprenanto):
-        ## pwrapper = PartoprenantoWrapper(partoprenanto)
+        # # pwrapper = PartoprenantoWrapper(partoprenanto)
         temo, teksto = self.cond_interpolate(partoprenanto)
         teksto = teksto.format(partoprenanto=partoprenanto)
         temo = temo.format(partoprenanto=partoprenanto)
@@ -392,12 +392,12 @@ class Retposhtajho(models.Model):
     def sendi(self, partoprenanto):
         temo, teksto = self.interpolate(partoprenanto)
         sendajho = SenditaRetposhtajho(
-            temo = temo,
-            teksto = teksto,
-            sendadreso = self.sendadreso,
-            ricevanto = partoprenanto.retposhtadreso,
-            partoprenanto = partoprenanto,
-            retposhtajho = self)
+            temo=temo,
+            teksto=teksto,
+            sendadreso=self.sendadreso,
+            ricevanto=partoprenanto.retposhtadreso,
+            partoprenanto=partoprenanto,
+            retposhtajho=self)
         try:
             send_mail(self.temo, teksto, self.sendadreso,
                 [partoprenanto.retposhtadreso], fail_silently=False)
@@ -411,7 +411,7 @@ class Retposhtajho(models.Model):
     class Meta:
         verbose_name = eo('Retposxtajxo')
         verbose_name_plural = eo('Retposxtajxoj')
-        permissions = ( (u"view_retposhtajho", u"Rajtas vidi retpoŝtaĵojn"), )
+        permissions = ((u"view_retposhtajho", u"Rajtas vidi retpoŝtaĵojn"),)
 
 class MembrighaKategorio(models.Model):
     '''Por krei liston de kategorioj de surlokaj membriĝoj en UEA/TEJO'''
@@ -422,8 +422,8 @@ class MembrighaKategorio(models.Model):
     class Meta:
         verbose_name = eo('Membrigxa Kategorio')
         verbose_name_plural = eo('Membrigxaj Kategorioj')
-        permissions = ( (u"view_membrighakategorio",
-                         u"Rajtas vidi membriĝajn kategoriojn"), )
+        permissions = ((u"view_membrighakategorio",
+                         u"Rajtas vidi membriĝajn kategoriojn"),)
 
 class Chambro(models.Model):
     '''Unuopa ĉambro por disdoni'''
@@ -441,7 +441,7 @@ class Chambro(models.Model):
     class Meta:
         verbose_name = eo('Cxambro')
         verbose_name_plural = eo('Cxambroj')
-        permissions = ( (u"view_chambro", u"Rajtas vidi ĉambrojn"), )
+        permissions = ((u"view_chambro", u"Rajtas vidi ĉambrojn"),)
 
 class UEARabato(models.Model):
     landokategorio = models.OneToOneField(LandoKategorio)
@@ -470,7 +470,7 @@ class UEARabato(models.Model):
     class Meta:
         verbose_name = eo('UEA-rabato')
         verbose_name_plural = eo('UEA-rabatoj')
-        permissions = ( (u"view_uearabato", u"Rajtas vidi UEA-rabatojn"), )
+        permissions = ((u"view_uearabato", u"Rajtas vidi UEA-rabatojn"),)
 
 class PartoprenantoWrapper(object):
     '''Wrapper around a Partoprenanto object to change the string
@@ -503,8 +503,8 @@ class ManghoMendoTipo(models.Model):
     class Meta:
         verbose_name = eo('Mangxomendotipo')
         verbose_name_plural = eo('Mangxomendotipoj')
-        permissions = ( (u"view_manghomendotipo",
-                         u"Rajtas vidi manghomendotipojn"), )
+        permissions = ((u"view_manghomendotipo",
+                         u"Rajtas vidi manghomendotipojn"),)
 
 class Partoprenanto(models.Model):
     '''Partoprenanto en la kongreso'''
@@ -558,7 +558,7 @@ class Partoprenanto(models.Model):
     deziras_loghi_kun = models.ForeignKey('Partoprenanto',
         null=True, blank=True, verbose_name=eo('Deziras logxi kun'),
         help_text=eo('Elektu cxi tie la alian partoprenanton indikitan '
-                     'supre, post kiam li-sxi aligxos')) #*
+                     'supre, post kiam li-sxi aligxos'))  # *
     chu_preferas_unuseksan_chambron = models.BooleanField(
         eo('Cxu preferas unuseksan cxambron'), default=False)
     chu_malnoktemulo = models.BooleanField(
@@ -581,20 +581,20 @@ class Partoprenanto(models.Model):
         default=False)
     uea_kodo = models.CharField(eo('UEA-kodo'), max_length=18, blank=True)
     chu_kontrolita = models.BooleanField(
-        eo('Cxu kontrolita'), default=False) #*
-    unua_konfirmilo_sendita = models.DateField(null=True, blank=True) #*
-    dua_konfirmilo_sendita = models.DateField(null=True, blank=True) #*
-    alighdato = models.DateField(eo('Aligxdato'), auto_now_add=True) #*
+        eo('Cxu kontrolita'), default=False)  # *
+    unua_konfirmilo_sendita = models.DateField(null=True, blank=True)  # *
+    dua_konfirmilo_sendita = models.DateField(null=True, blank=True)  # *
+    alighdato = models.DateField(eo('Aligxdato'), auto_now_add=True)  # *
     malalighdato = models.DateField(eo('Malaligxdato'), null=True, blank=True,
-        help_text=eo('Se la partoprenanto malaligxis')) #*
-    chu_alvenis = models.BooleanField(eo('Cxu alvenis'), default=False) #*
+        help_text=eo('Se la partoprenanto malaligxis'))  # *
+    chu_alvenis = models.BooleanField(eo('Cxu alvenis'), default=False)  # *
     chu_havasmanghkuponon = models.BooleanField(
-        eo('Cxu havas mangxkuponon'), default=False) #*
+        eo('Cxu havas mangxkuponon'), default=False)  # *
     chu_havasnomshildon = models.BooleanField(
-        eo('Cxu havas nomsxildon'), default=False) #*
+        eo('Cxu havas nomsxildon'), default=False)  # *
 
-    #def manghomendoj(self):
-        #return ManghoMendo.objects.filter(partoprenanto=self)
+    # def manghomendoj(self):
+        # return ManghoMendo.objects.filter(partoprenanto=self)
 
     def chu_plentempa(self):
         return self.ekde == KOMENCA_DATO and self.ghis == FINIGHA_DATO
@@ -653,7 +653,7 @@ class Partoprenanto(models.Model):
         verbose_name_plural = eo('Partoprenantoj')
         ordering = ('familia_nomo',)
         permissions = (
-            (u"view_partoprenanto",  u"Rajtas vidi partoprenanton"),
+            (u"view_partoprenanto", u"Rajtas vidi partoprenanton"),
             (u"change_partoprenanto_adreso",
                 u'Rajtas ŝanĝi adreson de partoprenantoj'),
             (u'change_partoprenanto_urbo',
@@ -680,18 +680,18 @@ class Partoprenanto(models.Model):
                 u'Rajtas ŝanĝi UEA-kodon de partoprenanto'),
         )
 
-#class ManghoMendo(models.Model):
-    #'''Unuopa manĝomendo de partoprenanto'''
-    #partoprenanto = models.ForeignKey(Partoprenanto)
-    #tipo = models.ForeignKey(ManghoMendoTipo)
-    #def __unicode__(self):
-        #return eo(u'Mangxomendo de {} por {}'.format(
-                  #self.partoprenanto, self.tipo.nomo))
-    #class Meta:
-        #verbose_name = eo('Mangxomendo')
-        #verbose_name_plural = eo('Mangxomendoj')
-        #unique_together = ('partoprenanto', 'tipo')
-        
+# class ManghoMendo(models.Model):
+    # '''Unuopa manĝomendo de partoprenanto'''
+    # partoprenanto = models.ForeignKey(Partoprenanto)
+    # tipo = models.ForeignKey(ManghoMendoTipo)
+    # def __unicode__(self):
+        # return eo(u'Mangxomendo de {} por {}'.format(
+                  # self.partoprenanto, self.tipo.nomo))
+    # class Meta:
+        # verbose_name = eo('Mangxomendo')
+        # verbose_name_plural = eo('Mangxomendoj')
+        # unique_together = ('partoprenanto', 'tipo')
+
 
 class SurlokaMembrigho(models.Model):
     '''Por registri surlokajn membriĝojn en UEA/TEJO'''
@@ -707,8 +707,8 @@ class SurlokaMembrigho(models.Model):
         verbose_name = eo('Surloka Membrigxo')
         verbose_name_plural = eo('Surlokaj Membrigxoj')
         ordering = ('partoprenanto',)
-        permissions = ( (u"view_surlokamembrigho",
-                         u"Rajtas vidi surlokajn membriĝojn"), )
+        permissions = ((u"view_surlokamembrigho",
+                         u"Rajtas vidi surlokajn membriĝojn"),)
 
 class Pagtipo(models.Model):
     '''Tipo de pago, ekz. subvencio, antaŭpago, ktp'''
@@ -717,7 +717,7 @@ class Pagtipo(models.Model):
         return self.nomo
     class Meta:
         verbose_name_plural = eo('Pagtipoj')
-        permissions = ( (u"view_pagtipo", u"Rajtas vidi pagtipojn"), )
+        permissions = ((u"view_pagtipo", u"Rajtas vidi pagtipojn"),)
 
 class NeEstontecaDato(models.DateField):
     '''Dato, kiu ne povas esti en la estonteco'''
@@ -762,7 +762,7 @@ class Pago(models.Model):
     class Meta:
         verbose_name_plural = eo('Pagoj')
         ordering = ('partoprenanto',)
-        permissions = ( (u"view_pago", u"Rajtas vidi pagojn"), )
+        permissions = ((u"view_pago", u"Rajtas vidi pagojn"),)
 
 class MinimumaAntaupago(models.Model):
     '''Minimuma antaŭpago por partopreni'''
@@ -788,16 +788,16 @@ class MinimumaAntaupago(models.Model):
     class Meta:
         verbose_name = eo('Minimuma Antauxpago')
         verbose_name_plural = eo('Minimumaj Antauxpagoj')
-        permissions = ( (u"view_minimumaantaupago",
-                         u"Rajtas vidi minimumajn antaŭpagojn"), )
+        permissions = ((u"view_minimumaantaupago",
+                         u"Rajtas vidi minimumajn antaŭpagojn"),)
 
 class Nomshildo(models.Model):
     '''Specialaj nomŝildoj por nepartoprenantoj'''
     nomo = models.CharField(max_length=50)
     titolo_lokalingve = models.CharField(max_length=50)
     titolo_esperante = models.CharField(max_length=50)
-    #funkcio_lokalingve = models.CharField()
-    #funkcio_esperante = models.CharField()
+    # funkcio_lokalingve = models.CharField()
+    # funkcio_esperante = models.CharField()
     chu_havasnomshildon = models.BooleanField(eo('Cxu havas nomsxildon'),
         default=False)
     def __unicode__(self):
@@ -805,16 +805,16 @@ class Nomshildo(models.Model):
     class Meta:
         verbose_name = eo('Nomsxildo')
         verbose_name_plural = eo('Nomsxildoj')
-        permissions = ( (u"view_nomshildo", u"Rajtas vidi nomshildojn"), )
+        permissions = ((u"view_nomshildo", u"Rajtas vidi nomshildojn"),)
 
 class Noto(models.Model):
     '''Memorigo por pritraktado'''
     partoprenanto = models.ForeignKey(Partoprenanto, null=True, blank=True)
     uzanto = models.ForeignKey(User, null=True, blank=True)
-    #kiu = models.CharField(max_length=300) # noto de
-    #kunkiu = models.CharField(max_length=300) # pri komunicado kun
+    # kiu = models.CharField(max_length=300) # noto de
+    # kunkiu = models.CharField(max_length=300) # pri komunicado kun
     dato = models.DateTimeField(auto_now_add=True)
-    #temo = models.CharField()
+    # temo = models.CharField()
     enhavo = models.TextField()
     chu_prilaborita = models.BooleanField(eo('Cxu prilaborita'), default=False)
     revidu = models.DateTimeField(null=True, blank=True,
@@ -828,7 +828,7 @@ class Noto(models.Model):
     class Meta:
         verbose_name_plural = eo('Notoj')
         ordering = ('partoprenanto',)
-        permissions = ( (u"view_noto", u"Rajtas vidi notojn"), )
+        permissions = ((u"view_noto", u"Rajtas vidi notojn"),)
 
 class UEAValideco(models.Model):
     CHOICES = list(enumerate((
@@ -867,7 +867,7 @@ class UEAValideco(models.Model):
 
     class Meta:
         unique_together = ('kodo', 'lando')
-        #permissions = ( (u"view_ueavalideco", u"Rajtas vidi UEA-validecon"), )
+        # permissions = ( (u"view_ueavalideco", u"Rajtas vidi UEA-validecon"), )
 
 class SenditaRetposhtajho(models.Model):
     # this table is append-only
@@ -892,8 +892,8 @@ class SenditaRetposhtajho(models.Model):
     class Meta:
         verbose_name = eo('Sendita Retposxtajxo')
         verbose_name_plural = eo('Senditaj Retposxtajxoj')
-        permissions = ( (u"view_senditaretposhtajho",
-                         u"Rajtas vidi senditajn retpoŝtaĵojn"), )
+        permissions = ((u"view_senditaretposhtajho",
+                         u"Rajtas vidi senditajn retpoŝtaĵojn"),)
 
 class SenditaOficialajho(models.Model):
     priskribo = models.CharField(max_length=250, blank=True,
@@ -935,5 +935,5 @@ class SenditaOficialajho(models.Model):
     class Meta:
         verbose_name = eo('Sendita Oficialajxo')
         verbose_name_plural = eo('Senditaj Oficialajxoj')
-        permissions = ( (u"view_senditaoficialajho",
-                         u"Rajtas vidi senditajn oficialaĵojn"), )
+        permissions = ((u"view_senditaoficialajho",
+                         u"Rajtas vidi senditajn oficialaĵojn"),)

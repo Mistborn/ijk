@@ -19,7 +19,7 @@ _eod = {
 }
 
 def eo(s):
-    '''Konverti x-kodigitan ĉenon al unikodo'''
+    u'''Konverti x-kodigitan ĉenon al unikodo'''
     #return s
     return unicode(re.sub(
         u'([cghjsuxCGHJSUX])[xX](?![xX])', lambda m: _eod[m.group(1)], s))

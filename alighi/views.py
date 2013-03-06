@@ -31,8 +31,8 @@ default_error_messages = {
                   u'La valoro de vi provizita ne validas.'),
     'min_length': eo(u'Certigu, ke tiu cxi valoro havas almenaux %(limit_value)d signojn (gxi havas %(show_value)d).'),
     'max_length': eo(u'Certigu, ke tiu cxi valoro havas maksimume %(limit_value)d signojn (gxi havas %(show_value)d).'),
-    #'max_value': eo(u'Certigu, ke tiu cxi valoro estas malpli ol aux egala al %(limit_value)s.'),
-    #'min_value': eo(u'Certigu, ke tiu cxi valoro estas pli ol aux egala al  %(limit_value)s.'),
+    # 'max_value': eo(u'Certigu, ke tiu cxi valoro estas malpli ol aux egala al %(limit_value)s.'),
+    # 'min_value': eo(u'Certigu, ke tiu cxi valoro estas pli ol aux egala al  %(limit_value)s.'),
     'invalid_choice': INVALID_CHOICE,
 }
 
@@ -122,7 +122,7 @@ class RadioAndTextInput(forms.widgets.RadioInput):
             self.choice_label += ', {}:'.format(self.extra_label)
 
 class RadioFieldWithCommentRenderer(forms.widgets.RadioFieldRenderer):
-    #~ infolist = models.AlighKategorio.infolist()
+    # ~ infolist = models.AlighKategorio.infolist()
     def __init__(self, name, value, attrs, choices, *args, **kw):
         if 'extra_labels' in kw:
             self.extra_labels = kw['extra_labels']
@@ -134,14 +134,14 @@ class RadioFieldWithCommentRenderer(forms.widgets.RadioFieldRenderer):
         if not self.value:
             self.value = [None, u'']
     def render(self):
-        #~ info = u'<ul class="infolist">{}</ul>'.format(
-            #~ u'\n'.join(u'<li>{}</li>'.format(i) for i in self.infolist))
+        # ~ info = u'<ul class="infolist">{}</ul>'.format(
+            # ~ u'\n'.join(u'<li>{}</li>'.format(i) for i in self.infolist))
         lis = [force_unicode(w.render(self.name, self.value, self.attrs))
                         for w in self]
         lis = u'\n'.join(u'<li>{}</li>'.format(li) for li in lis)
         ul = u'<ul class="vertical-display infolist">\n{}\n</ul>'.format(lis)
         return mark_safe(ul)
-        ## u'<div class="vertical-display">{}</div>'.format(ul))
+        # # u'<div class="vertical-display">{}</div>'.format(ul))
     def _get_widget(self, choice, idx):
         return RadioAndTextInput(
             self.name, self.value, self.attrs.copy(), choice, idx,
@@ -162,13 +162,13 @@ class RadioSelectPagmanieroj(forms.RadioSelect):
             textval = u''
         else:
             textval = data.get('{}_comment_{}'.format(name, radioval), u'')
-        #self.comment_value = textval
+        # self.comment_value = textval
         return [radioval, textval]
     def get_renderer(self, name, value, attrs=None, choices=()):
         if value is None: value = u''
-        #str_value = force_unicode(value) # Normalize to string.
+        # str_value = force_unicode(value) # Normalize to string.
         final_attrs = self.build_attrs(attrs)
-        choices = list(self.choices) # list(chain(self.choices, choices))
+        choices = list(self.choices)  # list(chain(self.choices, choices))
         return self.renderer(name, value, final_attrs, choices,
             extra_labels=self.extra_labels)
     def get_selected_extra_label(self, pk):
@@ -217,153 +217,153 @@ class CustomLabelModelChoiceField(forms.ModelChoiceField):
         return super(CustomLabelModelChoiceField,
                      self).label_from_instance(obj)
 
-## class LimitedDateField(forms.DateField):
-    ## def __init__(self, *args, **kw):
-        ## if 'max_value' in kw:
-            ## self.max_value = kw['max_value']
-            ## del kw['max_value']
-        ## if 'min_value' in kw:
-            ## self.min_value = kw['min_value']
-            ## del kw['min_value']
-        ## super(LimitedDateField, self).__init__(*args, **kw)
+# # class LimitedDateField(forms.DateField):
+    # # def __init__(self, *args, **kw):
+        # # if 'max_value' in kw:
+            # # self.max_value = kw['max_value']
+            # # del kw['max_value']
+        # # if 'min_value' in kw:
+            # # self.min_value = kw['min_value']
+            # # del kw['min_value']
+        # # super(LimitedDateField, self).__init__(*args, **kw)
 
 partoprenanto_fields_dict = dict(
-    persona_nomo = forms.CharField(max_length=50,
+    persona_nomo=forms.CharField(max_length=50,
         error_messages=em(required='Enigu vian personan nomon'),
         validators=[nomo_validator]),
-    familia_nomo = forms.CharField(max_length=50,
+    familia_nomo=forms.CharField(max_length=50,
         error_messages=em(required='Enigu vian familian nomon'),
         validators=[nomo_validator]),
-    shildnomo = forms.CharField(required=False,
+    shildnomo=forms.CharField(required=False,
         label=eo('Kromnomo'), validators=[kromnomo_validator]),
-    sekso = forms.ChoiceField(widget=forms.RadioSelect, choices=SEKSOJ,
+    sekso=forms.ChoiceField(widget=forms.RadioSelect, choices=SEKSOJ,
         error_messages=em(required='Elektu vian sekson')),
-    naskighdato = forms.DateField(label=eo('Naskigxdato'),
+    naskighdato=forms.DateField(label=eo('Naskigxdato'),
         validators=[naskighdato],
         error_messages=em(
             required='Elektu vian naskiĝdaton', invalid=NEVALIDA_DATO,
             estonteco=u'Aliĝanto ne povas naskiĝi en la estonteco.')),
-    retposhtadreso = forms.EmailField(label=eo('Retposxtadreso'),
+    retposhtadreso=forms.EmailField(label=eo('Retposxtadreso'),
         error_messages=em(required='Enigu vian retpoŝtadreson',
                           invalid='Enigu validan retpoŝtadreson')),
-    adreso = forms.CharField(required=False, widget=forms.Textarea),
-    urbo = forms.CharField(max_length=50, required=False),
-    poshtkodo = forms.CharField(
+    adreso=forms.CharField(required=False, widget=forms.Textarea),
+    urbo=forms.CharField(max_length=50, required=False),
+    poshtkodo=forms.CharField(
         max_length=15, label=eo('Posxtkodo'), required=False,
         validators=[poshtkodo_validator]),
-    loghlando = forms.ModelChoiceField(
+    loghlando=forms.ModelChoiceField(
         models.Lando.objects, label=eo('Logxlando'),
         error_messages=em(required='Elektu vian loĝlandon')),
-    shildlando = forms.CharField(required=False,
+    shildlando=forms.CharField(required=False,
         label=eo('Mi volas, ke mia lando aperu sur mia sxildo jene:'),
         validators=[shildlando_validator]),
-    chu_bezonas_invitleteron = forms.BooleanField(
+    chu_bezonas_invitleteron=forms.BooleanField(
         initial=False, required=False,
         label=eo('Mi bezonas invitleteron'),
         help_text=eo(u'Kromkosto: {} €'.format(models.KrompagTipo.liveri_koston('invitletero')))),
-    telefono = forms.CharField(max_length=50, required=False,
+    telefono=forms.CharField(max_length=50, required=False,
         label='Poŝtelefon-numero', validators=[telefono_validator]),
-    skype = forms.CharField(max_length=50, required=False,
+    skype=forms.CharField(max_length=50, required=False,
         validators=[skype_validator]),
-    facebook = forms.CharField(max_length=50, required=False),
-    mesaghiloj = forms.CharField(required=False,
+    facebook=forms.CharField(max_length=50, required=False),
+    mesaghiloj=forms.CharField(required=False,
         label=eo('Aliaj mesagxiloj'),
         help_text=eo(u'Kiujn vi volas aperigi '
                      u'en la postkongresa listo de  partoprenantoj')),
-    chu_retalisto = forms.BooleanField(initial=True, required=False,
+    chu_retalisto=forms.BooleanField(initial=True, required=False,
         label=eo(u'Sur la retejo de IJK, en listo de aligxintoj')),
-    chu_postkongresalisto = forms.BooleanField(initial=True, required=False,
+    chu_postkongresalisto=forms.BooleanField(initial=True, required=False,
         label=eo(u'Kun kontaktinformoj en la postkongresa adresaro de '              'partoprenintoj'),
         help_text=eo('Haveble nur por tiuj, kiuj efektive partoprenis')),
-    ekde = forms.DateField(
+    ekde=forms.DateField(
         initial=KOMENCA_DATO, label=eo('Mi partoprenos ekde'),
         error_messages=em(required='Elektu la daton, kiam vi alvenos',
                           invalid=NEVALIDA_DATO)),
-    ghis = forms.DateField(
+    ghis=forms.DateField(
         initial=FINIGHA_DATO, label=eo('Mi partoprenos gxis'),
         error_messages=em(required='Elektu la daton, kiam vi forlasos',
                           invalid=NEVALIDA_DATO)),
-    alveno = forms.CharField(required=False, label=eo('Mi alvenas per/je')),
-    #alvenas_je = forms.DateField(required=False, label=eo('Mi alvenas je'))
-    foriro = forms.CharField(required=False, label=eo('Mi foriras per/je')),
-    #foriras_je = forms.DateField(required=False, label=eo('Mi foriras je'))
-    interesighas_pri_antaukongreso = forms.IntegerField(
+    alveno=forms.CharField(required=False, label=eo('Mi alvenas per/je')),
+    # alvenas_je = forms.DateField(required=False, label=eo('Mi alvenas je'))
+    foriro=forms.CharField(required=False, label=eo('Mi foriras per/je')),
+    # foriras_je = forms.DateField(required=False, label=eo('Mi foriras je'))
+    interesighas_pri_antaukongreso=forms.IntegerField(
         required=True, widget=forms.RadioSelect(
         choices=[(0, 'ne')] +
             [(i, '{}-taga'.format(i)) for i in (2, 3, 5)]),
-        #max_value=5, min_value=2,
+        # max_value=5, min_value=2,
         label=eo('Mi interesigxas pri antauxkongreso'),
         error_messages=em(
             invalid=u'Elektu inter "ne" kaj nombro de tagoj (2 ĝis 5)')),
-    interesighas_pri_postkongreso = forms.IntegerField(
+    interesighas_pri_postkongreso=forms.IntegerField(
         required=True, widget=forms.RadioSelect(
         choices=[(0, 'ne')] +
             [(i, '{}-taga'.format(i)) for i in (2, 3, 5)]),
-        #max_value=5, min_value=2,
+        # max_value=5, min_value=2,
         label=eo('Mi interesigxas pri postkongreso'),
         error_messages=em(
             invalid=u'Elektu inter "ne" kaj nombro de tagoj (2 ĝis 5)')),
-    chu_tuttaga_ekskurso = forms.BooleanField(initial=True, required=False,
+    chu_tuttaga_ekskurso=forms.BooleanField(initial=True, required=False,
         label=eo('Mi aligxas al la tut-taga ekskurso')),
-    chu_unua_dua_ijk = forms.BooleanField(initial=False, required=False,
+    chu_unua_dua_ijk=forms.BooleanField(initial=False, required=False,
         label=eo('Tiu cxi estas mia unua aux dua IJK')),
-    chu_komencanto = forms.BooleanField(initial=False, required=False,
+    chu_komencanto=forms.BooleanField(initial=False, required=False,
         label=eo('Mi estas komencanto')),
-    chu_interesighas_pri_kurso = forms.BooleanField(
+    chu_interesighas_pri_kurso=forms.BooleanField(
         initial=False, required=False,
         label=eo('Mi interesigxas pri Esperanto-kurso')),
-    programa_kontribuo = forms.CharField(required=False,
+    programa_kontribuo=forms.CharField(required=False,
         widget=forms.Textarea,
         label=eo('Mi volas kontribui al la programo per')),
-    organiza_kontribuo = forms.CharField(required=False,
+    organiza_kontribuo=forms.CharField(required=False,
         widget=forms.Textarea,
         label=eo('Mi povas kontribui al organizado per')),
-    loghkategorio = forms.ModelChoiceField(models.LoghKategorio.objects,
+    loghkategorio=forms.ModelChoiceField(models.LoghKategorio.objects,
         label=eo('Mi volas logxi en'),
         widget=RadioSelectSpecialClass, empty_label=None,
         help_text=models.LoghKategorio.helptext(),
-        #initial=models.LoghKategorio.objects.all()[0],
+        # initial=models.LoghKategorio.objects.all()[0],
         error_messages=em(required='Elektu kie vi volas loĝi')),
-    deziras_loghi_kun_nomo = forms.CharField(
+    deziras_loghi_kun_nomo=forms.CharField(
         required=False, label=eo('Mi deziras logxi kun')),
-    chu_preferas_unuseksan_chambron = forms.BooleanField(initial=False,
+    chu_preferas_unuseksan_chambron=forms.BooleanField(initial=False,
         required=False, label=eo('Mi preferas unuseksan cxambron')),
-    chu_malnoktemulo = forms.BooleanField(
-        #help_text=u'Se vi ŝatas dormi frue, sciigu nin',
+    chu_malnoktemulo=forms.BooleanField(
+        # help_text=u'Se vi ŝatas dormi frue, sciigu nin',
         initial=False, required=False, label=eo('Mi estas malnoktemulo')),
-    manghotipo = forms.ModelChoiceField(models.ManghoTipo.objects,
+    manghotipo=forms.ModelChoiceField(models.ManghoTipo.objects,
         label=eo('Mangxotipo'), widget=forms.RadioSelect,
-            #widget=RadioSelectSpecialClass,
+            # widget=RadioSelectSpecialClass,
         required=True, initial=None,
         empty_label=None,
-        #initial=models.ManghoTipo.objects.get(nomo='Viande'),
+        # initial=models.ManghoTipo.objects.get(nomo='Viande'),
         error_messages=em(required='Elektu kian manĝon vi volas')),
-    antaupagos_ghis = CustomLabelModelChoiceField(models.AlighKategorio.objects,
+    antaupagos_ghis=CustomLabelModelChoiceField(models.AlighKategorio.objects,
         label=eo('Mi antauxpagos gxis'), required=True, initial=None,
         labelfunc=lambda o: esperanteca_dato(o.limdato),
         widget=RadioSelectSpecialClass, empty_label=None,
         error_messages=em(
             required=eo('Elektu gxis kiam vi faros la antauxpagon'))),
-    pagmaniero = PagmanieroChoiceField(
+    pagmaniero=PagmanieroChoiceField(
         models.Pagmaniero.objects.filter(chu_publika=True),
-    #paginformoj = forms.ChoiceField(
-        #choices=[([o.id, u''], o.nomo) for o in models.Pagmaniero.objects.filter(chu_publika=True)],
+    # paginformoj = forms.ChoiceField(
+        # choices=[([o.id, u''], o.nomo) for o in models.Pagmaniero.objects.filter(chu_publika=True)],
         label=eo('Mi antauxpagos per'),
         widget=RadioSelectPagmanieroj, empty_label=None,
         help_text=paginfo,
         error_messages=em(
             required=eo('Elektu kiel vi pagos la antauxpagon'))),
-    #pagmaniero = forms.ModelChoiceField(
-        #models.Pagmaniero.objects.filter(chu_publika=True),
-        #label=eo('Mi antauxpagos per'),
-        #widget=TextSelect, empty_label=None,
-        #help_text=paginfo, error_messages=em(
-            #required=eo('Elektu kiel vi pagos la antauxpagon'))),
-    #pagmaniera_komento = forms.CharField(max_length=50, required=False),
-    chu_ueamembro = forms.BooleanField(
+    # pagmaniero = forms.ModelChoiceField(
+        # models.Pagmaniero.objects.filter(chu_publika=True),
+        # label=eo('Mi antauxpagos per'),
+        # widget=TextSelect, empty_label=None,
+        # help_text=paginfo, error_messages=em(
+            # required=eo('Elektu kiel vi pagos la antauxpagon'))),
+    # pagmaniera_komento = forms.CharField(max_length=50, required=False),
+    chu_ueamembro=forms.BooleanField(
         required=False, initial=False,
         label=eo('Mi estas/estos membro de TEJO/UEA en 2013')),
-    uea_kodo = forms.CharField(max_length=6, min_length=6, required=False,
+    uea_kodo=forms.CharField(max_length=6, min_length=6, required=False,
         label=eo('UEA-kodo'), validators=[ueakodo_validator],
         error_messages=em(
             min_length=u'Certigu ke ĉi-tiu valoro havas ekzakte 6 signojn',
@@ -373,12 +373,12 @@ partoprenanto_fields_dict = dict(
 class ManghoMendoForm(forms.Form):
     manghomendoj = forms.ModelMultipleChoiceField(label=eo('Mi volas mendi'),
         required=False, widget=CheckboxSpecialClass,
-            #forms.CheckboxSelectMultiple,
+            # forms.CheckboxSelectMultiple,
         queryset=models.ManghoMendoTipo.objects,
         initial=models.ManghoMendoTipo.objects.all(),
         error_messages=em(invalid_choice='Ne, ne, ne: %r'))
-        #choices=[(tipo.id, unicode(tipo))
-                    #for tipo in models.ManghoMendoTipo.objects.all()])
+        # choices=[(tipo.id, unicode(tipo))
+                    # for tipo in models.ManghoMendoTipo.objects.all()])
 
 class NotoForm(forms.ModelForm):
     enhavo = forms.CharField(widget=forms.Textarea,
@@ -391,11 +391,11 @@ class PartoprenantoBaseForm(forms.ModelForm):
     def as_ul(self):
         "Returns this form rendered as HTML <li>s -- excluding the <ul></ul>."
         return self._html_output(
-            normal_row = u'<li%(html_class_attr)s>%(errors)s%(label)s %(field)s%(help_text)s</li>',
-            error_row = u'<li>%s</li>',
-            row_ender = '</li>',
-            help_text_html = u' <div class="helptext">%s</div>',
-            errors_on_separate_row = False)
+            normal_row=u'<li%(html_class_attr)s>%(errors)s%(label)s %(field)s%(help_text)s</li>',
+            error_row=u'<li>%s</li>',
+            row_ender='</li>',
+            help_text_html=u' <div class="helptext">%s</div>',
+            errors_on_separate_row=False)
 
 def partoprenanto_form_factory(name, fieldnames):
     '''Krei formularan klason por prezenti la kampojn en fieldnames
@@ -500,7 +500,7 @@ class MembroKategorioFormInfo(FormInfo):
 
 class MultiField(forms.Field):
     widget = forms.MultiWidget
-    def __init__(self, fields, **kw): #required, label, initial, widget, help_text):
+    def __init__(self, fields, **kw):  # required, label, initial, widget, help_text):
         self.fields = fields
         if 'widget' not in kw:
             kw['widget'] = self.widget(
@@ -519,7 +519,7 @@ class MultiField(forms.Field):
 vianda_kosto = models.KrompagTipo.liveri_koston('viando')
 formdivisions = [
     ('Personaj informoj', [
-        ['persona_nomo', 'familia_nomo', 'shildnomo',],
+        ['persona_nomo', 'familia_nomo', 'shildnomo', ],
         FormInfo.make_form(u'Por la nomŝildo'),
         ['sekso', 'naskighdato',
         'adreso', 'urbo', 'poshtkodo', 'loghlando', 'shildlando',
@@ -535,7 +535,7 @@ formdivisions = [
         ['skype', 'facebook', 'mesaghiloj'],
         partoprenanto_fieldset_factory(
             'Mi permesas publikigi mian nomon, urbon kaj landon:',
-            ['chu_retalisto', 'chu_postkongresalisto',])
+            ['chu_retalisto', 'chu_postkongresalisto', ])
     ]),
     ('Partopreno', [
         ['ekde', 'ghis', 'chu_unua_dua_ijk'],
@@ -550,7 +550,7 @@ formdivisions = [
     ]),
     (eo('Logxado'), [
         ['loghkategorio', 'chu_preferas_unuseksan_chambron',
-        'chu_malnoktemulo', 'deziras_loghi_kun_nomo',]
+        'chu_malnoktemulo', 'deziras_loghi_kun_nomo', ]
     ]),
     (eo('Mangxado'), [ManghoMendoForm, ['manghotipo', ],
         # FormInfo.make_form(u'Kromkosto por viando: {} €'.format(vianda_kosto))
@@ -561,7 +561,7 @@ formdivisions = [
                   u'(kategorio MG ne validas por la rabato).',
             models.UEARabato.infoline()
         )),
-        ['uea_kodo', 'antaupagos_ghis', 'pagmaniero'],  NotoForm,
+        ['uea_kodo', 'antaupagos_ghis', 'pagmaniero'], NotoForm,
         FormInfo.make_form(u'Sciigu nin pri ajna grava detalo rilate vin; '
             u'ekz. specifaj bezonoj pri manĝoj aŭ ĉu vi venos kun infanoj.')
     ])
@@ -586,8 +586,8 @@ tabs = mark_safe(
             u'<li class="tab"><a href="#tab-{}">{}</a></li>'.format(i, tab)
                 for (i, tab) in enumerate(tablist))))
 
-#~ from django.views.decorators.csrf import csrf_exempt
-#~ @csrf_exempt
+# ~ from django.views.decorators.csrf import csrf_exempt
+# ~ @csrf_exempt
 def alighi(request):
     has_errors = False
     if request.method == 'POST':
