@@ -291,14 +291,14 @@ class PartoprenantoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
         'pagmaniera_komento', 'uea_kodo',)
     def save_formset(self, request, form, formset, change):
         if formset.model == SenditaOficialajho:
-            print 'sendita oficialajho'
+#            print 'sendita oficialajho'
             objects = formset.save(commit=False)
             for obj in objects:
                 if not obj.alshutinto:
                     obj.alshutinto = request.user
                 obj.save()
         elif formset.model == Pago:
-            print 'pago,',
+#            print 'pago,',
             objects = formset.save(commit=False)
             for obj in objects:
                 if obj.pk is None and not obj.kreinto:
