@@ -498,6 +498,9 @@ class ManghoMendoTipo(models.Model):
     kosto = models.DecimalField(max_digits=8, decimal_places=2)
     # memzorge/matenmangho/tagmangho/vespermangho
 
+    def minuskle_multnombre_akuzative(self):
+        return self.nomo.lower() + 'jn'
+
     @classmethod
     def javascript(cls):
         d = {obj.id: obj.kosto for obj in cls.objects.all()}
@@ -603,8 +606,49 @@ class Partoprenanto(models.Model):
     # def manghomendoj(self):
         # return ManghoMendo.objects.filter(partoprenanto=self)
 
+    @property
     def chu_plentempa(self):
-        return self.ekde == KOMENCA_DATO and self.ghis == FINIGHA_DATO
+        return self.ekde <= KOMENCA_DATO and self.ghis >= FINIGHA_DATO
+
+    @property
+    def landetikedo(self):
+        if self.shildlando:
+            return u"{} ({})".format(self.shildlando, self.loghlando)
+        else:
+            return self.loghlando
+
+    @property
+    def manghomendolisto(self):
+        return u', '.join(mm.minuskle_multnombre_akuzative()
+                          for mm in self.manghomendoj.all())
+
+    @property
+    def partoprengamo(self):
+        if self.chu_plentempa:
+            return u'plentempe'
+        esperanteca_dato(self.ekde), esperanteca_dato(self.ghis)
+        return u'inter {} kaj {}'.format(
+            esperanteca_dato(self.ekde, jaro=False),
+            esperanteca_dato(self.ghis, jaro=False))
+
+    @property
+    def kunloghetikedo(self):
+        return u''  # XXX put something here
+
+    @property
+    def naskighdatetikedo(self):
+        return esperanteca_dato(self.naskighdato)
+
+    @property
+    def partopreninformoj(self):
+        return (u"Naskiĝdato: {naskighdato} "
+                u"Vi partoprenos: {gamo} "
+                u'kaj loĝos en: {loghkategorio} '
+                u'{kunloghetikedo} '.format(
+            naskighdato=self.naskighdato,
+            gamo=self.partoprengamo,
+            loghkategorio=self.loghkategorio,
+            kunloghetikedo=self.kunloghetikedo))
 
     def tagoj(self):
         '''suma numbro da tagoj de tiu chi partoprenanto'''
