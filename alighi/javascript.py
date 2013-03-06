@@ -17,6 +17,9 @@ def all_javascript():
     for name in dir(models):
         cls = getattr(models, name)
         if hasattr(cls, 'javascript'):
-            result.append(cls.javascript())
+            js = cls.javascript()
+            if not js.endswith(';'):
+                js += ';'
+            result.append(js)
     return DATE_JAVASCRIPT + '\n'.join(result)
 
