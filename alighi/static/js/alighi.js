@@ -3,10 +3,12 @@
   var alighi_form;
 
   alighi_form = function() {
-    var $dateslider, $dateslider_container, $datesliderli, $errorlis, $gvidilo, $kotizoul, $newerrorlist, $tabs, DAY, NUMTABS, YEAR, activate_cb, c, curend, curstart, date_to_iso, datogamo_end, datogamo_start, error, errorlist, id, iso_to_date, kongreso_end, kongreso_start, kotizeroj, kotizo, kotizo_selectors, liveri_aghon_lau_naskightago, nav_callback, newtab, numnotches, onbeforeunload, selector, signo, tabwidth, tabwidths, widget_width, _i, _j, _k, _len, _len1, _results;
+    var $dateslider, $dateslider_container, $datesliderli, $errorlis, $gvidilo, $kotizoul, $newerrorlist, $tabs, DAY, LOGHMINAGHO, NUMTABS, PROGRAMMINAGHO, YEAR, activate_cb, c, curend, curstart, date_to_iso, datogamo_end, datogamo_start, error, errorlist, id, iso_to_date, kongreso_end, kongreso_start, kotizeroj, kotizo, kotizo_selectors, liveri_aghon_lau_naskightago, nav_callback, newtab, numnotches, onbeforeunload, selector, signo, tabwidth, tabwidths, widget_width, _i, _j, _k, _len, _len1, _results;
     NUMTABS = 6;
     DAY = 1000 * 60 * 60 * 24;
     YEAR = DAY * 365.25;
+    PROGRAMMINAGHO = 12;
+    LOGHMINAGHO = 5;
     $.datepicker.setDefaults({
       dateFormat: 'yy-mm-dd',
       autoSize: true,
@@ -121,33 +123,37 @@
 
       this.alighkategorio = (_ref5 = $('input[name="antaupagos_ghis"]:checked').val()) != null ? _ref5 : false;
       this.alighlimdato = this.alighkategorio ? window.limdatoj[this.alighkategorio] : false;
-      this.unuatago = Math.max(this.ektago, window.KOMENCA_DATO);
-      this.lastatago = Math.min(this.ghistago, window.FINIGHA_DATO);
-      this.tranoktoj = Math.floor((this.unuatago - this.lastatago) / DAY);
+      this.unuatago = Math.max(this.ekdato, window.KOMENCA_DATO);
+      this.lastatago = Math.min(this.ghisdato, window.FINIGHA_DATO);
+      this.tranoktoj = Math.floor((this.lastatago - this.unuatago) / DAY);
       this.superaj_tranoktoj = (function() {
         var antauaj, postaj;
-        antauaj = Math.floor(_this.ektago - _this.unuatago / DAY);
-        postaj = Math.floor(_this.lastatago - _this.ghistago / DAY);
+        antauaj = _this.ekdato < _this.unuatago ? Math.floor((_this.unuatago - _this.ekdato) / DAY) : 0;
+        postaj = _this.ghisdato > _this.lastatago ? Math.floor((_this.ghisdato - _this.lastatago) / DAY) : 0;
         return antauaj + postaj;
       })();
-      this.partoprentagoj = Math.floor((this.unuatago - this.duatago) / DAY) + 1;
+      this.partoprentagoj = Math.floor((this.lastatago - this.unuatago) / DAY) + 1;
       this.relativa_partopreno = this.chu_plentempa ? 1 : this.partoprentagoj / 5;
+      this.manghorelativeco = this.chu_plentempa ? 1 : this.partoprentagoj / 6;
       this.loghkosto = (function() {
-        var _ref6, _ref7;
-        if (_this.agho !== false && _this.agho <= 5) {
+        var _ref6;
+        if (_this.agho !== false && _this.agho < LOGHMINAGHO) {
           return 0;
         }
         if (!(_this.loghkategorio !== false && (_this.chu_plentempa != null))) {
           return false;
         }
-        _ref7 = (_ref6 = window.loghkategorioj[_this.loghkategorio]) != null ? _ref6[0] : void 0, _this.plentempa = _ref7[0], _this.eksterkongresa = _ref7[1];
+        if (window.loghkategorioj[_this.loghkategorio] == null) {
+          return null;
+        }
+        _ref6 = window.loghkategorioj[_this.loghkategorio], _this.plentempa = _ref6[0], _this.eksterkongresa = _ref6[1];
         if (_this.chu_plentempa) {
-          return _this.plentempa + _this.superaj_tranoktoj * _this.eksterkongresaj;
+          return _this.plentempa + _this.superaj_tranoktoj * _this.eksterkongresa;
         } else {
-          return (_this.tranoktoj + _this.superaj_tranoktoj) * _this.eksterkongresaj;
+          return (_this.tranoktoj + _this.superaj_tranoktoj) * _this.eksterkongresa;
         }
       })();
-      this.programkotizo = this.agho !== false && this.agho <= 12 ? 0 : !((this.aghkategorio != null) && (this.landokategorio != null) && (this.alighkategorio != null)) ? null : this.aghkategorio === false || this.landokategorio === false || this.alighkategorio === false ? false : (_ref6 = window.programkotizoj[this.aghkategorio]) != null ? (_ref7 = _ref6[this.landokategorio]) != null ? _ref7[this.alighkategorio] : void 0 : void 0;
+      this.programkotizo = this.agho !== false && this.agho < PROGRAMMINAGHO ? 0 : !((this.aghkategorio != null) && (this.landokategorio != null) && (this.alighkategorio != null)) ? null : this.aghkategorio === false || this.landokategorio === false || this.alighkategorio === false ? false : (_ref6 = window.programkotizoj[this.aghkategorio]) != null ? (_ref7 = _ref6[this.landokategorio]) != null ? _ref7[this.alighkategorio] : void 0 : void 0;
       if (this.programkotizo) {
         this.programkotizo *= this.relativa_partopreno;
       }
@@ -168,12 +174,15 @@
         return manghokosto += window.manghomendotipoj[$(this).val()];
       });
       this.manghokosto = isNaN(manghokosto) ? null : manghokosto;
-      if ((this.manghokosto != null) && this.chu_viando) {
-        this.manghokosto += window.krompagtipoj.viando;
+      if (this.manghokosto) {
+        if (this.chu_viando) {
+          this.manghokosto += window.krompagtipoj.viando;
+        }
+        this.manghokosto *= this.manghorelativeco;
       }
-      this.uearabato = !$('#id_chu_ueamembro').is(':checked') ? 0 : (this.landokategorio != null) && this.programkotizo > 0 ? this.landokategorio !== false ? window.uearabatoj[this.landokategorio] : false : null;
+      this.uearabato = !$('#id_chu_ueamembro').is(':checked') || !this.programkotizo > 0 ? 0 : (this.landokategorio != null) && this.programkotizo > 0 ? this.landokategorio !== false ? window.uearabatoj[this.landokategorio] : false : null;
       if (this.uearabato) {
-        this.uearabato *= Math.min(this.relativa_partopreno, 1);
+        this.uearabato *= this.relativa_partopreno;
       }
       this.chu_invitletero = $('#id_chu_bezonas_invitleteron').is(':checked');
       return this.chu_ekskurso = $('#id_chu_tuttaga_ekskurso').is(':checked');
@@ -239,6 +248,8 @@
           if (info.chu_plentempa) {
             if (info.superaj_tranoktoj === 0) {
               return 'plentempa loĝado';
+            } else if (info.superaj_tranoktoj === 1) {
+              return "plentempa loĝado kaj aldona tranokto";
             } else {
               return "plentempa loĝado kaj " + info.superaj_tranoktoj + "                                 aldonaj tranoktoj";
             }
@@ -265,6 +276,10 @@
         }
         $('.programo-kosto').text("(elektu " + (elektote.join(' kaj ')) + ")");
         $('.programo-klarigo').text('programo');
+      } else if (info.programkotizo === 0) {
+        klarigo = 'programo';
+        $('.programo-klarigo').text(klarigo);
+        $('.programo-kosto').text(info.programkotizo);
       } else if (info.programkotizo != null) {
         klarigo = 'programo';
         if (!info.chu_plentempa) {

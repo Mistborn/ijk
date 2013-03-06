@@ -2,6 +2,8 @@ alighi_form = ->
     NUMTABS = 6   
     DAY = 1000 * 60 * 60 * 24
     YEAR = DAY * 365.25
+    PROGRAMMINAGHO = 12
+    LOGHMINAGHO = 5
     # datoj
     $.datepicker.setDefaults
         dateFormat: 'yy-mm-dd'
@@ -106,31 +108,38 @@ alighi_form = ->
             window.limdatoj[@alighkategorio] 
         else 
             off
-        # unua kaj lasta tagoj de la kongreso mem:
-        @unuatago = Math.max(@ektago, window.KOMENCA_DATO)
-        @lastatago = Math.min(@ghistago, window.FINIGHA_DATO)
+        # unua kaj lasta tagoj de la dumkongresa partopreno:
+        @unuatago = Math.max(@ekdato, window.KOMENCA_DATO)
+        @lastatago = Math.min(@ghisdato, window.FINIGHA_DATO)
         # @tranoktoj estas la kvanto de tranoktoj dum la kongreso mem
-        # kaj @aldonaj_tranoktoj estas la kvanto de tranokto 
+        # kaj @superaj_tranoktoj estas la kvanto de tranokto 
         # antaŭ/post la kongreso
-        @tranoktoj = Math.floor((@unuatago - @lastatago) / DAY)
+        @tranoktoj = Math.floor((@lastatago - @unuatago) / DAY)
         @superaj_tranoktoj = do =>
-            antauaj = Math.floor @ektago - @unuatago / DAY
-            postaj = Math.floor @lastatago - @ghistago / DAY
+            antauaj = if @ekdato < @unuatago
+                Math.floor (@unuatago - @ekdato) / DAY
+            else 0
+            postaj = if @ghisdato > @lastatago
+                Math.floor (@ghisdato - @lastatago) / DAY
+            else 0
             return antauaj + postaj
-        @partoprentagoj = Math.floor((@unuatago - @duatago) / DAY) + 1
+        @partoprentagoj = Math.floor((@lastatago - @unuatago) / DAY) + 1
         @relativa_partopreno = if @chu_plentempa then 1
         else (@partoprentagoj) / 5
+        @manghorelativeco = if @chu_plentempa then 1
+        else @partoprentagoj / 6
         @loghkosto = do =>
-            return 0 if @agho isnt off and @agho <= 5
+            return 0 if @agho isnt off and @agho < LOGHMINAGHO
             return off unless @loghkategorio isnt off and @chu_plentempa?
-            [@plentempa, @eksterkongresa] = window.loghkategorioj[@loghkategorio]?[0]
+            return null unless window.loghkategorioj[@loghkategorio]?
+            [@plentempa, @eksterkongresa] = window.loghkategorioj[@loghkategorio]
             # @plentempa estas la plena kosto de dumkongresa loĝado
             # @eksterkongresa estas la kosto de unu nokto eksterkongrese
             if @chu_plentempa
-                return @plentempa + @superaj_tranoktoj * @eksterkongresaj
+                return @plentempa + @superaj_tranoktoj * @eksterkongresa
             else
-                return (@tranoktoj + @superaj_tranoktoj) * @eksterkongresaj
-        @programkotizo = if @agho isnt off and @agho <= 12 then 0
+                return (@tranoktoj + @superaj_tranoktoj) * @eksterkongresa
+        @programkotizo = if @agho isnt off and @agho < PROGRAMMINAGHO then 0
         else unless @aghkategorio? and @landokategorio? and 
             @alighkategorio? then null
         else if @aghkategorio is off or
@@ -148,16 +157,18 @@ alighi_form = ->
         $('input[name="manghomendoj"]:checked').each ->
             manghokosto += window.manghomendotipoj[$(this).val()]
         @manghokosto = if isNaN manghokosto then null else manghokosto
-        if @manghokosto? and @chu_viando
-            @manghokosto += window.krompagtipoj.viando 
-        @uearabato = if not $('#id_chu_ueamembro').is(':checked') then 0
+        if @manghokosto
+            @manghokosto += window.krompagtipoj.viando if @chu_viando
+            @manghokosto *= @manghorelativeco 
+        @uearabato = if not $('#id_chu_ueamembro').is(':checked') or
+        not @programkotizo > 0 then 0
         else if @landokategorio? and @programkotizo > 0
             if @landokategorio isnt off
                 window.uearabatoj[@landokategorio]
             else
                 off
         else null
-        @uearabato *= Math.min @relativa_partopreno, 1 if @uearabato
+        @uearabato *= @relativa_partopreno if @uearabato
         @chu_invitletero = $('#id_chu_bezonas_invitleteron').is ':checked'
         @chu_ekskurso = $('#id_chu_tuttaga_ekskurso').is ':checked'
 
@@ -227,6 +238,8 @@ alighi_form = ->
                 if info.chu_plentempa 
                     if info.superaj_tranoktoj is 0
                         return 'plentempa loĝado'
+                    else if info.superaj_tranoktoj is 1
+                        return "plentempa loĝado kaj aldona tranokto"
                     else
                         return "plentempa loĝado kaj #{info.superaj_tranoktoj} 
                                 aldonaj tranoktoj"
@@ -245,6 +258,10 @@ alighi_form = ->
             elektote.push 'antaŭpagan daton' if info.alighkategorio is off
             $('.programo-kosto').text "(elektu #{elektote.join ' kaj '})"
             $('.programo-klarigo').text 'programo'
+        else if info.programkotizo is 0
+            klarigo = 'programo'
+            $('.programo-klarigo').text klarigo
+            $('.programo-kosto').text info.programkotizo
         else if info.programkotizo?
             klarigo = 'programo'
             if not info.chu_plentempa
