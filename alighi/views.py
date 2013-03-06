@@ -31,13 +31,10 @@ default_error_messages = {
                   u'La valoro de vi provizita ne validas.'),
     'min_length': eo(u'Certigu, ke tiu cxi valoro havas almenaux %(limit_value)d signojn (gxi havas %(show_value)d).'),
     'max_length': eo(u'Certigu, ke tiu cxi valoro havas maksimume %(limit_value)d signojn (gxi havas %(show_value)d).'),
-    # 'max_value': eo(u'Certigu, ke tiu cxi valoro estas malpli ol aux egala al %(limit_value)s.'),
-    # 'min_value': eo(u'Certigu, ke tiu cxi valoro estas pli ol aux egala al  %(limit_value)s.'),
     'invalid_choice': INVALID_CHOICE,
 }
 
 default_error_messages['invalid_pk_value'] = INVALID_PK_CHOICE
-    # default_error_messages['invalid_choice']
 
 def em(**kw):
     '''error message dict'''
@@ -122,7 +119,6 @@ class RadioAndTextInput(forms.widgets.RadioInput):
             self.choice_label += ', {}:'.format(self.extra_label)
 
 class RadioFieldWithCommentRenderer(forms.widgets.RadioFieldRenderer):
-    # ~ infolist = models.AlighKategorio.infolist()
     def __init__(self, name, value, attrs, choices, *args, **kw):
         if 'extra_labels' in kw:
             self.extra_labels = kw['extra_labels']
@@ -134,14 +130,11 @@ class RadioFieldWithCommentRenderer(forms.widgets.RadioFieldRenderer):
         if not self.value:
             self.value = [None, u'']
     def render(self):
-        # ~ info = u'<ul class="infolist">{}</ul>'.format(
-            # ~ u'\n'.join(u'<li>{}</li>'.format(i) for i in self.infolist))
         lis = [force_unicode(w.render(self.name, self.value, self.attrs))
                         for w in self]
         lis = u'\n'.join(u'<li>{}</li>'.format(li) for li in lis)
         ul = u'<ul class="vertical-display infolist">\n{}\n</ul>'.format(lis)
         return mark_safe(ul)
-        # # u'<div class="vertical-display">{}</div>'.format(ul))
     def _get_widget(self, choice, idx):
         return RadioAndTextInput(
             self.name, self.value, self.attrs.copy(), choice, idx,
@@ -162,13 +155,11 @@ class RadioSelectPagmanieroj(forms.RadioSelect):
             textval = u''
         else:
             textval = data.get('{}_comment_{}'.format(name, radioval), u'')
-        # self.comment_value = textval
         return [radioval, textval]
     def get_renderer(self, name, value, attrs=None, choices=()):
         if value is None: value = u''
-        # str_value = force_unicode(value) # Normalize to string.
         final_attrs = self.build_attrs(attrs)
-        choices = list(self.choices)  # list(chain(self.choices, choices))
+        choices = list(self.choices)
         return self.renderer(name, value, final_attrs, choices,
             extra_labels=self.extra_labels)
     def get_selected_extra_label(self, pk):
@@ -216,16 +207,6 @@ class CustomLabelModelChoiceField(forms.ModelChoiceField):
             return self._labelfunc(obj)
         return super(CustomLabelModelChoiceField,
                      self).label_from_instance(obj)
-
-# # class LimitedDateField(forms.DateField):
-    # # def __init__(self, *args, **kw):
-        # # if 'max_value' in kw:
-            # # self.max_value = kw['max_value']
-            # # del kw['max_value']
-        # # if 'min_value' in kw:
-            # # self.min_value = kw['min_value']
-            # # del kw['min_value']
-        # # super(LimitedDateField, self).__init__(*args, **kw)
 
 partoprenanto_fields_dict = dict(
     persona_nomo=forms.CharField(max_length=50,
@@ -284,14 +265,11 @@ partoprenanto_fields_dict = dict(
         error_messages=em(required='Elektu la daton, kiam vi forlasos',
                           invalid=NEVALIDA_DATO)),
     alveno=forms.CharField(required=False, label=eo('Mi alvenas per/je')),
-    # alvenas_je = forms.DateField(required=False, label=eo('Mi alvenas je'))
     foriro=forms.CharField(required=False, label=eo('Mi foriras per/je')),
-    # foriras_je = forms.DateField(required=False, label=eo('Mi foriras je'))
     interesighas_pri_antaukongreso=forms.IntegerField(
         required=True, widget=forms.RadioSelect(
         choices=[(0, 'ne')] +
             [(i, '{}-taga'.format(i)) for i in (2, 3, 5)]),
-        # max_value=5, min_value=2,
         label=eo('Mi interesigxas pri antauxkongreso'),
         error_messages=em(
             invalid=u'Elektu inter "ne" kaj nombro de tagoj (2 ĝis 5)')),
@@ -322,21 +300,17 @@ partoprenanto_fields_dict = dict(
         label=eo('Mi volas logxi en'),
         widget=RadioSelectSpecialClass, empty_label=None,
         help_text=models.LoghKategorio.helptext(),
-        # initial=models.LoghKategorio.objects.all()[0],
         error_messages=em(required='Elektu kie vi volas loĝi')),
     deziras_loghi_kun_nomo=forms.CharField(
         required=False, label=eo('Mi deziras logxi kun')),
     chu_preferas_unuseksan_chambron=forms.BooleanField(initial=False,
         required=False, label=eo('Mi preferas unuseksan cxambron')),
     chu_malnoktemulo=forms.BooleanField(
-        # help_text=u'Se vi ŝatas dormi frue, sciigu nin',
         initial=False, required=False, label=eo('Mi estas malnoktemulo')),
     manghotipo=forms.ModelChoiceField(models.ManghoTipo.objects,
         label=eo('Mangxotipo'), widget=forms.RadioSelect,
-            # widget=RadioSelectSpecialClass,
         required=True, initial=None,
         empty_label=None,
-        # initial=models.ManghoTipo.objects.get(nomo='Viande'),
         error_messages=em(required='Elektu kian manĝon vi volas')),
     antaupagos_ghis=CustomLabelModelChoiceField(models.AlighKategorio.objects,
         label=eo('Mi antauxpagos gxis'), required=True, initial=None,
@@ -346,20 +320,11 @@ partoprenanto_fields_dict = dict(
             required=eo('Elektu gxis kiam vi faros la antauxpagon'))),
     pagmaniero=PagmanieroChoiceField(
         models.Pagmaniero.objects.filter(chu_publika=True),
-    # paginformoj = forms.ChoiceField(
-        # choices=[([o.id, u''], o.nomo) for o in models.Pagmaniero.objects.filter(chu_publika=True)],
         label=eo('Mi antauxpagos per'),
         widget=RadioSelectPagmanieroj, empty_label=None,
         help_text=paginfo,
         error_messages=em(
             required=eo('Elektu kiel vi pagos la antauxpagon'))),
-    # pagmaniero = forms.ModelChoiceField(
-        # models.Pagmaniero.objects.filter(chu_publika=True),
-        # label=eo('Mi antauxpagos per'),
-        # widget=TextSelect, empty_label=None,
-        # help_text=paginfo, error_messages=em(
-            # required=eo('Elektu kiel vi pagos la antauxpagon'))),
-    # pagmaniera_komento = forms.CharField(max_length=50, required=False),
     chu_ueamembro=forms.BooleanField(
         required=False, initial=False,
         label=eo('Mi estas/estos membro de TEJO/UEA en 2013')),
@@ -373,12 +338,9 @@ partoprenanto_fields_dict = dict(
 class ManghoMendoForm(forms.Form):
     manghomendoj = forms.ModelMultipleChoiceField(label=eo('Mi volas mendi'),
         required=False, widget=CheckboxSpecialClass,
-            # forms.CheckboxSelectMultiple,
         queryset=models.ManghoMendoTipo.objects,
         initial=models.ManghoMendoTipo.objects.all(),
         error_messages=em(invalid_choice='Ne, ne, ne: %r'))
-        # choices=[(tipo.id, unicode(tipo))
-                    # for tipo in models.ManghoMendoTipo.objects.all()])
 
 class NotoForm(forms.ModelForm):
     enhavo = forms.CharField(widget=forms.Textarea,
@@ -506,16 +468,7 @@ class MultiField(forms.Field):
             kw['widget'] = self.widget(
                 widgets=[field.widget for field in fields])
         super(MultiField, self).__init__(**kw)
-    #def clean(***
 
-#def info_factory(val):
-    #class FormInfo(object):
-        #def __init__(self, *args, **kw):
-            #pass
-        #def as_ul(self):
-            #return mark_safe(u'<li><span class="info">'
-                             #u'{}</span></li>'.format(val))
-    #return FormInfo
 vianda_kosto = models.KrompagTipo.liveri_koston('viando')
 formdivisions = [
     ('Personaj informoj', [
@@ -586,8 +539,6 @@ tabs = mark_safe(
             u'<li class="tab"><a href="#tab-{}">{}</a></li>'.format(i, tab)
                 for (i, tab) in enumerate(tablist))))
 
-# ~ from django.views.decorators.csrf import csrf_exempt
-# ~ @csrf_exempt
 def alighi(request):
     has_errors = False
     if request.method == 'POST':
