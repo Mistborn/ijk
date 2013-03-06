@@ -256,13 +256,13 @@ class PartoprenantoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
             'chambro',),
         ('manghotipo', 'manghomendoj'),
         ('antaupagos_ghis', 'pagmaniero', 'pagmaniera_komento',),
-        ('chu_ueamembro', 'uea_kodo',),
+        ('chu_ueamembro', 'uea_kodo', 'alighila_kotizo'),
         'chu_kontrolita',
         ('unua_konfirmilo_sendita', 'dua_konfirmilo_sendita'),
         ('alighdato', 'malalighdato'),
         ('chu_alvenis', 'chu_havasmanghkuponon', 'chu_havasnomshildon',)
     )
-    readonly_fields = ('id', 'alighdato',)
+    readonly_fields = ('id', 'alighdato', 'alighila_kotizo')
     list_display = ('persona_nomo', 'familia_nomo', 'sekso',
                     'loghlando', 'chu_kontrolita', 'chambro')
     list_editable = ('loghlando', 'chambro')

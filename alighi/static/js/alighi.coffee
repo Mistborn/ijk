@@ -302,6 +302,7 @@ alighi_form = ->
             $('.uearabato-kosto').text nedifinita
 
         $('.sumo-kosto').text "#{kosto} €"
+        $('#id_alighila_kotizo').val(kosto)
         
         #klarigo = '[konsistas el ' + (klarigo.join ' + ')
         #klarigo += " - #{info.uearabato} (UEA-rabato)" if info.uearabato > 0

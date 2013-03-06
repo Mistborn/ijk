@@ -321,7 +321,8 @@
         $('.uearabato-li').show();
         $('.uearabato-kosto').text(nedifinita);
       }
-      return $('.sumo-kosto').text("" + kosto + " €");
+      $('.sumo-kosto').text("" + kosto + " €");
+      return $('#id_alighila_kotizo').val(kosto);
     };
     kotizo_selectors = ['#id_naskighdato', '#id_loghlando', 'input[name="loghkategorio"]', 'input[name="manghomendoj"]', '[name="manghotipo"]', '#id_chu_ueamembro', '#id_ekde', '#id_ghis', '#id_chu_bezonas_invitleteron', '#id_chu_tuttaga_ekskurso', 'input[name="antaupagos_ghis"]'];
     for (_j = 0, _len1 = kotizo_selectors.length; _j < _len1; _j++) {

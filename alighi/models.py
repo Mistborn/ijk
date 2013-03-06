@@ -590,6 +590,10 @@ class Partoprenanto(models.Model):
     chu_ueamembro = models.BooleanField(eo('Cxu membro de UEA/TEJO'),
         default=False)
     uea_kodo = models.CharField(eo('UEA-kodo'), max_length=18, blank=True)
+    alighila_kotizo = models.IntegerField(eo('Aligxila kotizo'),
+        null=True, blank=True,
+        help_text=eo('La suma kotizo prezentita al la partoprenanto '
+                     'kiam li-sxi plenigis la aligxilon'))
     chu_kontrolita = models.BooleanField(
         eo('Cxu kontrolita'), default=False)  # *
     unua_konfirmilo_sendita = models.DateField(null=True, blank=True)  # *

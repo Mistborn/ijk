@@ -332,7 +332,8 @@ partoprenanto_fields_dict = dict(
         label=eo('UEA-kodo'), validators=[ueakodo_validator],
         error_messages=em(
             min_length=u'Certigu ke ĉi-tiu valoro havas ekzakte 6 signojn',
-            max_length=u'Certigu ke ĉi-tiu valoro havas ekzakte 6 signojn'))
+            max_length=u'Certigu ke ĉi-tiu valoro havas ekzakte 6 signojn')),
+    alighila_kotizo=forms.CharField(widget=forms.HiddenInput, required=False)
 )
 
 class ManghoMendoForm(forms.Form):
@@ -516,7 +517,8 @@ formdivisions = [
         )),
         ['uea_kodo', 'antaupagos_ghis', 'pagmaniero'], NotoForm,
         FormInfo.make_form(u'Sciigu nin pri ajna grava detalo rilate vin; '
-            u'ekz. specifaj bezonoj pri manĝoj aŭ ĉu vi venos kun infanoj.')
+            u'ekz. specifaj bezonoj pri manĝoj aŭ ĉu vi venos kun infanoj.'),
+        ['alighila_kotizo']
     ])
 ]
 
