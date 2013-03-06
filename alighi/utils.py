@@ -18,11 +18,17 @@ _eod = {
  'C': u'Ĉ', 'G': u'Ĝ', 'H': u'Ĥ', 'J': u'Ĵ', 'S': u'Ŝ', 'U': u'Ŭ', 'X': u'X',
 }
 
+_eox = {val: (key + 'x') for (key, val) in _eod.items()}
+
 def eo(s):
     u'''Konverti x-kodigitan ĉenon al unikodo'''
     #return s
     return unicode(re.sub(
         u'([cghjsuxCGHJSUX])[xX](?![xX])', lambda m: _eod[m.group(1)], s))
+
+def x(s):
+    u'Konverti unikodan ĉenon al x-kodigo'
+    return re.sub(u'[ĉĝĥĵŝŭĈĜĤĴŜŬ]', lambda m: _eox[m.group(0)], s)
 
 def json_default(obj):
     if isinstance(obj, Decimal):

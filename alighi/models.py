@@ -17,7 +17,8 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.db.utils import DatabaseError
 
-from utils import eo, KOMENCA_DATO, FINIGHA_DATO, SEKSOJ, json_default, esperanteca_dato
+from utils import (eo, x, KOMENCA_DATO, FINIGHA_DATO, SEKSOJ, json_default,
+                   esperanteca_dato)
 
 # south
 from south.modelsinspector import add_introspection_rules
@@ -168,8 +169,13 @@ class LandoKategorio(models.Model):
 class Lando(models.Model):
     '''Loĝlando de partoprenanto'''
     nomo = models.CharField(max_length=50)
+    xnomo = models.CharField(max_length=55)  # denormalize so we can sort
     kodo = models.CharField(max_length=2)
     kategorio = models.ForeignKey(LandoKategorio)
+
+    def save(self):
+        self.xnomo = x(self.nomo)
+        super(Lando, self).save()
 
     @classmethod
     def javascript(cls):
@@ -183,6 +189,7 @@ class Lando(models.Model):
     class Meta:
         verbose_name_plural = eo('Landoj')
         permissions = ((u"view_lando", u"Rajtas vidi landojn"),)
+        ordering = ('xnomo',)  # nomo has esperanto diacritics
 
 class LoghKategorio(models.Model):
     '''Elektebla loĝkategorio'''
