@@ -1,0 +1,1764 @@
+[
+    {
+        "pk": 1, 
+        "model": "alighi.landokategorio", 
+        "fields": {
+            "priskribo": "", 
+            "nomo": "A"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "alighi.landokategorio", 
+        "fields": {
+            "priskribo": "", 
+            "nomo": "B"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "alighi.landokategorio", 
+        "fields": {
+            "priskribo": "", 
+            "nomo": "C"
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "alighi.landokategorio", 
+        "fields": {
+            "priskribo": "", 
+            "nomo": "I"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "AD", 
+            "xnomo": "Andoro", 
+            "nomo": "Andoro", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "AE", 
+            "xnomo": "Unuigxintaj Arabaj Emirlandoj", 
+            "nomo": "Unui\u011dintaj Arabaj Emirlandoj", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "AT", 
+            "xnomo": "Auxstrio", 
+            "nomo": "A\u016dstrio", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "BE", 
+            "xnomo": "Belgio", 
+            "nomo": "Belgio", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "BH", 
+            "xnomo": "Barejno", 
+            "nomo": "Barejno", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "CH", 
+            "xnomo": "Svislando", 
+            "nomo": "Svislando", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "CY", 
+            "xnomo": "Kipro", 
+            "nomo": "Kipro", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "DE", 
+            "xnomo": "Germanio", 
+            "nomo": "Germanio", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 9, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "DK", 
+            "xnomo": "Danio", 
+            "nomo": "Danio", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 10, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "EG", 
+            "xnomo": "Egiptio", 
+            "nomo": "Egiptio", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 11, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "FI", 
+            "xnomo": "Finnlando", 
+            "nomo": "Finnlando", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 12, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "FR", 
+            "xnomo": "Francio", 
+            "nomo": "Francio", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 13, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "GB", 
+            "xnomo": "Britio", 
+            "nomo": "Britio", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 14, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "IE", 
+            "xnomo": "Irlando", 
+            "nomo": "Irlando", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 15, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "IR", 
+            "xnomo": "Irano", 
+            "nomo": "Irano", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 16, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "IS", 
+            "xnomo": "Islando", 
+            "nomo": "Islando", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 17, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "IT", 
+            "xnomo": "Italio", 
+            "nomo": "Italio", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 18, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "JO", 
+            "xnomo": "Jordanio", 
+            "nomo": "Jordanio", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 19, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "LB", 
+            "xnomo": "Libano", 
+            "nomo": "Libano", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 20, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "LI", 
+            "xnomo": "Lihxtensxtejno", 
+            "nomo": "Li\u0125ten\u015dtejno", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 21, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "LU", 
+            "xnomo": "Luksemburgo", 
+            "nomo": "Luksemburgo", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 22, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "MC", 
+            "xnomo": "Monako", 
+            "nomo": "Monako", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 23, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "NL", 
+            "xnomo": "Nederlando", 
+            "nomo": "Nederlando", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 24, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "NO", 
+            "xnomo": "Norvegio", 
+            "nomo": "Norvegio", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 25, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "SE", 
+            "xnomo": "Svedio", 
+            "nomo": "Svedio", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 26, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "SM", 
+            "xnomo": "San-Marino", 
+            "nomo": "San-Marino", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 27, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "TR", 
+            "xnomo": "Turkio", 
+            "nomo": "Turkio", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 28, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "VA", 
+            "xnomo": "Vatikanurbo", 
+            "nomo": "Vatikanurbo", 
+            "kategorio": 1
+        }
+    }, 
+    {
+        "pk": 29, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "AU", 
+            "xnomo": "Auxstralio", 
+            "nomo": "A\u016dstralio", 
+            "kategorio": 2
+        }
+    }, 
+    {
+        "pk": 30, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "BN", 
+            "xnomo": "Brunejo", 
+            "nomo": "Brunejo", 
+            "kategorio": 2
+        }
+    }, 
+    {
+        "pk": 31, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "CA", 
+            "xnomo": "Kanado", 
+            "nomo": "Kanado", 
+            "kategorio": 2
+        }
+    }, 
+    {
+        "pk": 32, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "CZ", 
+            "xnomo": "Cxehxio", 
+            "nomo": "\u0108e\u0125io", 
+            "kategorio": 2
+        }
+    }, 
+    {
+        "pk": 33, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "EE", 
+            "xnomo": "Estonio", 
+            "nomo": "Estonio", 
+            "kategorio": 2
+        }
+    }, 
+    {
+        "pk": 34, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "ES", 
+            "xnomo": "Hispanio", 
+            "nomo": "Hispanio", 
+            "kategorio": 2
+        }
+    }, 
+    {
+        "pk": 35, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "GR", 
+            "xnomo": "Grekio", 
+            "nomo": "Grekio", 
+            "kategorio": 2
+        }
+    }, 
+    {
+        "pk": 36, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "HK", 
+            "xnomo": "Honkongo", 
+            "nomo": "Honkongo", 
+            "kategorio": 2
+        }
+    }, 
+    {
+        "pk": 37, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "HR", 
+            "xnomo": "Kroatio", 
+            "nomo": "Kroatio", 
+            "kategorio": 2
+        }
+    }, 
+    {
+        "pk": 38, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "HU", 
+            "xnomo": "Hungario", 
+            "nomo": "Hungario", 
+            "kategorio": 2
+        }
+    }, 
+    {
+        "pk": 39, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "IM", 
+            "xnomo": "Manksio", 
+            "nomo": "Manksio", 
+            "kategorio": 2
+        }
+    }, 
+    {
+        "pk": 40, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "JP", 
+            "xnomo": "Japanio", 
+            "nomo": "Japanio", 
+            "kategorio": 2
+        }
+    }, 
+    {
+        "pk": 41, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "LT", 
+            "xnomo": "Litovio", 
+            "nomo": "Litovio", 
+            "kategorio": 2
+        }
+    }, 
+    {
+        "pk": 42, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "LV", 
+            "xnomo": "Latvio", 
+            "nomo": "Latvio", 
+            "kategorio": 2
+        }
+    }, 
+    {
+        "pk": 43, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "ME", 
+            "xnomo": "Montenegro", 
+            "nomo": "Montenegro", 
+            "kategorio": 2
+        }
+    }, 
+    {
+        "pk": 44, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "MT", 
+            "xnomo": "Malto", 
+            "nomo": "Malto", 
+            "kategorio": 2
+        }
+    }, 
+    {
+        "pk": 45, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "NZ", 
+            "xnomo": "Nov-Zelando", 
+            "nomo": "Nov-Zelando", 
+            "kategorio": 2
+        }
+    }, 
+    {
+        "pk": 46, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "PL", 
+            "xnomo": "Pollando", 
+            "nomo": "Pollando", 
+            "kategorio": 2
+        }
+    }, 
+    {
+        "pk": 47, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "PT", 
+            "xnomo": "Portugalio", 
+            "nomo": "Portugalio", 
+            "kategorio": 2
+        }
+    }, 
+    {
+        "pk": 48, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "RS", 
+            "xnomo": "Serbio", 
+            "nomo": "Serbio", 
+            "kategorio": 2
+        }
+    }, 
+    {
+        "pk": 49, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "SG", 
+            "xnomo": "Singapuro", 
+            "nomo": "Singapuro", 
+            "kategorio": 2
+        }
+    }, 
+    {
+        "pk": 50, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "SK", 
+            "xnomo": "Slovakio", 
+            "nomo": "Slovakio", 
+            "kategorio": 2
+        }
+    }, 
+    {
+        "pk": 51, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "SL", 
+            "xnomo": "Siera-Leono", 
+            "nomo": "Siera-Leono", 
+            "kategorio": 2
+        }
+    }, 
+    {
+        "pk": 52, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "US", 
+            "xnomo": "Usono", 
+            "nomo": "Usono", 
+            "kategorio": 2
+        }
+    }, 
+    {
+        "pk": 53, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "BD", 
+            "xnomo": "Bangladesxo", 
+            "nomo": "Banglade\u015do", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 54, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "BF", 
+            "xnomo": "Burkino", 
+            "nomo": "Burkino", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 55, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "BG", 
+            "xnomo": "Bulgario", 
+            "nomo": "Bulgario", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 56, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "BA", 
+            "xnomo": "Bosnio kaj Hercegovino", 
+            "nomo": "Bosnio kaj Hercegovino", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 57, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "BO", 
+            "xnomo": "Bolivio", 
+            "nomo": "Bolivio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 58, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "BI", 
+            "xnomo": "Burundo", 
+            "nomo": "Burundo", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 59, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "BJ", 
+            "xnomo": "Benino", 
+            "nomo": "Benino", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 60, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "BT", 
+            "xnomo": "Butano", 
+            "nomo": "Butano", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 61, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "JM", 
+            "xnomo": "Jamajko", 
+            "nomo": "Jamajko", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 62, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "BW", 
+            "xnomo": "Bocvano", 
+            "nomo": "Bocvano", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 63, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "BR", 
+            "xnomo": "Brazilo", 
+            "nomo": "Brazilo", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 64, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "BS", 
+            "xnomo": "Bahamoj", 
+            "nomo": "Bahamoj", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 65, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "BY", 
+            "xnomo": "Belorusio", 
+            "nomo": "Belorusio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 66, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "BZ", 
+            "xnomo": "Belizo", 
+            "nomo": "Belizo", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 67, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "RU", 
+            "xnomo": "Rusio", 
+            "nomo": "Rusio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 68, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "RW", 
+            "xnomo": "Ruando", 
+            "nomo": "Ruando", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 69, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "RE", 
+            "xnomo": "Reunio", 
+            "nomo": "Reunio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 70, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "TM", 
+            "xnomo": "Turkmenio", 
+            "nomo": "Turkmenio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 71, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "TJ", 
+            "xnomo": "Tagxikio", 
+            "nomo": "Ta\u011dikio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 72, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "RO", 
+            "xnomo": "Rumanio", 
+            "nomo": "Rumanio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 73, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "GT", 
+            "xnomo": "Gvatemalo", 
+            "nomo": "Gvatemalo", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 74, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "GE", 
+            "xnomo": "Kartvelio", 
+            "nomo": "Kartvelio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 75, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "GA", 
+            "xnomo": "Gabono", 
+            "nomo": "Gabono", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 76, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "GM", 
+            "xnomo": "Gambio", 
+            "nomo": "Gambio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 77, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "GL", 
+            "xnomo": "Gronlando", 
+            "nomo": "Gronlando", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 78, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "GI", 
+            "xnomo": "Gxibraltaro", 
+            "nomo": "\u011cibraltaro", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 79, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "GH", 
+            "xnomo": "Ganao", 
+            "nomo": "Ganao", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 80, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "OM", 
+            "xnomo": "Omano", 
+            "nomo": "Omano", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 81, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "TN", 
+            "xnomo": "Tunizio", 
+            "nomo": "Tunizio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 82, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "HT", 
+            "xnomo": "Haitio", 
+            "nomo": "Haitio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 83, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "HN", 
+            "xnomo": "Honduro", 
+            "nomo": "Honduro", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 84, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "VE", 
+            "xnomo": "Venezuelo", 
+            "nomo": "Venezuelo", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 85, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "PR", 
+            "xnomo": "Porto-Riko", 
+            "nomo": "Porto-Riko", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 86, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "PY", 
+            "xnomo": "Paragvajo", 
+            "nomo": "Paragvajo", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 87, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "PA", 
+            "xnomo": "Panamo", 
+            "nomo": "Panamo", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 88, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "PG", 
+            "xnomo": "Papuo-Nov-Gvineo", 
+            "nomo": "Papuo-Nov-Gvineo", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 89, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "PE", 
+            "xnomo": "Peruo", 
+            "nomo": "Peruo", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 90, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "PK", 
+            "xnomo": "Pakistano", 
+            "nomo": "Pakistano", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 91, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "PH", 
+            "xnomo": "Filipinoj", 
+            "nomo": "Filipinoj", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 92, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "ZM", 
+            "xnomo": "Zambio", 
+            "nomo": "Zambio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 93, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "ZA", 
+            "xnomo": "Sudafriko", 
+            "nomo": "Sudafriko", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 94, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "EC", 
+            "xnomo": "Ekvadoro", 
+            "nomo": "Ekvadoro", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 95, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "VN", 
+            "xnomo": "Vjetnamio", 
+            "nomo": "Vjetnamio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 96, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "ET", 
+            "xnomo": "Etiopio", 
+            "nomo": "Etiopio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 97, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "SO", 
+            "xnomo": "Somalio", 
+            "nomo": "Somalio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 98, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "ZW", 
+            "xnomo": "Zimbabvo", 
+            "nomo": "Zimbabvo", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 99, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "ER", 
+            "xnomo": "Eritreo", 
+            "nomo": "Eritreo", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 100, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "MD", 
+            "xnomo": "Moldavio", 
+            "nomo": "Moldavio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 101, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "MG", 
+            "xnomo": "Madagaskaro", 
+            "nomo": "Madagaskaro", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 102, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "MA", 
+            "xnomo": "Maroko", 
+            "nomo": "Maroko", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 103, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "UZ", 
+            "xnomo": "Uzbekio", 
+            "nomo": "Uzbekio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 104, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "MM", 
+            "xnomo": "Birmo", 
+            "nomo": "Birmo", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 105, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "ML", 
+            "xnomo": "Malio", 
+            "nomo": "Malio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 106, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "MO", 
+            "xnomo": "Makao", 
+            "nomo": "Makao", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 107, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "MN", 
+            "xnomo": "Mongolio", 
+            "nomo": "Mongolio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 108, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "MK", 
+            "xnomo": "Makedonio", 
+            "nomo": "Makedonio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 109, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "MW", 
+            "xnomo": "Malavio", 
+            "nomo": "Malavio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 110, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "MV", 
+            "xnomo": "Maldivoj", 
+            "nomo": "Maldivoj", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 111, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "MR", 
+            "xnomo": "Mauxritanio", 
+            "nomo": "Ma\u016dritanio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 112, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "UG", 
+            "xnomo": "Ugando", 
+            "nomo": "Ugando", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 113, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "MY", 
+            "xnomo": "Malajzio", 
+            "nomo": "Malajzio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 114, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "MX", 
+            "xnomo": "Meksiko", 
+            "nomo": "Meksiko", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 115, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "FM", 
+            "xnomo": "Federacio de Mikronezio", 
+            "nomo": "Federacio de Mikronezio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 116, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "NI", 
+            "xnomo": "Nikaragvo", 
+            "nomo": "Nikaragvo", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 117, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "NA", 
+            "xnomo": "Namibio", 
+            "nomo": "Namibio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 118, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "NE", 
+            "xnomo": "Nigxero", 
+            "nomo": "Ni\u011dero", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 119, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "NG", 
+            "xnomo": "Nigxerio", 
+            "nomo": "Ni\u011derio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 120, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "NP", 
+            "xnomo": "Nepalo", 
+            "nomo": "Nepalo", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 121, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "CI", 
+            "xnomo": "Ebura Bordo", 
+            "nomo": "Ebura Bordo", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 122, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "CO", 
+            "xnomo": "Kolombio", 
+            "nomo": "Kolombio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 123, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "CN", 
+            "xnomo": "Cxinio", 
+            "nomo": "\u0108inio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 124, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "CM", 
+            "xnomo": "Kameruno", 
+            "nomo": "Kameruno", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 125, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "CL", 
+            "xnomo": "Cxilio", 
+            "nomo": "\u0108ilio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 126, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "CG", 
+            "xnomo": "Respubliko Kongo", 
+            "nomo": "Respubliko Kongo", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 127, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "CF", 
+            "xnomo": "Centr-Afrika Respubliko", 
+            "nomo": "Centr-Afrika Respubliko", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 128, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "CD", 
+            "xnomo": "Demokratia Respubliko Kongo", 
+            "nomo": "Demokratia Respubliko Kongo", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 129, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "CR", 
+            "xnomo": "Kostariko", 
+            "nomo": "Kostariko", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 130, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "CU", 
+            "xnomo": "Kubo", 
+            "nomo": "Kubo", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 131, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "SZ", 
+            "xnomo": "Svazilando", 
+            "nomo": "Svazilando", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 132, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "SY", 
+            "xnomo": "Sirio", 
+            "nomo": "Sirio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 133, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "KG", 
+            "xnomo": "Kirgizio", 
+            "nomo": "Kirgizio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 134, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "KE", 
+            "xnomo": "Kenjo", 
+            "nomo": "Kenjo", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 135, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "SS", 
+            "xnomo": "Sudsudano", 
+            "nomo": "Sudsudano", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 136, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "SR", 
+            "xnomo": "Surinamo", 
+            "nomo": "Surinamo", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 137, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "KH", 
+            "xnomo": "Kambogxo", 
+            "nomo": "Kambo\u011do", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 138, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "SV", 
+            "xnomo": "Salvadoro", 
+            "nomo": "Salvadoro", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 139, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "KR", 
+            "xnomo": "Sud-Koreio", 
+            "nomo": "Sud-Koreio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 140, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "SI", 
+            "xnomo": "Slovenio", 
+            "nomo": "Slovenio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 141, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "KW", 
+            "xnomo": "Kuvajto", 
+            "nomo": "Kuvajto", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 142, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "SN", 
+            "xnomo": "Senegalo", 
+            "nomo": "Senegalo", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 143, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "KZ", 
+            "xnomo": "Kazahxio", 
+            "nomo": "Kaza\u0125io", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 144, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "SA", 
+            "xnomo": "Sauda Arabio", 
+            "nomo": "Sauda Arabio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 145, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "SD", 
+            "xnomo": "Sudano", 
+            "nomo": "Sudano", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 146, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "DO", 
+            "xnomo": "Domingo", 
+            "nomo": "Domingo", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 147, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "DJ", 
+            "xnomo": "Gxibutio", 
+            "nomo": "\u011cibutio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 148, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "YE", 
+            "xnomo": "Jemeno", 
+            "nomo": "Jemeno", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 149, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "DZ", 
+            "xnomo": "Algxerio", 
+            "nomo": "Al\u011derio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 150, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "UY", 
+            "xnomo": "Urugvajo", 
+            "nomo": "Urugvajo", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 151, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "LA", 
+            "xnomo": "Laoso", 
+            "nomo": "Laoso", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 152, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "TW", 
+            "xnomo": "Tajvano", 
+            "nomo": "Tajvano", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 153, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "LK", 
+            "xnomo": "Sri-Lanko", 
+            "nomo": "Sri-Lanko", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 154, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "LR", 
+            "xnomo": "Liberio", 
+            "nomo": "Liberio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 155, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "LS", 
+            "xnomo": "Lesoto", 
+            "nomo": "Lesoto", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 156, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "TH", 
+            "xnomo": "Tajlando", 
+            "nomo": "Tajlando", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 157, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "TG", 
+            "xnomo": "Togo", 
+            "nomo": "Togo", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 158, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "TD", 
+            "xnomo": "Cxado", 
+            "nomo": "\u0108ado", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 159, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "LY", 
+            "xnomo": "Libio", 
+            "nomo": "Libio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 160, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "AF", 
+            "xnomo": "Afganio", 
+            "nomo": "Afganio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 161, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "IQ", 
+            "xnomo": "Irako", 
+            "nomo": "Irako", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 162, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "AM", 
+            "xnomo": "Armenio", 
+            "nomo": "Armenio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 163, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "AL", 
+            "xnomo": "Albanio", 
+            "nomo": "Albanio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 164, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "AO", 
+            "xnomo": "Angolo", 
+            "nomo": "Angolo", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 165, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "AR", 
+            "xnomo": "Argentino", 
+            "nomo": "Argentino", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 166, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "IN", 
+            "xnomo": "Barato", 
+            "nomo": "Barato", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 167, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "TZ", 
+            "xnomo": "Tanzanio", 
+            "nomo": "Tanzanio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 168, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "AZ", 
+            "xnomo": "Azerbajgxano", 
+            "nomo": "Azerbaj\u011dano", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 169, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "ID", 
+            "xnomo": "Indonezio", 
+            "nomo": "Indonezio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 170, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "UA", 
+            "xnomo": "Ukrainio", 
+            "nomo": "Ukrainio", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 171, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "QA", 
+            "xnomo": "Kataro", 
+            "nomo": "Kataro", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 172, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "MZ", 
+            "xnomo": "Mozambiko", 
+            "nomo": "Mozambiko", 
+            "kategorio": 3
+        }
+    }, 
+    {
+        "pk": 173, 
+        "model": "alighi.lando", 
+        "fields": {
+            "kodo": "IL", 
+            "xnomo": "Israelo", 
+            "nomo": "Israelo", 
+            "kategorio": 4
+        }
+    }
+]
