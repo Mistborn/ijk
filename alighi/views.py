@@ -312,6 +312,11 @@ partoprenanto_fields_dict = dict(
         required=True, initial=None,
         empty_label=None,
         error_messages=em(required='Elektu kian manĝon vi volas')),
+    manghomendoj = forms.ModelMultipleChoiceField(label=eo('Mi volas mendi'),
+        required=False, widget=CheckboxSpecialClass,
+        queryset=models.ManghoMendoTipo.objects,
+        initial=models.ManghoMendoTipo.objects.all(),
+        error_messages=em(invalid_choice='Ne, ne, ne: %r')),
     antaupagos_ghis=CustomLabelModelChoiceField(models.AlighKategorio.objects,
         label=eo('Mi antauxpagos gxis'), required=True, initial=None,
         labelfunc=lambda o: esperanteca_dato(o.limdato),
@@ -544,18 +549,14 @@ tabs = mark_safe(
 def alighi(request):
     has_errors = False
     if request.method == 'POST':
-        mmform = ManghoMendoForm(request.POST)
         nform = NotoForm(request.POST)
         ppform = PartoprenantoForm(request.POST)
-        if (mmform.is_valid() and nform.is_valid() and ppform.is_valid()):
+        if (nform.is_valid() and ppform.is_valid()):
             partoprenanto = ppform.save(commit=False)
             partoprenanto.pagmaniera_komento = \
                 ppform.fields['pagmaniero'].comment
             partoprenanto.save()
-            mm = [models.ManghoMendo(partoprenanto=partoprenanto, tipo=tipo)
-                    for tipo in mmform.cleaned_data['manghomendoj']]
-            for manghomendo in mm:
-                manghomendo.save()
+            ppform.save_m2m()
             noto = nform.save(commit=False)
             if noto.enhavo:
                 noto.partoprenanto = partoprenanto
@@ -568,8 +569,7 @@ def alighi(request):
             return HttpResponseRedirect(reverse('gratulon'))
         else:
             has_errors = True
-            errors = mmform.errors.copy()
-            errors.update(nform.errors)
+            errors = nform.errors.copy()
             errors.update(ppform.errors)
             def adderrors(form):
                 form._errors = errors.copy()
