@@ -38,8 +38,8 @@ def json_default(obj):
 MONATOJ = (u'januaro februaro marto aprilo majo junio '
            u'julio aŭgusto septembro oktobro novembro decembro'.split())
 
-def esperanteca_dato(dato):
-    jaro = dato.year
+def esperanteca_dato(dato, jaro=True):
+    jarstr = u', {}'.format(dato.year) if jaro else u''
     monato = dato.month - 1
     tago = dato.day
-    return 'la {}-a de {}, {}'.format(tago, MONATOJ[monato], jaro)
+    return u'la {}-a de {}{}'.format(tago, MONATOJ[monato], jarstr)
