@@ -321,10 +321,6 @@ class PartoprenantoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
 class PagtipoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
     search_fields = ('nomo',)
 
-class MinimumaAntaupagoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
-    list_display = ('landokategorio', 'oficiala_antaupago')
-    list_editable = list_display[1:]
-    list_filter = ('landokategorio',)
 
 class KrompagTipoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
     list_display = ('nomo', 'sumo')
@@ -390,7 +386,6 @@ admin.site.register(SurlokaMembrigho, SurlokaMembrighoAdmin)
 admin.site.register(Chambro, ChambroAdmin)
 admin.site.register(Pago, PagoAdmin)
 admin.site.register(Pagtipo, PagtipoAdmin)
-admin.site.register(MinimumaAntaupago, MinimumaAntaupagoAdmin)
 admin.site.register(KrompagTipo, KrompagTipoAdmin)
 admin.site.register(Nomshildo, NomshildoAdmin)
 admin.site.register(Noto, NotoAdmin)

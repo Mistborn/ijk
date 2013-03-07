@@ -18,7 +18,7 @@ from django.conf import settings
 from django.db.utils import DatabaseError
 
 from utils import (eo, x, KOMENCA_DATO, FINIGHA_DATO, SEKSOJ, json_default,
-                   esperanteca_dato)
+                   esperanteca_dato, MINIMUMA_ANTAUPAGO)
 
 # south
 from south.modelsinspector import add_introspection_rules
@@ -826,33 +826,6 @@ class Pago(models.Model):
         verbose_name_plural = eo('Pagoj')
         ordering = ('partoprenanto',)
         permissions = ((u"view_pago", u"Rajtas vidi pagojn"),)
-
-class MinimumaAntaupago(models.Model):
-    '''Minimuma antaŭpago por partopreni'''
-    landokategorio = models.ForeignKey(LandoKategorio)
-    oficiala_antaupago = models.DecimalField(eo('Oficiala antauxpago'),
-        max_digits=8, decimal_places=2,
-        help_text=eo('La sumo, kiun ni montras oficiale'))
-    interna_antaupago = models.DecimalField(eo('Interna antauxpago'),
-        max_digits=8, decimal_places=2, null=True, blank=True,
-        help_text=eo('La sumo, kiun ni uzas por internaj kalkuloj, se alia'))
-    # Kion ni montras ekstere kaj kion ni uzas por internaj kalkuloj
-
-    @classmethod
-    def javascript(cls):
-        obj = {o.landokategorio.id: o.oficiala_antaupago
-                        for o in cls.objects.all()}
-        return 'window.minimumaj_antaupagoj = {}'.format(
-                        json.dumps(obj, default=json_default))
-
-    def __unicode__(self):
-        return eo(u'{} € por {}'.format(
-                  self.oficiala_antaupago, self.landokategorio))
-    class Meta:
-        verbose_name = eo('Minimuma Antauxpago')
-        verbose_name_plural = eo('Minimumaj Antauxpagoj')
-        permissions = ((u"view_minimumaantaupago",
-                         u"Rajtas vidi minimumajn antaŭpagojn"),)
 
 class Nomshildo(models.Model):
     '''Specialaj nomŝildoj por nepartoprenantoj'''

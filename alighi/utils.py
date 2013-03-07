@@ -7,6 +7,8 @@ FINIGHA_DATO = datetime.date(2013, 8, 26)
 PLEJFRUA_DATO = datetime.date(2013, 8, 16)
 PLEJMALFRUA_DATO = datetime.date(2013, 8, 26)
 
+MINIMUMA_ANTAUPAGO = 15
+
 SEKSOJ = (
     ('v', u"♂ vira"),
     ('i', u"♀ ina"),
