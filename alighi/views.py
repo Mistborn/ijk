@@ -589,7 +589,7 @@ tabs = mark_safe(
 #~ @csrf_exempt
 def alighi(request):
     if settings.HIDE_ALIGHILO:
-        return Http404
+        raise Http404
     has_errors = False
     if request.method == 'POST':
         mmform = ManghoMendoForm(request.POST)
