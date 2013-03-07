@@ -262,7 +262,7 @@ class PartoprenantoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
         ('manghotipo', 'manghomendoj'),
         ('antaupagos_ghis',),
         ('pagmaniero', 'pagmaniera_komento',),
-        'chu_antaupagis',
+        ('chu_antaupagis_disp', 'antaupaga_sumo_disp',),
         ('chu_ueamembro', 'uea_kodo',),
         'alighila_kotizo',
         'chu_kontrolita',
@@ -270,7 +270,8 @@ class PartoprenantoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
         ('alighdato', 'malalighdato'),
         ('chu_alvenis', 'chu_havasmanghkuponon', 'chu_havasnomshildon',)
     )
-    readonly_fields = ('id', 'alighdato', 'alighila_kotizo', 'chu_antaupagis')
+    readonly_fields = ('id', 'alighdato', 'alighila_kotizo',
+                       'chu_antaupagis_disp', 'antaupaga_sumo_disp')
     list_display = ('persona_nomo', 'familia_nomo', 'sekso',
                     'loghlando', 'chu_kontrolita', 'chambro')
     list_editable = ('loghlando', 'chambro')

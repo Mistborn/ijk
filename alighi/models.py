@@ -615,10 +615,25 @@ class Partoprenanto(models.Model):
         qs = self.pago_set.filter(pagtipo=pagtipo)
         return sum(pago.sumo for pago in qs)
     
+    @property
+    def antaupaga_sumo(self):
+        return self.sumo_de_pagtipo(Pagtipo.antaupago())
+
+    def antaupaga_sumo_disp(self):
+        # we need this to be a callable and not a property
+        # so that we can give it options in the admin
+        return u'{} €'.format(self.antaupaga_sumo)
+    antaupaga_sumo_disp.short_description = u'Antaŭpaga sumo'
+
+    @property
     def chu_antaupagis(self):
-        return self.sumo_de_pagtipo(Pagtipo.antaupago()) >= MINIMUMA_ANTAUPAGO
-    chu_antaupagis.boolean = True
-    chu_antaupagis.short_description = u'Ĉu antaŭpagis'
+        return self.antaupaga_sumo >= MINIMUMA_ANTAUPAGO
+
+    def chu_antaupagis_disp(self):
+        # again a callable and not a property for admin reasons
+        return self.chu_antaupagis
+    chu_antaupagis_disp.boolean = True
+    chu_antaupagis_disp.short_description = u'Ĉu antaŭpagis'
 
     @property
     def chu_plentempa(self):
