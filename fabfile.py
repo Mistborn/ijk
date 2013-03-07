@@ -14,14 +14,14 @@ def restart_test():
 def update_test():
     with cd('/home/mesha/webapps/ijktest/ijk'):
         run('git pull')
-        run('./manage.py collectstatic')
+        run('echo "yes" | ./manage.py collectstatic')
         run('./manage.py migrate alighi')
     restart_test()
 
 def update_live():
     with cd('/home/mesha/webapps/ijk/ijk'):
         run('git pull')
-        run('./manage.py collectstatic')
+        run('echo "yes" | ./manage.py collectstatic')
         run('./manage.py migrate alighi')
     restart_live()
 
