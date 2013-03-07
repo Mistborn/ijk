@@ -422,7 +422,8 @@ class Retposhtajho(models.Model):
     class Meta:
         verbose_name = eo('Retposxtajxo')
         verbose_name_plural = eo('Retposxtajxoj')
-        permissions = ((u"view_retposhtajho", u"Rajtas vidi retpoŝtaĵojn"),)
+        permissions = ((u"view_retposhtajho", u"Rajtas vidi retpoŝtaĵojn"),
+                       (u'send_retposhtajho', u'Rajtas sendi retpoŝtaĵojn'))
 
 class MembrighaKategorio(models.Model):
     '''Por krei liston de kategorioj de surlokaj membriĝoj en UEA/TEJO'''

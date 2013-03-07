@@ -306,6 +306,14 @@ class PartoprenantoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
         'deziras_loghi_kun__familia_nomo',
         'pagmaniera_komento', 'uea_kodo',)
     actions = ('sendi_amasan_retposhtajhon',)
+    
+    def get_actions(self, request):
+        actions = super(PartoprenantoAdmin, self).get_actions(request)
+        if not request.user.has_perm('alighi.send_retposhtajho'):
+            del actions['sendi_amasan_retposhtajhon']
+        if not request.user.has_perm('alighi.delete_user'):
+            del actions['delete_selected']
+        return actions
 
     def save_formset(self, request, form, formset, change):
         if formset.model == SenditaOficialajho:
@@ -340,6 +348,13 @@ class PartoprenantoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
         return my_urls + urls
 
     def sendi(self, request):
+        if not request.user.has_perm('alighi.send_retposhtajho'):
+            if request.path == reverse('admin:logout',
+                                       current_app=self.admin_site.name):
+                index_path = reverse('admin:index',
+                                     current_app=self.admin_site.name)
+                return HttpResponseRedirect(index_path)
+            return self.admin_site.login(request)
         try:
             pk = int(request.REQUEST.get('retposhtajho'))
         except (ValueError, TypeError):
