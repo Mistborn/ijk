@@ -160,6 +160,21 @@
       if (this.programkotizo) {
         this.programkotizo += this.aghaldona_pago ? this.aghaldona_pago : 0;
       }
+      this.chu_tagmangho = (function() {
+        var label, mendo, _i, _j, _len, _len1, _ref8, _ref9;
+        _ref8 = $('[name="manghomendoj"]:checked');
+        for (_i = 0, _len = _ref8.length; _i < _len; _i++) {
+          mendo = _ref8[_i];
+          _ref9 = $("label[for='" + ($(mendo).attr('id')) + "']");
+          for (_j = 0, _len1 = _ref9.length; _j < _len1; _j++) {
+            label = _ref9[_j];
+            if (label.innerText.toLowerCase().indexOf('tag') !== -1) {
+              return true;
+            }
+          }
+        }
+        return false;
+      })();
       this.chu_viando = (function() {
         var tipo, tipo_id;
         if (window.krompagtipoj.viando == null) {
@@ -167,7 +182,7 @@
         }
         tipo_id = $('[name="manghotipo"]:checked').attr('id');
         tipo = $("label[for='" + tipo_id + "']").text().toLowerCase();
-        return -1 !== tipo.indexOf('viand');
+        return _this.chu_tagmangho && -1 !== tipo.indexOf('viand');
       })();
       manghokosto = 0;
       $('input[name="manghomendoj"]:checked').each(function() {

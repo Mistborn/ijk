@@ -148,11 +148,17 @@ alighi_form = ->
         @programkotizo *= @relativa_partopreno if @programkotizo
         if @programkotizo
             @programkotizo += if @aghaldona_pago then @aghaldona_pago else 0
+        @chu_tagmangho = do =>
+            for mendo in $ '[name="manghomendoj"]:checked'
+                for label in $ "label[for='#{$(mendo).attr('id')}']"
+                    if label.innerText.toLowerCase().indexOf('tag') isnt -1
+                        return yes
+            return no
         @chu_viando = do =>
             return null unless window.krompagtipoj.viando?
             tipo_id = $('[name="manghotipo"]:checked').attr 'id'
             tipo = $("label[for='#{tipo_id}']").text().toLowerCase()
-            return -1 isnt tipo.indexOf 'viand'
+            return @chu_tagmangho and -1 isnt tipo.indexOf 'viand'
         manghokosto = 0
         $('input[name="manghomendoj"]:checked').each ->
             manghokosto += window.manghomendotipoj[$(this).val()]
