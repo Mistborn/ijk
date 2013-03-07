@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_unicode
 from django.conf import settings
+from django.http import Http404
 
 import models
 from utils import eo, KOMENCA_DATO, FINIGHA_DATO, SEKSOJ, esperanteca_dato
@@ -587,6 +588,8 @@ tabs = mark_safe(
 #~ from django.views.decorators.csrf import csrf_exempt
 #~ @csrf_exempt
 def alighi(request):
+    if settings.HIDE_ALIGHILO:
+        return Http404
     has_errors = False
     if request.method == 'POST':
         mmform = ManghoMendoForm(request.POST)
