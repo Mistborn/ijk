@@ -610,6 +610,16 @@ class Partoprenanto(models.Model):
     # def manghomendoj(self):
         # return ManghoMendo.objects.filter(partoprenanto=self)
 
+    def sumo_de_pagtipo(self, pagtipo):
+        '''Sumo de ĉiuj pagoj de tiu ĉi parteprenanto de la donita pagtipo'''
+        qs = self.pago_set.filter(pagtipo=pagtipo)
+        return sum(pago.sumo for pago in qs)
+    
+    def chu_antaupagis(self):
+        return self.sumo_de_pagtipo(Pagtipo.antaupago()) >= MINIMUMA_ANTAUPAGO
+    chu_antaupagis.boolean = True
+    chu_antaupagis.short_description = u'Ĉu antaŭpagis'
+
     @property
     def chu_plentempa(self):
         return self.ekde <= KOMENCA_DATO and self.ghis >= FINIGHA_DATO
@@ -776,8 +786,14 @@ class SurlokaMembrigho(models.Model):
 class Pagtipo(models.Model):
     '''Tipo de pago, ekz. subvencio, antaŭpago, ktp'''
     nomo = models.CharField(max_length=200)
+
+    @classmethod
+    def antaupago(cls):
+        return cls.objects.get(nomo__iexact=u'antaŭpago')
+
     def __unicode__(self):
         return self.nomo
+
     class Meta:
         verbose_name_plural = eo('Pagtipoj')
         permissions = ((u"view_pagtipo", u"Rajtas vidi pagtipojn"),)

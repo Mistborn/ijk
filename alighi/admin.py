@@ -123,7 +123,7 @@ class RetposhtajhoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
 
 class SurlokaMembrighoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
     list_display = ('partoprenanto', 'kategorio', 'kotizo', 'valuto')
-    #list_editable = list_display[1:]
+    # list_editable = list_display[1:]
     list_filter = ('kategorio', 'kotizo', 'valuto', 'partoprenanto',)
 class SurlokaMembrighoInline(SpecialPermissionsAdmin, admin.TabularInline):
     model = SurlokaMembrigho
@@ -262,6 +262,7 @@ class PartoprenantoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
         ('manghotipo', 'manghomendoj'),
         ('antaupagos_ghis',),
         ('pagmaniero', 'pagmaniera_komento',),
+        'chu_antaupagis',
         ('chu_ueamembro', 'uea_kodo',),
         'alighila_kotizo',
         'chu_kontrolita',
@@ -269,7 +270,7 @@ class PartoprenantoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
         ('alighdato', 'malalighdato'),
         ('chu_alvenis', 'chu_havasmanghkuponon', 'chu_havasnomshildon',)
     )
-    readonly_fields = ('id', 'alighdato', 'alighila_kotizo')
+    readonly_fields = ('id', 'alighdato', 'alighila_kotizo', 'chu_antaupagis')
     list_display = ('persona_nomo', 'familia_nomo', 'sekso',
                     'loghlando', 'chu_kontrolita', 'chambro')
     list_editable = ('loghlando', 'chambro')
@@ -320,7 +321,6 @@ class PartoprenantoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
 
 class PagtipoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
     search_fields = ('nomo',)
-
 
 class KrompagTipoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
     list_display = ('nomo', 'sumo')
