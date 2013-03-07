@@ -16,10 +16,10 @@ class ChambroInline(SpecialPermissionsAdmin, admin.TabularInline):
     extra = 0
 
 class RespondecoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
-    #fields = (('rolo', 'uzanto'),)
+    # fields = (('rolo', 'uzanto'),)
     list_display = ('rolo', 'uzanto')
     list_editable = ('uzanto',)
-    #save_as = True
+    # save_as = True
     list_filter = ('rolo', 'uzanto')
 
 class KurzoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
@@ -31,7 +31,7 @@ class KurzoInline(SpecialPermissionsAdmin, admin.TabularInline):
     extra = 0
 
 class ValutoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
-    #fields = (('kodo', 'nomo'),)
+    # fields = (('kodo', 'nomo'),)
     list_display = ('kodo', 'nomo')
     list_editable = ('nomo',)
     search_fields = ('nomo',)
@@ -94,18 +94,18 @@ class ManghoMendoTipoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
     list_editable = list_display[1:]
     search_fields = ('nomo', 'priskribo')
 
-#class ManghoMendoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
-    #list_display = ('partoprenanto', 'tipo')
-    ##list_editable = list_display[1:]
-    #list_filter = list_display
+# class ManghoMendoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
+    # list_display = ('partoprenanto', 'tipo')
+    # #list_editable = list_display[1:]
+    # list_filter = list_display
 
 class ManghoTipoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
-    #def model_unicode(self, obj):
-        #return unicode(obj)
-    #model_unicode.short_description = 'Ero'
-    #list_display = ('model_unicode', 'nomo')
-    #list_display_links = ('model_unicode',)
-    #list_editable = list_display[1:]
+    # def model_unicode(self, obj):
+        # return unicode(obj)
+    # model_unicode.short_description = 'Ero'
+    # list_display = ('model_unicode', 'nomo')
+    # list_display_links = ('model_unicode',)
+    # list_editable = list_display[1:]
     pass
 
 class PagmanieroAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
@@ -152,7 +152,7 @@ class PagoInline(SpecialPermissionsAdmin, admin.TabularInline):
     extra = 0
     readonly_fields = PagoAdmin.readonly_fields + ('dato',
             'pagmaniero', 'pagtipo', 'valuto', 'sumo')
-    fields = [f for f in PagoAdmin.list_display]# if f != 'respondeculo']
+    fields = [f for f in PagoAdmin.list_display]  # if f != 'respondeculo']
     can_delete = False
     def has_add_permission(self, request): return False
 
@@ -175,7 +175,7 @@ class OficialajhoAdminBase(object):
     elshuto.short_description = u'elŝuto'
     def get_readonly_fields(self, request, obj=None):
         if obj is None:
-            return ('alshutinto',  'alshutodato', 'elshuto')
+            return ('alshutinto', 'alshutodato', 'elshuto')
         return ('dosiero', 'alshutinto', 'alshutodato', 'elshuto')
     def has_delete_permission(self, request, obj=None): return False
     def save_model(self, request, obj, form, change):
@@ -187,7 +187,7 @@ class OficialajhoAdminBase(object):
 class SenditaOficialajhoAdmin(OficialajhoAdminBase,
                               SpecialPermissionsAdmin,
                               reversion.VersionAdmin):
-    #readonly_fields = ('alshutinto',)
+    # readonly_fields = ('alshutinto',)
     list_display = ('priskribo', 'elshuto', 'partoprenanto',
         'alshutinto', 'alshutodato')
     list_filter = ('partoprenanto', 'alshutinto', 'alshutodato')
@@ -223,7 +223,7 @@ class SenditaRetposhtajhoAdmin(
                    'partoprenanto')
     search_fields = ('temo', 'teksto')
     def has_add_permission(self, request): return False
-    #def has_change_permission(self, request, obj=None): return False
+    # def has_change_permission(self, request, obj=None): return False
     def has_delete_permission(self, request, obj=None): return False
     actions = None
     can_delete = False
@@ -338,24 +338,24 @@ class NomshildoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
     list_filter = ('chu_havasnomshildon',)
     search_fields = list_display[:-1]
 
-#class UEAValidecoAdmin(admin.ModelAdmin):
-    #readonly_fields = ('kodo', 'lando', 'rezulto')
-#admin.site.register(UEAValideco, UEAValidecoAdmin)
+# class UEAValidecoAdmin(admin.ModelAdmin):
+    # readonly_fields = ('kodo', 'lando', 'rezulto')
+# admin.site.register(UEAValideco, UEAValidecoAdmin)
 
 # inlines
 class UserRespondecoInline(SpecialPermissionsAdmin, admin.TabularInline):
     model = Respondeco
     extra = 0
-    #can_delete = False
-    #verbose_name_plural = 'profile'
+    # can_delete = False
+    # verbose_name_plural = 'profile'
 class UserPagoInline(SpecialPermissionsAdmin, admin.TabularInline):
     model = Pago
     fk_name = 'respondeculo'
     extra = 0
 
-#class OficialajhoInline(SpecialPermissionsAdmin, admin.TabularInline):
-    #model = SenditaOficialajho
-    #extra = 0
+# class OficialajhoInline(SpecialPermissionsAdmin, admin.TabularInline):
+    # model = SenditaOficialajho
+    # extra = 0
 
 # inline additions to User
 from django.contrib.auth.admin import UserAdmin
@@ -380,7 +380,7 @@ admin.site.register(LandoKategorio, LandoKategorioAdmin)
 admin.site.register(Lando, LandoAdmin)
 admin.site.register(LoghKategorio, LoghKategorioAdmin)
 admin.site.register(ManghoMendoTipo, ManghoMendoTipoAdmin)
-#admin.site.register(ManghoMendo, ManghoMendoAdmin)
+# admin.site.register(ManghoMendo, ManghoMendoAdmin)
 admin.site.register(ManghoTipo, ManghoTipoAdmin)
 admin.site.register(ProgramKotizo, ProgramKotizoAdmin)
 admin.site.register(Pagmaniero, PagmanieroAdmin)
