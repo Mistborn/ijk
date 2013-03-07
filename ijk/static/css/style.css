@@ -240,34 +240,30 @@ table, caption, tbody, tfoot, thead, tr, th, td {
 #heading .menuo > ul > li {
   border-radius: 10px 10px 0 0;
 }
-#heading .menuo > ul > li > ul > li {
+#heading .menuo > ul > li > ul > li, #heading .menuo > ul > li > ul > li li {
   border-radius: 0;
   border-left: 1px solid black;
   border-right: 1px solid black;
 }
-#heading .menuo > ul > li > ul > li:first-child {
+#heading .menuo > ul > li > ul > li:first-child, #heading .menuo > ul > li > ul > li li:first-child {
   border-radius: 0 10px 0 0;
   border-top: 1px solid black;
   border-right: 1px solid black;
   border-left: 1px solid black;
 }
-#heading .menuo > ul > li > ul > li:last-child {
+#heading .menuo > ul > li > ul > li:last-child, #heading .menuo > ul > li > ul > li li:last-child {
   border-radius: 0 0 10px 10px;
   border-bottom: 1px solid black;
   border-right: 1px solid black;
   border-left: 1px solid black;
 }
-#heading .menuo > ul > li > ul > li:first-child:last-child {
+#heading .menuo > ul > li > ul > li:first-child:last-child, #heading .menuo > ul > li > ul > li li:first-child:last-child {
   border-radius: 0 10px 10px 10px;
   border-border: 1px solid black;
 }
-#heading .menuo > ul > li > ul > li li {
+#heading .menuo > ul > li > ul > li li, #heading .menuo > ul > li > ul > li li li {
   position: relative;
   left: -11px;
-  border-radius: 0 10px 10px 0;
-  border-top: 1px solid black;
-  border-right: 1px solid black;
-  border-bottom: 1px solid black;
 }
 #heading .menuo li {
   text-transform: lowercase;
