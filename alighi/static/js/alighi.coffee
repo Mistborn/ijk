@@ -174,7 +174,7 @@ alighi_form = ->
             else
                 off
         else null
-        if @uearabato and @relative_partopreno < 1
+        if @uearabato > 0 and @relativa_partopreno < 1
             @uearabato *= @relativa_partopreno 
         @chu_invitletero = $('#id_chu_bezonas_invitleteron').is ':checked'
         @chu_ekskurso = $('#id_chu_tuttaga_ekskurso').is ':checked'

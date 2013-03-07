@@ -196,7 +196,7 @@
         this.manghokosto *= this.manghorelativeco;
       }
       this.uearabato = !$('#id_chu_ueamembro').is(':checked') || !this.programkotizo > 0 ? 0 : (this.landokategorio != null) && this.programkotizo > 0 ? this.landokategorio !== false ? window.uearabatoj[this.landokategorio] : false : null;
-      if (this.uearabato && this.relative_partopreno < 1) {
+      if (this.uearabato > 0 && this.relativa_partopreno < 1) {
         this.uearabato *= this.relativa_partopreno;
       }
       this.chu_invitletero = $('#id_chu_bezonas_invitleteron').is(':checked');
