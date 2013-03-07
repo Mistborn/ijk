@@ -151,7 +151,7 @@ alighi_form = ->
         @chu_tagmangho = do =>
             for mendo in $ '[name="manghomendoj"]:checked'
                 for label in $ "label[for='#{$(mendo).attr('id')}']"
-                    if label.innerText.toLowerCase().indexOf('tag') isnt -1
+                    if $(label).text().toLowerCase().indexOf('tag') isnt -1
                         return yes
             return no
         @chu_viando = do =>

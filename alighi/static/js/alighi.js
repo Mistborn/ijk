@@ -168,7 +168,7 @@
           _ref9 = $("label[for='" + ($(mendo).attr('id')) + "']");
           for (_j = 0, _len1 = _ref9.length; _j < _len1; _j++) {
             label = _ref9[_j];
-            if (label.innerText.toLowerCase().indexOf('tag') !== -1) {
+            if ($(label).text().toLowerCase().indexOf('tag') !== -1) {
               return true;
             }
           }
