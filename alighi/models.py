@@ -410,7 +410,11 @@ class Retposhtajho(models.Model):
                 [partoprenanto.retposhtadreso], fail_silently=False)
         except smtplib.SMTPException:
             sendajho.traceback = traceback.format_exc()
+            retval = False
+        else:
+            retval = True
         sendajho.save()
+        return retval
 
     def __unicode__(self):
         return self.nomo
@@ -615,6 +619,10 @@ class Partoprenanto(models.Model):
         qs = self.pago_set.filter(pagtipo=pagtipo)
         return sum(pago.sumo for pago in qs)
     
+    @property
+    def plena_nomo(self):
+        return unicode(self)
+
     @property
     def antaupaga_sumo(self):
         return self.sumo_de_pagtipo(Pagtipo.antaupago())

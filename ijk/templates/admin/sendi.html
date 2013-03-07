@@ -1,0 +1,40 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static admin_list %}
+{% load url from future %}
+{% load admin_urls %}
+
+{% block content %}
+    <form method="post" action="{{ path }}">{% csrf_token %}
+    <div id="alsendatoj-div" class="grp-group grp-tabular">
+      <h2>Elektu alsendato(j)n:</h2>
+      <select multiple id="alsendato" name="alsendato"
+              size="15" style="height: auto">
+        {% for partoprenanto in partoprenantoj %}
+          <option {% if partoprenanto in alsendatoj %}selected{% endif %} 
+                  value="{{ partoprenanto.id }}">
+            {{ partoprenanto.plena_nomo }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div id="retposhtajho-div" class="grp-group grp-tabular">
+        <h2>Elektu retpoŝtaĵon:</h2>
+        <select id="retposhtajho" name="retposhtajho">
+            <option value="">&mdash;</option>
+            {% for rp in retposhtajhoj %}
+            <option {% if rp == retposhtajho %}selected{% endif %}
+                    value="{{ rp.id }}">{{ rp }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <footer class="grp-module grp-submit-row grp-fixed-footer">
+    <ul>
+      <li class="grp-float-left">
+        <input type="submit" name="konfirmi" value="Sendi" class="grp-button">
+      </li>
+    </ul>
+    </footer>
+    
+    </form>
+{% endblock %}

@@ -1,6 +1,13 @@
 # -*- encoding: utf-8 -*-
+import urllib
 
+from django.conf.urls import patterns, url
 from django.contrib import admin
+from annoying.functions import get_object_or_None
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
 
 import reversion
 from alighi.models import *
@@ -298,16 +305,16 @@ class PartoprenantoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
         'deziras_loghi_kun__persona_nomo',
         'deziras_loghi_kun__familia_nomo',
         'pagmaniera_komento', 'uea_kodo',)
+    actions = ('sendi_amasan_retposhtajhon',)
+
     def save_formset(self, request, form, formset, change):
         if formset.model == SenditaOficialajho:
-#            print 'sendita oficialajho'
             objects = formset.save(commit=False)
             for obj in objects:
                 if not obj.alshutinto:
                     obj.alshutinto = request.user
                 obj.save()
         elif formset.model == Pago:
-#            print 'pago,',
             objects = formset.save(commit=False)
             for obj in objects:
                 if obj.pk is None and not obj.kreinto:
@@ -317,6 +324,59 @@ class PartoprenantoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
         else:
             super(PartoprenantoAdmin, self).save_formset(
                 request, form, formset, change)
+
+    def sendi_amasan_retposhtajhon(self, request, queryset):
+        querydict = [('alsendato', pp.id) for pp in queryset]
+        dest = reverse('admin:sendi') + '?' + urllib.urlencode(querydict)
+        return HttpResponseRedirect(dest)
+    sendi_amasan_retposhtajhon.short_description = u'Sendi amasan retpoŝtaĵon'
+
+
+    def get_urls(self):
+        urls = super(PartoprenantoAdmin, self).get_urls()
+        my_urls = patterns('',
+            url(r'^sendi/$',  # (rp-\d+/)?(\d+(?:,\d+)*/)?$',
+                self.admin_site.admin_view(self.sendi), name='sendi'))
+        return my_urls + urls
+
+    def sendi(self, request):
+        try:
+            pk = int(request.REQUEST.get('retposhtajho'))
+        except (ValueError, TypeError):
+            pk = None
+        rp = get_object_or_None(Retposhtajho, pk=pk)
+        ids = set()
+        for ppid in request.REQUEST.getlist('alsendato'):
+            try:
+                ids.add(int(ppid))
+            except (ValueError, TypeError):
+                pass
+        alsendatoj = Partoprenanto.objects.filter(pk__in=ids)
+
+        context = {
+            'retposhtajho': rp,
+            'alsendatoj': alsendatoj,
+            'current_app': self.admin_site.name,
+            'path': request.path,
+            'title': u'Sendi retpoŝtaĵon'
+        }
+
+        if (alsendatoj and rp is not None and 'konfirmi' in request.POST):
+            # send it
+            errors = []
+            for alsendato in alsendatoj:
+                if not rp.sendi(alsendato):
+                    errors.append(alsendato)
+            context['errors'] = errors
+            context['title'] = u'Sendo de retpoŝtaĵo {}'.format(rp)
+            return render_to_response('admin/sendita.html',
+                                      RequestContext(request, context))
+        # montri la formularon
+        context.update(partoprenantoj=Partoprenanto.objects.all(),
+                       retposhtajhoj=Retposhtajho.objects.all())
+        return render_to_response('admin/sendi.html',
+                                  RequestContext(request, context))
+
     inlines = (PagoInline, NotoInline, OficialajhoInline,
         SenditaRetposhtajhoInline)
 

@@ -1,0 +1,27 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static admin_list %}
+{% load url from future %}
+{% load admin_urls %}
+
+{# % block coltype %}flex{% endblock % #}
+
+{% block content %}
+    <div class="grp-group grp-tabular">
+      <h2>Ricevantoj:</h2>
+      <ul style="padding: 0.5em">
+          {% for alsendato in alsendatoj %}
+          <li style="padding: 0.5em">{{ alsendato.plena_nomo }}</li>
+          {% endfor %}
+      </ul>
+    </div>
+    {% if errors %}
+    <div class="grp-group grp-tabular">
+      <h2>Okazis problemoj kun la jenaj ricevantoj:</h2>
+      <ul style="padding: 0.5em">
+          {% for error in errors %}
+            <li style="padding: 0.5em">{{ error.plena_nomo }}</li>
+          {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+{% endblock %}
