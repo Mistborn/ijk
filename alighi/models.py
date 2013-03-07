@@ -644,6 +644,14 @@ class Partoprenanto(models.Model):
         return esperanteca_dato(self.naskighdato)
 
     @property
+    def deziras_loghi_kun_etikedo(self):
+        if self.deziras_loghi_kun is not None:
+            return u'{} {}'.format(self.deziras_loghi_kun.persona_nomo,
+                                   self.deziras_loghi_kun.familia_nomo)
+        else:
+            return self.deziras_loghi_kun_nomo
+
+    @property
     def partopreninformoj(self):
         return (u"Naskiĝdato: {naskighdato} "
                 u"Vi partoprenos: {gamo} "
