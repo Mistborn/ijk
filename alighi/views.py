@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_unicode
 from django.conf import settings
+from django.http import Http404
 
 import models
 from utils import eo, KOMENCA_DATO, FINIGHA_DATO, SEKSOJ, esperanteca_dato
@@ -547,6 +548,8 @@ tabs = mark_safe(
                 for (i, tab) in enumerate(tablist))))
 
 def alighi(request):
+    if settings.HIDE_ALIGHILO:
+        raise Http404
     has_errors = False
     if request.method == 'POST':
         nform = NotoForm(request.POST)
