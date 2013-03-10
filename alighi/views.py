@@ -513,7 +513,8 @@ formdivisions = [
         'chu_malnoktemulo', 'deziras_loghi_kun_nomo', ]
     ]),
     (eo('Mangxado'), [ManghoMendoForm, ['manghotipo', ],
-        FormInfo.make_form(u'Kromkosto por viando: {} €'.format(vianda_kosto))
+        FormInfo.make_form(
+            u'Kromkosto de vianda manĝo: {} €'.format(vianda_kosto))
         ]),
     (eo('Pago'), [
         ['chu_ueamembro'], FormInfo.make_form(u'<p>{}</p><p>{}</p>'.format(
