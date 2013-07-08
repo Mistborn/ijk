@@ -1,0 +1,54 @@
+# django-dosiero translation file
+# Copyright (C) Adam Mesha
+# This file is distributed under the same license as the django-dosiero package.
+# Adam Mesha <adam@mesha.org>, 2013.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-04-09 11:50+0300\n"
+"PO-Revision-Date: 2013-04-09 10:36+0300\n"
+"Last-Translator: Adam Mesha <adam@mesha.org>\n"
+"Language: eo\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: admin.py:15
+msgid "Link"
+msgstr "Ligilo"
+
+#: admin.py:22
+msgid "Unknown file format"
+msgstr "Nekonata dosierformato"
+
+#: admin.py:24
+msgid "Preview"
+msgstr "Antaŭrigardo"
+
+#: admin.py:36
+msgid "Delete selected"
+msgstr "Forigi elektitajn"
+
+#: models.py:18
+msgid "Description"
+msgstr "Priskribo"
+
+#: models.py:19
+msgid "Will be set to the file name if left blank"
+msgstr "Ricevos la nomon de la dosiero se vi lasos ĝin malplena."
+
+#: models.py:21
+msgid "File"
+msgstr "Dosiero"
+
+#: models.py:53
+msgid "Dosiero file"
+msgstr "Dosiero"
+
+#: models.py:54
+msgid "Dosiero files"
+msgstr "Dosieroj"

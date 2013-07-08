@@ -1,5 +1,9 @@
 from fabric.api import *
 
+import os.path
+
+BASE_DIR = '/home/amesha/projects/ijk'
+
 env.user = 'mesha'
 env.hosts = ['mesha.webfactional.com']
 
@@ -30,7 +34,11 @@ def scss():
         local('sass -t expanded --update style.scss:style.css')
 
 def coffee():
-    with lcd('/home/amesha/projects/ijk/alighi/static/js'):
+    with lcd(os.path.join(BASE_DIR, 'alighi/static/js')):
         local('coffee -c alighi.coffee')
         local('yui-compressor -o alighi.min.js alighi.js')
+
+def update_dosiero():
+    with lcd(BASE_DIR):
+        local('cp -r /home/amesha/projects/django-dosiero/dosiero/* dosiero')
 

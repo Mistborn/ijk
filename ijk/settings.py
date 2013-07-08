@@ -4,6 +4,11 @@ import os.path
 
 from private_settings import *
 
+try:
+    DOSIERO_BACKUP_DIR = os.path.join(BACKUP_DIR, 'dosiero')
+except NameError:
+    pass
+
 ADMINS = (
     ('Adam Mesha', 'adam@mesha.org'),
 )
