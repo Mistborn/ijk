@@ -199,6 +199,9 @@ class LoghKategorio(models.Model):
         help_text=eo('Kosto por logxo dum la tuta kongreso'))
     unutaga_kosto = models.DecimalField(max_digits=8, decimal_places=2,
         help_text=eo('Kosto por logxo dum unu nokto'))
+    chu_havebla = models.BooleanField(default=True,
+        verbose_name='Ĉu havebla',
+        help_text='Ĉu la loĝkategorio estas elektebla en la aliĝilo')
 
     @classmethod
     def javascript(cls):
