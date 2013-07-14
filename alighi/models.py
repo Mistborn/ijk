@@ -586,7 +586,7 @@ class Partoprenanto(models.Model):
     manghotipo = models.ForeignKey(ManghoTipo, verbose_name=eo('Mangxotipo'),
         help_text=eo('Tipo de mangxo, ekz. vegetare, viande, ktp'))
     manghomendoj = models.ManyToManyField(ManghoMendoTipo,
-        verbose_name=eo('Mangxomendoj'))
+        verbose_name=eo('Mangxomendoj'), blank=True, null=True)
     antaupagos_ghis = models.ForeignKey(AlighKategorio,
         verbose_name=eo('Antauxpagos gxis'), null=True,
         help_text=eo('Kio estis enigita en la alighformularo'))
