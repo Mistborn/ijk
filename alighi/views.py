@@ -297,7 +297,8 @@ partoprenanto_fields_dict = dict(
     organiza_kontribuo=forms.CharField(required=False,
         widget=forms.Textarea,
         label=eo('Mi povas kontribui al organizado per')),
-    loghkategorio=forms.ModelChoiceField(models.LoghKategorio.objects,
+    loghkategorio=forms.ModelChoiceField(
+        models.LoghKategorio.objects.filter(chu_havebla=True),
         label=eo('Mi volas logxi en'),
         widget=RadioSelectSpecialClass, empty_label=None,
         help_text=models.LoghKategorio.helptext(),
