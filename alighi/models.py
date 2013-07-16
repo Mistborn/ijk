@@ -643,7 +643,7 @@ class Partoprenanto(models.Model):
     def antaupaga_sumo_disp(self):
         # we need this to be a callable and not a property
         # so that we can give it options in the admin
-        return u'{} €'.format(self.antaupaga_sumo)
+        return u'{:.2f} €'.format(self.antaupaga_sumo)
     antaupaga_sumo_disp.short_description = u'Antaŭpaga sumo'
 
     @property
