@@ -56,6 +56,15 @@ class Kurzo(models.Model):
     kurzo = models.DecimalField(max_digits=12, decimal_places=5,
         help_text=eo('1 euxro = tiom'))
     # *** de la donita valuto al euroj
+
+    @classmethod
+    def get_last_kurzo(cls, valuto, dato):
+        if valuto == 'EUR':
+            return 1
+        qs = cls.objects.filter(valuto__kodo=valuto,
+                                dato__lte=dato).order_by('-dato')
+        return qs[0]
+
     def __unicode__(self):
         return eo(u'Kurzo por {} je {}'.format(self.valuto, self.dato))
     class Meta:
@@ -621,8 +630,8 @@ class Partoprenanto(models.Model):
     def sumo_de_pagtipo(self, pagtipo):
         '''Sumo de ĉiuj pagoj de tiu ĉi parteprenanto de la donita pagtipo'''
         qs = self.pago_set.filter(pagtipo=pagtipo)
-        return sum(pago.sumo for pago in qs)
-    
+        return sum(pago.eura_sumo for pago in qs)
+
     @property
     def plena_nomo(self):
         return unicode(self)
@@ -860,6 +869,13 @@ class Pago(models.Model):
         u'Pago ne povas esti en la estonteco.'})
     rimarko = models.CharField(blank=True, max_length=255,
         help_text=eo('Ekz. por indiki peranton, konto por UEA gxiro, ktp'))
+
+    @property
+    def eura_sumo(self):
+        if self.valuto.kodo == 'EUR':
+            return self.sumo
+        kurzo = Kurzo.get_last_kurzo(self.valuto.kodo, self.dato)
+        return self.sumo / kurzo.kurzo
 
     def __unicode__(self):
         return eo(u'{} {} ({}) de {} je {}'.format(
