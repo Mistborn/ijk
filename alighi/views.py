@@ -57,13 +57,34 @@ PARTOPRENANTO_EXCLUDE = ('chambro', 'chu_invitletero_sendita',
 )
 
 class RadioFieldSpecialClassRenderer(forms.widgets.RadioFieldRenderer):
+#    def render(self):
+#        return mark_safe(u'<ul class="%s">\n%s\n</ul>' %
+#                         (VERTICAL_CLASS, u'\n'.join(
+#            [u'<li>%s</li>' % force_unicode(w) for w in self])))
+
     def render(self):
+        def procw(w):
+            if int(w.choice_value) in self.disabled:
+                w.attrs['disabled'] = True
+            return w
+        widgets = (procw(widget) for widget in self)
         return mark_safe(u'<ul class="%s">\n%s\n</ul>' %
                          (VERTICAL_CLASS, u'\n'.join(
-            [u'<li>%s</li>' % force_unicode(w) for w in self])))
+            (u'<li>%s</li>' % force_unicode(w) for w in widgets))))
+
 
 class RadioSelectSpecialClass(forms.RadioSelect):
     renderer = RadioFieldSpecialClassRenderer
+    def __init__(self, *args, **kw):
+        if 'disabled' in kw:
+            self.disabled = kw['disabled']
+            del kw['disabled']
+        super(RadioSelectSpecialClass, self).__init__(*args, **kw)
+    def get_renderer(self, *args, **kw):
+        renderer = super(RadioSelectSpecialClass,
+                         self).get_renderer(*args, **kw)
+        renderer.disabled = self.disabled if hasattr(self, 'disabled') else {}
+        return renderer
 
 class CheckboxSpecialClass(forms.CheckboxSelectMultiple):
     def render(self, *args, **kw):
@@ -297,10 +318,12 @@ partoprenanto_fields_dict = dict(
     organiza_kontribuo=forms.CharField(required=False,
         widget=forms.Textarea,
         label=eo('Mi povas kontribui al organizado per')),
-    loghkategorio=forms.ModelChoiceField(
-        models.LoghKategorio.objects.filter(chu_havebla=True),
+    loghkategorio=forms.ModelChoiceField(models.LoghKategorio.objects,
         label=eo('Mi volas logxi en'),
-        widget=RadioSelectSpecialClass, empty_label=None,
+        widget=RadioSelectSpecialClass(
+            disabled=set(lk.id for lk in
+                     models.LoghKategorio.objects.filter(chu_havebla=False))),
+        empty_label=None,
         help_text=models.LoghKategorio.helptext(),
         error_messages=em(required='Elektu kie vi volas loĝi')),
     deziras_loghi_kun_nomo=forms.CharField(
@@ -314,7 +337,7 @@ partoprenanto_fields_dict = dict(
         required=True, initial=None,
         empty_label=None,
         error_messages=em(required='Elektu kian manĝon vi volas')),
-    manghomendoj = forms.ModelMultipleChoiceField(label=eo('Mi volas mendi'),
+    manghomendoj=forms.ModelMultipleChoiceField(label=eo('Mi volas mendi'),
         required=False, widget=CheckboxSpecialClass,
         queryset=models.ManghoMendoTipo.objects,
         initial=models.ManghoMendoTipo.objects.all(),
