@@ -728,6 +728,17 @@ class Partoprenanto(models.Model):
             return 0
         return UEARabato.rabato(self.loghlando)
 
+    @classmethod
+    def alighintoj(cls):
+        qset = cls.objects.order_by('alighdato')
+        # result is a tuple (pk, css_class, name, city/country)
+        return [(obj.pk, obj.sekso,
+                 u'{} {}'.format(obj.persona_nomo, obj.familia_nomo),
+                 u'{}, {}'.format(obj.urbo, obj.loghlando.nomo))
+                    if obj.chu_retalisto else
+                        (obj.pk, 'r', 'rezervita', 'rezervita')
+                for obj in qset]
+
     def kotizo(self):
         '''Liveri la bazan kotizon de tiu ĉi partoprenanto
         Formulo por kotizo:

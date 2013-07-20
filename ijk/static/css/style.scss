@@ -528,3 +528,43 @@ textarea {
     }
 }
 
+// Participant list
+.alighintoj {
+    $lighten-factor: 40;
+    $boy-blue: lighten(#64739A, $lighten-factor);
+    $girl-pink: lighten(#98685C, $lighten-factor);
+    $other-green: lighten(#4F7D66, $lighten-factor);
+    box-sizing: border-box;
+    width: 100%;
+    tr {
+        border-bottom: 1px dotted gray;    
+        &.header {
+            border-bottom: 3px solid $style-color;
+        }
+        &.v {
+            background-color: $boy-blue;
+        }
+        &.i {
+            background-color: $girl-pink;
+        }
+        &.a {
+            background-color: $other-green;
+        }
+    }
+    td, th {
+        text-align: left;
+        line-height: 175%;
+    }
+    th {
+        font-weight: bold;
+    }
+    td.pk {
+        width: 3em;
+        &:after {
+            content: ".";
+        }
+    }
+    td.name {
+        width: 50%;
+    }
+}

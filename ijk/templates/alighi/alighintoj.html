@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Aliĝintoj{% endblock %}
+
+{% block heading %}Aliĝintoj al IJK{% endblock %}
+
+{% block content %}
+
+<table class="alighintoj">
+    <tr class="header"><th></th><th>nomo</th><th>loko</th></tr>
+{% for pk, cls, name, loc in alighintoj %}
+    <tr class="{{ cls }}">
+        <td class="pk">{{ pk }}</td>
+        <td class="name">{{ name }}</td>
+        <td class="loc">{{ loc }}</td>
+    </tr>
+{% endfor %}
+</table>
+
+{% endblock %}

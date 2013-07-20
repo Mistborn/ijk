@@ -108,6 +108,8 @@ try:
             u'<ul>{}</ul>'.format(u''.join(sublist)) if sublist else u'')
 
     _menu.extend(_mkmenu(node) for node in _roots)
+    _menu.append(u'<li><a href="{}">Alighintoj</a></li>'.format(
+        reverse('alighintoj')))
     if not settings.HIDE_ALIGHILO:
         _menu.append(u'<li><a href="{}">Aliĝi!</a></li>'.format(
             reverse('alighi')))
@@ -139,4 +141,4 @@ def ga_context_processor(request):
 
             \n</script>''')
     return d
-    
+

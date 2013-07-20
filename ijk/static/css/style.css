@@ -541,3 +541,39 @@ textarea {
 .fakturo ul li .sumo-klarigo {
   border-top: 3px double black;
 }
+
+.alighintoj {
+  box-sizing: border-box;
+  width: 100%;
+}
+.alighintoj tr {
+  border-bottom: 1px dotted gray;
+}
+.alighintoj tr.header {
+  border-bottom: 3px solid #2a3753;
+}
+.alighintoj tr.v {
+  background-color: #dfe3eb;
+}
+.alighintoj tr.i {
+  background-color: #e8dbd8;
+}
+.alighintoj tr.a {
+  background-color: #c1d7cc;
+}
+.alighintoj td, .alighintoj th {
+  text-align: left;
+  line-height: 175%;
+}
+.alighintoj th {
+  font-weight: bold;
+}
+.alighintoj td.pk {
+  width: 3em;
+}
+.alighintoj td.pk:after {
+  content: ".";
+}
+.alighintoj td.name {
+  width: 50%;
+}

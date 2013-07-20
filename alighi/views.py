@@ -621,3 +621,8 @@ def gratulon(request):
 def bazo(request):
     context = RequestContext(request)
     return render_to_response('base.html', context)
+
+def alighintoj(request):
+    context = RequestContext(request, {'alighintoj':
+                                       models.Partoprenanto.alighintoj()})
+    return render_to_response('alighi/alighintoj.html', context)
