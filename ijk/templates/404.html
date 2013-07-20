@@ -5,6 +5,42 @@
 {% block heading %}404 Netroveble{% endblock %}
 
 {% block content %}
+{% comment %}
 <p>La paĝo, kiun vi serĉas, ne troveblas.
 Eble iru al la <a href="/">ĉefpaĝo</a>?</p>
+{% endcomment %}
+
+<img src=" /static/media/dosiero/404.png" align="left" style="margin-right: 1em">
+<h1 class="main-heading">404 Netroveble</h1>
+<p>
+La teamo de krokodiloj&ndash;detektivoj de IJK ĵus revenis tute elĉerpitaj kaj &mdash; ni bedaŭras informi &mdash; kun malplenaj manoj...&nbsp;
+Se vi jam estas ĉi tie, ĉu vi eble trovis unu el tiuj?
+</p>
+<br>
+<script>
+       $(document).ready(function() {
+              $('.Blarek').each(function() {
+                     $(this).on('mouseenter', function() {
+                           blarekBildo = $('#Blarek');
+                           if (blarekBildo.attr('stato') == 'R') {
+                                  blarekBildo.hide('clip', function() { $(this).attr('src', ' /static/media/dosiero/404-blarek.jpg').attr('stato', 'H').show('clip'); });
+                           }
+                     });
+              });
+       });
+</script>
+<table style="font-size: 80%">
+<tr valign="bottom" align="center">
+       <td width="33%"><img src="/static/media/dosiero/404-shtrumpeto.jpg" style="margin-bottom: 20px" /></td>
+       <td width="33%"><img src=" /static/media/dosiero/404-kondomo.jpg" /></td>
+       <td width="33%" class="Blarek"><img id="Blarek" src=" /static/media/dosiero/404-blarek_a.jpg" style="border-radius: 2px" stato="R" /></td>
+</tr>
+<tr valign="top" align="center">
+       <td><b>Ŝtrumpeto kun strioj</b><br>Ankoraŭ hieraŭ nia prezidantino surhavis ĝin. Hodiaŭ, malaperinta.</td>
+       <td><b>Fraga kondomo</b><br>Freŝa, ankoraŭ tute ne uzita, kaj ŝajne estos tre bezonata ĉi-nokte.</td>
+       <td class="Blarek"><b>Blarek Mahuŝ</b><br>Eltrovita lastsomere, E@I promesis liveri lin al IJK. Sed li denove eskapis.</td>
+</tr>
+</table>
+
+
 {% endblock %}
