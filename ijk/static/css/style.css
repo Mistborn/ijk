@@ -547,25 +547,52 @@ textarea {
   width: 100%;
 }
 .alighintoj tr {
-  border-bottom: 1px dotted gray;
+  border-bottom: dotted 1px #ddd;
+  height: 1.8em;
+  vertical-align: middle;
 }
 .alighintoj tr.header {
   border-bottom: 3px solid #2a3753;
 }
 .alighintoj tr.v {
-  background-color: #dfe3eb;
+  color: #000055;
+}
+.alighintoj tr.v.neantaupagis {
+  color: #444455;
 }
 .alighintoj tr.i {
-  background-color: #e8dbd8;
+  color: #660066;
+}
+.alighintoj tr.i.neantaupagis {
+  color: #665566;
 }
 .alighintoj tr.a {
-  background-color: #c1d7cc;
+  color: #4f7d66;
+}
+.alighintoj tr.a.neantaupagis {
+  color: gray;
+}
+.alighintoj tr.r {
+  font-style: italic;
+}
+.alighintoj tr .fam {
+  font-variant: small-caps;
+}
+.alighintoj tr .malalighis {
+  text-decoration: line-through;
+}
+.alighintoj tr td:first-child {
+  font-size: 80%;
+}
+.alighintoj tr td.name, .alighintoj tr td.loc, .alighintoj tr .fam {
+  color: inherit;
 }
 .alighintoj td, .alighintoj th {
   text-align: left;
   line-height: 175%;
 }
 .alighintoj th {
+  text-align: left;
   font-weight: bold;
 }
 .alighintoj td.pk {

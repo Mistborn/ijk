@@ -533,22 +533,52 @@ textarea {
     $lighten-factor: 40;
     $boy-blue: lighten(#64739A, $lighten-factor);
     $girl-pink: lighten(#98685C, $lighten-factor);
-    $other-green: lighten(#4F7D66, $lighten-factor);
+    $other-green: #4F7D66; // lighten(#4F7D66, $lighten-factor);
+    $v-jes: #005;
+    $v-ne: #445;
+    $i-jes: #606;
+    $i-ne: #656;
     box-sizing: border-box;
     width: 100%;
     tr {
-        border-bottom: 1px dotted gray;    
+        border-bottom: dotted 1px #ddd;
+        height: 1.8em;
+        vertical-align: middle;
         &.header {
             border-bottom: 3px solid $style-color;
         }
         &.v {
-            background-color: $boy-blue;
+            color: $v-jes; // $boy-blue;
+            &.neantaupagis {
+              color: $v-ne;
+            }
         }
         &.i {
-            background-color: $girl-pink;
+            color: $i-jes; // $girl-pink;
+            &.neantaupagis {
+              color: $i-ne;
+            }
         }
         &.a {
-            background-color: $other-green;
+            color: $other-green;
+            &.neantaupagis {
+              color: gray;
+            }
+        }
+        &.r {
+            font-style: italic;
+        }
+        .fam {
+          font-variant: small-caps;
+        }
+        .malalighis {
+          text-decoration: line-through;
+        }
+        td:first-child {
+          font-size: 80%;
+        }
+        td.name, td.loc, .fam {
+          color: inherit;
         }
     }
     td, th {
@@ -556,6 +586,7 @@ textarea {
         line-height: 175%;
     }
     th {
+        text-align: left;
         font-weight: bold;
     }
     td.pk {

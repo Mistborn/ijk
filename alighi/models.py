@@ -731,13 +731,25 @@ class Partoprenanto(models.Model):
     @classmethod
     def alighintoj(cls):
         qset = cls.objects.order_by('alighdato')
+        def get_line(obj):
+            if not obj.chu_retalisto:
+                return (obj.pk, 'r', 'rezervita', 'rezervita')
+            classes = []
+            classes.append(obj.sekso)
+            if obj.malalighdato:
+                classes.append('malalighis')
+            if not obj.chu_antaupagis:
+                classes.append('neantaupagis')
+            
+            return (obj.pk, ' '.join(classes),
+                 mark_safe(u'{} {} <span class="fam">{}</span>'.format(
+                        obj.persona_nomo,
+                        u'&laquo;{}&raquo;'.format(obj.shildnomo)
+                            if obj.shildnomo else u'',
+                        obj.familia_nomo)),
+                 mark_safe(u'{}, {}'.format(obj.urbo, obj.loghlando.nomo)))
         # result is a tuple (pk, css_class, name, city/country)
-        return [(obj.pk, obj.sekso,
-                 u'{} {}'.format(obj.persona_nomo, obj.familia_nomo),
-                 u'{}, {}'.format(obj.urbo, obj.loghlando.nomo))
-                    if obj.chu_retalisto else
-                        (obj.pk, 'r', 'rezervita', 'rezervita')
-                for obj in qset]
+        return [get_line(obj) for obj in qset]
 
     def kotizo(self):
         '''Liveri la bazan kotizon de tiu ĉi partoprenanto
