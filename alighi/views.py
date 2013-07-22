@@ -65,12 +65,12 @@ class RadioFieldSpecialClassRenderer(forms.widgets.RadioFieldRenderer):
     def render(self):
         def procw(w):
             if int(w.choice_value) in self.disabled:
-                w.attrs['disabled'] = True
-            return w
+                w.attrs['disabled'] = 'disabled'
+            return force_unicode(w)
         widgets = (procw(widget) for widget in self)
         return mark_safe(u'<ul class="%s">\n%s\n</ul>' %
                          (VERTICAL_CLASS, u'\n'.join(
-            (u'<li>%s</li>' % force_unicode(w) for w in widgets))))
+            (u'<li>%s</li>' % w for w in widgets))))
 
 
 class RadioSelectSpecialClass(forms.RadioSelect):
@@ -85,6 +85,7 @@ class RadioSelectSpecialClass(forms.RadioSelect):
                          self).get_renderer(*args, **kw)
         renderer.disabled = self.disabled if hasattr(self, 'disabled') else {}
         return renderer
+
 
 class CheckboxSpecialClass(forms.CheckboxSelectMultiple):
     def render(self, *args, **kw):
@@ -324,6 +325,7 @@ partoprenanto_fields_dict = dict(
             disabled=set(lk.id for lk in
                      models.LoghKategorio.objects.filter(chu_havebla=False))),
         empty_label=None,
+        validators=[havebla_loghkategorio],
         help_text=models.LoghKategorio.helptext(),
         error_messages=em(required='Elektu kie vi volas loĝi')),
     deziras_loghi_kun_nomo=forms.CharField(

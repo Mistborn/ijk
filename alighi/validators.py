@@ -74,9 +74,16 @@ shildlando_validator = RegexValidator(r"(?u)^([^\W\d_]|[ .()'-])+$",
 kromnomo_validator = RegexValidator(u"(?u)^[\w .'_!?-]+$",
     u'Enigu validan valoron. '
     u'Validas nur literoj, ciferoj, spaceto, kaj simboloj el inter .\'-_!?',
-    'kromnomo') # nur literoj [unikode], ciferoj, spaco, punkto, ', -, _, !, ?
+    'kromnomo')  # nur literoj [unikode], ciferoj, spaco, punkto, ', -, _, !, ?
 
 poshtkodo_validator = RegexValidator(u'^[A-Z0-9 -]+$',
     'Enigu validan valoron. '
     'Validas majusklaj literoj, ciferoj, spaceto, kaj divido-streko',
     'poshtkodo')
+
+def havebla_loghkategorio(obj):
+    if not obj.chu_havebla:
+        raise ValidationError(u'Ne plu restas lokoj. '
+                              u'Bonvolu elekti alian loĝkategorion.',
+                              code='nehavebla')
+
