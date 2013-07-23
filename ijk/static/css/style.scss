@@ -530,7 +530,7 @@ textarea {
 
 // Participant list
 .alighintoj {
-    $lighten-factor: 40;
+    $lighten-factor: 0;
     $boy-blue: lighten(#64739A, $lighten-factor);
     $girl-pink: lighten(#98685C, $lighten-factor);
     $other-green: #4F7D66; // lighten(#4F7D66, $lighten-factor);
@@ -540,39 +540,54 @@ textarea {
     $i-ne: #656;
     box-sizing: border-box;
     width: 100%;
+    margin-top: 1em;
+    border-bottom: 3px double gray;
     tr {
         border-bottom: dotted 1px #ddd;
         height: 1.8em;
         vertical-align: middle;
+        font-weight: bold;
         &.header {
-            border-bottom: 3px solid $style-color;
+            border-bottom: 3px double $style-color;
         }
         &.v {
-            color: $v-jes; // $boy-blue;
-            &.neantaupagis {
-              color: $v-ne;
+            .name {
+                color: $v-jes; // $boy-blue;
+            }
+            &.neantaupagis .name {
+                color: $v-ne;
             }
         }
         &.i {
-            color: $i-jes; // $girl-pink;
-            &.neantaupagis {
-              color: $i-ne;
+            .name {
+                  color: $i-jes; // $girl-pink;
+            }
+            &.neantaupagis .name {
+                color: $i-ne;
             }
         }
         &.a {
-            color: $other-green;
-            &.neantaupagis {
-              color: gray;
+            .name {
+                color: $other-green;
+            }
+            &.neantaupagis .name {
+                color: gray;
             }
         }
         &.r {
-            font-style: italic;
+            .name, .loc {
+              font-style: italic;
+            }
         }
         .fam {
           font-variant: small-caps;
         }
-        .malalighis {
+        &.malalighis {
           text-decoration: line-through;
+        }
+        &.neantaupagis {
+          // background-color: #eee;
+          font-weight: normal;
         }
         td:first-child {
           font-size: 80%;
@@ -588,9 +603,11 @@ textarea {
     th {
         text-align: left;
         font-weight: bold;
+        font-size: 1.333em;
     }
     td.pk {
         width: 3em;
+        padding-left: 0.25em;
         &:after {
             content: ".";
         }

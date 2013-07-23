@@ -747,7 +747,8 @@ class Partoprenanto(models.Model):
                         u'&laquo;{}&raquo;'.format(obj.shildnomo)
                             if obj.shildnomo else u'',
                         obj.familia_nomo)),
-                 mark_safe(u'{}, {}'.format(obj.urbo, obj.loghlando.nomo)))
+                 mark_safe(u'{}, {}'.format(obj.urbo, obj.loghlando.nomo)
+                           if obj.urbo.strip() else obj.loghlando.nomo))
         # result is a tuple (pk, css_class, name, city/country)
         return [get_line(obj) for obj in qset]
 

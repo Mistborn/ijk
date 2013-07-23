@@ -545,41 +545,47 @@ textarea {
 .alighintoj {
   box-sizing: border-box;
   width: 100%;
+  margin-top: 1em;
+  border-bottom: 3px double gray;
 }
 .alighintoj tr {
   border-bottom: dotted 1px #ddd;
   height: 1.8em;
   vertical-align: middle;
+  font-weight: bold;
 }
 .alighintoj tr.header {
-  border-bottom: 3px solid #2a3753;
+  border-bottom: 3px double #2a3753;
 }
-.alighintoj tr.v {
+.alighintoj tr.v .name {
   color: #000055;
 }
-.alighintoj tr.v.neantaupagis {
+.alighintoj tr.v.neantaupagis .name {
   color: #444455;
 }
-.alighintoj tr.i {
+.alighintoj tr.i .name {
   color: #660066;
 }
-.alighintoj tr.i.neantaupagis {
+.alighintoj tr.i.neantaupagis .name {
   color: #665566;
 }
-.alighintoj tr.a {
+.alighintoj tr.a .name {
   color: #4f7d66;
 }
-.alighintoj tr.a.neantaupagis {
+.alighintoj tr.a.neantaupagis .name {
   color: gray;
 }
-.alighintoj tr.r {
+.alighintoj tr.r .name, .alighintoj tr.r .loc {
   font-style: italic;
 }
 .alighintoj tr .fam {
   font-variant: small-caps;
 }
-.alighintoj tr .malalighis {
+.alighintoj tr.malalighis {
   text-decoration: line-through;
+}
+.alighintoj tr.neantaupagis {
+  font-weight: normal;
 }
 .alighintoj tr td:first-child {
   font-size: 80%;
@@ -594,9 +600,11 @@ textarea {
 .alighintoj th {
   text-align: left;
   font-weight: bold;
+  font-size: 1.333em;
 }
 .alighintoj td.pk {
   width: 3em;
+  padding-left: 0.25em;
 }
 .alighintoj td.pk:after {
   content: ".";
