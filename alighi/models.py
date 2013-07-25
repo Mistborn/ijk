@@ -730,7 +730,8 @@ class Partoprenanto(models.Model):
 
     @classmethod
     def alighintoj(cls):
-        qset = cls.objects.order_by('alighdato')
+        qset = cls.objects.exclude(
+            persona_nomo=u'--aŭkciata--').order_by('pk')
         def get_line(obj):
             if not obj.chu_retalisto:
                 return (obj.pk, 'r', 'rezervita', 'rezervita')
