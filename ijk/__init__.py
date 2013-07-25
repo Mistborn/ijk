@@ -108,9 +108,10 @@ try:
             u'<ul>{}</ul>'.format(u''.join(sublist)) if sublist else u'')
 
     _menu.extend(_mkmenu(node) for node in _roots)
-    _menu.append(u'<li><a href="{}">Alighintoj</a></li>'.format(
-        reverse('alighintoj')))
-    if not settings.HIDE_ALIGHILO:
+    if not getattr(settings, 'HIDE_ALIGHINTOJ', True):
+        _menu.append(u'<li><a href="{}">Alighintoj</a></li>'.format(
+            reverse('alighintoj')))
+    if not getattr(settings, 'HIDE_ALIGHILO', True):
         _menu.append(u'<li><a href="{}">Aliĝi!</a></li>'.format(
             reverse('alighi')))
     menu_html = u'<ul>{}</ul>'.format(u''.join(_menu))
