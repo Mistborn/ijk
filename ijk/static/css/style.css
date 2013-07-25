@@ -545,14 +545,13 @@ textarea {
 .alighintoj {
   box-sizing: border-box;
   width: 100%;
-  margin-top: 1em;
+  margin-top: 1em auto 2em;
   border-bottom: 3px double gray;
 }
 .alighintoj tr {
   border-bottom: dotted 1px #ddd;
   height: 1.8em;
   vertical-align: middle;
-  font-weight: bold;
 }
 .alighintoj tr.header {
   border-bottom: 3px double #2a3753;
@@ -570,10 +569,10 @@ textarea {
   color: #665566;
 }
 .alighintoj tr.a .name {
-  color: #4f7d66;
+  color: #448855;
 }
 .alighintoj tr.a.neantaupagis .name {
-  color: gray;
+  color: #668877;
 }
 .alighintoj tr.r .name, .alighintoj tr.r .loc {
   font-style: italic;
@@ -583,9 +582,6 @@ textarea {
 }
 .alighintoj tr.malalighis {
   text-decoration: line-through;
-}
-.alighintoj tr.neantaupagis {
-  font-weight: normal;
 }
 .alighintoj tr td:first-child {
   font-size: 80%;
