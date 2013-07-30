@@ -109,7 +109,7 @@ try:
 
     _menu.extend(_mkmenu(node) for node in _roots)
     if not getattr(settings, 'HIDE_ALIGHINTOJ', True):
-        _menu.append(u'<li><a href="{}">Alighintoj</a></li>'.format(
+        _menu.append(u'<li><a href="{}">Aliĝintoj</a></li>'.format(
             reverse('alighintoj')))
     if not getattr(settings, 'HIDE_ALIGHILO', True):
         _menu.append(u'<li><a href="{}">Aliĝi!</a></li>'.format(
