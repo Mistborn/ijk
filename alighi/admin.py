@@ -1,5 +1,8 @@
 # -*- encoding: utf-8 -*-
+from __future__ import unicode_literals
+
 import urllib
+import csv
 
 from django.conf.urls import patterns, url
 from django.contrib import admin
@@ -7,11 +10,25 @@ from annoying.functions import get_object_or_None
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 
 import reversion
 from alighi.models import *
 from alighi.permissions import *
+
+def export_as_csv(modeladmin, request, queryset):
+    response = HttpResponse(mimetype="text/csv")
+    name = modeladmin.model._meta.verbose_name_plural.lower().replace(' ', '-')
+    response['Content-Disposition'] = ('attachment; '
+                                       'filename="ijk-{}.csv"'.format(name))
+    writer = csv.writer(response)
+    fields = [f.name for f in modeladmin.model._meta.fields]
+    writer.writerow(fields)
+    serialize = lambda obj: [unicode(getattr(obj, f)).encode('utf-8')
+                             for f in fields]
+    writer.writerows(serialize(obj) for obj in queryset)
+    return response
+export_as_csv.short_description = 'Eksporti kiel CSV'
 
 class ChambroInline(SpecialPermissionsAdmin, admin.TabularInline):
     model = Chambro
@@ -240,6 +257,7 @@ class PagoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
     list_filter = ('partoprenanto', 'respondeculo', 'kreinto', 'lasta_redaktanto', 'pagmaniero',
                    'pagtipo', 'valuto', 'dato',)
     search_fields = ('rimarko',)
+    actions = (export_as_csv,)
     def save_model(self, request, obj, form, change):
         if not change and not obj.kreinto:
             obj.kreinto = request.user
@@ -414,7 +432,7 @@ class PartoprenantoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
         'deziras_loghi_kun__persona_nomo',
         'deziras_loghi_kun__familia_nomo',
         'pagmaniera_komento', 'uea_kodo',)
-    actions = ('sendi_amasan_retposhtajhon',)
+    actions = ('sendi_amasan_retposhtajhon', export_as_csv)
 
     def get_actions(self, request):
         actions = super(PartoprenantoAdmin, self).get_actions(request)
