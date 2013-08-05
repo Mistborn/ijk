@@ -13,17 +13,6 @@ import reversion
 from alighi.models import *
 from alighi.permissions import *
 
-class ChambroAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
-    list_display = ('nomo', 'litonombro', 'loghkategorio', 'rimarko')
-    list_editable = list_display[1:]
-    list_filter = ('litonombro', 'loghkategorio',)
-    search_fields = ('nomo',)
-    def get_actions(self, request):
-        actions = super(ChambroAdmin, self).get_actions(request)
-        if 'delete_selected' in actions and not request.user.has_perm(
-                'alighi.delete_chambro'):
-            del actions['delete_selected']
-        return actions
 class ChambroInline(SpecialPermissionsAdmin, admin.TabularInline):
     model = Chambro
     extra = 0
@@ -426,7 +415,7 @@ class PartoprenantoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
         'deziras_loghi_kun__familia_nomo',
         'pagmaniera_komento', 'uea_kodo',)
     actions = ('sendi_amasan_retposhtajhon',)
-    
+
     def get_actions(self, request):
         actions = super(PartoprenantoAdmin, self).get_actions(request)
         if ('sendi_amasan_retposhtajhon' in actions and
@@ -516,6 +505,32 @@ class PartoprenantoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
 
     inlines = (PagoInline, NotoInline, OficialajhoInline,
         SenditaRetposhtajhoInline)
+class PartoprenantoInline(SpecialPermissionsAdmin, admin.TabularInline):
+    model = Partoprenanto
+    extra = 0
+    def has_delete_permission(self, request, obj=None): return False
+    def has_add_permission(self, request): return False
+    actions = None
+    can_delete = False
+    fields = (
+        ('persona_nomo', 'familia_nomo', 'shildnomo', 'sekso'),
+        ('loghkategorio', 'deziras_loghi_kun_nomo',),
+        ('chu_preferas_unuseksan_chambron', 'chu_malnoktemulo'),
+        # ('chu_alvenis', 'chu_havasmanghkuponon', 'chu_havasnomshildon',),
+    )
+
+class ChambroAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
+    list_display = ('nomo', 'litonombro', 'loghkategorio', 'rimarko')
+    list_editable = list_display[1:]
+    list_filter = ('litonombro', 'loghkategorio',)
+    search_fields = ('nomo',)
+    def get_actions(self, request):
+        actions = super(ChambroAdmin, self).get_actions(request)
+        if 'delete_selected' in actions and not request.user.has_perm(
+                'alighi.delete_chambro'):
+            del actions['delete_selected']
+        return actions
+    inlines = (PartoprenantoInline,)
 
 class PagtipoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
     search_fields = ('nomo',)
