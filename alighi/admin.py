@@ -18,6 +18,7 @@ from alighi.permissions import *
 
 def export_as_csv(modeladmin, request, queryset):
     response = HttpResponse(mimetype="text/csv")
+    response.write(u'\uFEFF')
     name = modeladmin.model._meta.verbose_name_plural.lower().replace(' ', '-')
     response['Content-Disposition'] = ('attachment; '
                                        'filename="ijk-{}.csv"'.format(name))
