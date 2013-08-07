@@ -1,4 +1,6 @@
 # -*- encoding: utf-8 -*-
+from __future__ import unicode_literals
+
 import datetime
 import time
 import json
@@ -97,16 +99,16 @@ class AghKategorio(models.Model):
             dato = datetime.date(*time.strptime(dato, '%Y-%m-%d')[:3])
         return (KOMENCA_DATO - dato).days / 365.25
 
-    @classmethod
+    # @classmethod
     def kalkuli_aldonan_kotizon(self, agho):
         if not self.aldona_kotizo:
             return 0
         if isinstance(agho, (datetime.date, basestring)):
-            agho = cls.liveri_aghon_lau_naskighdato(agho)
+            agho = self.liveri_aghon_lau_naskighdato(agho)
         cls = self.__class__
-        lt = cls.objects.filter(limagho__lt=self.limagho).order_by('limagho')
-        minimuma = lt[-1].limagho if lt else 1
-        return (agho - minimuma + 1) * self.aldona_kotizo
+        lt = cls.objects.filter(limagho__lt=self.limagho).order_by('-limagho')
+        minimuma = lt[0].limagho if lt else 1
+        return (agho - minimuma + 1) * float(self.aldona_kotizo)
 
     @classmethod
     def liveri_kategorion(cls, agho):
@@ -143,7 +145,13 @@ class AlighKategorio(models.Model):
                     json.dumps(obj, default=json_default))
 
     @classmethod
+    def surloke(cls):
+        return cls.objects.order_by('-limdato')[0]
+
+    @classmethod
     def liveri_kategorion(cls, dato):
+        if dato is None:
+            return cls.surloke()
         rset = cls.objects.filter(limdato__gte=dato).order_by('limdato')
         return rset[0] if rset else None
 
@@ -251,6 +259,10 @@ class ManghoTipo(models.Model):
     nomo = models.CharField(unique=True, max_length=50)
     # vegetare/vegane/ktp
 
+    @property
+    def chu_viande(self):
+        return self.nomo[:5].lower() == 'viand'
+
     def __unicode__(self):
         return self.nomo
 
@@ -273,7 +285,7 @@ class ProgramKotizo(models.Model):
 
     def kalkuli_finan_kotizon(self, agho):
         aldono = self.aghkategorio.kalkuli_aldonan_kotizon(agho)
-        return self.kotizo + aldono
+        return float(self.kotizo) + aldono
 
     @classmethod
     def javascript(cls):
@@ -349,7 +361,14 @@ class KrompagTipo(models.Model):
         try:
             return cls.objects.get(nomo=key).sumo
         except cls.DoesNotExist:
-            return u''
+            return None
+
+    @classmethod
+    def viando(cls): return cls.liveri_koston('viando')
+    @classmethod
+    def ekskurso(cls): return cls.liveri_koston('ekskurso')
+    @classmethod
+    def invitletero(cls): return cls.liveri_koston('invitletero')
 
     def __unicode__(self):
         return self.nomo
@@ -633,6 +652,23 @@ class Partoprenanto(models.Model):
         return sum(pago.eura_sumo for pago in qs)
 
     @property
+    def efektiva_alighdato(self):
+        qs = self.pago_set.filter(pagtipo=Pagtipo.antaupago()).order_by('dato')
+        sumo = 0
+        for pago in qs:
+            sumo += pago.eura_sumo
+            if sumo >= MINIMUMA_ANTAUPAGO:
+                return pago.dato
+        return None
+
+    @property
+    def loghkosto(self):
+        if self.chu_plentempa:
+            return self.loghkategorio.plena_kosto
+        return (self.loghkategorio.unutaga_kosto *
+                (self.ghis.day - self.ekde.day))
+
+    @property
     def plena_nomo(self):
         return unicode(self)
 
@@ -741,7 +777,7 @@ class Partoprenanto(models.Model):
                 classes.append('malalighis')
             if not obj.chu_antaupagis:
                 classes.append('neantaupagis')
-            
+
             return (obj.pk, ' '.join(classes),
                  mark_safe(u'{} {} <span class="fam">{}</span>'.format(
                         obj.persona_nomo,
@@ -752,6 +788,116 @@ class Partoprenanto(models.Model):
                            if obj.urbo.strip() else obj.loghlando.nomo))
         # result is a tuple (pk, css_class, name, city/country)
         return [get_line(obj) for obj in qset]
+
+    @property
+    def agho_je_komenco(self):
+        return int(AghKategorio.liveri_aghon_lau_naskighdato(self.naskighdato))
+
+    @property
+    def aghkategorio(self):
+        return AghKategorio.liveri_kategorion(self.agho_je_komenco)
+
+    @property
+    def manghoj(self):
+        kosto = 0
+        desc = []
+        for mangho in self.manghomendoj.all():
+            kosto += mangho.kosto
+            desc.append(unicode(mangho))
+        return kosto, u', '.join(desc)
+
+    def interna_fakturo(self, encoding=None):
+        result = []
+
+        name = [u'Nomo:']
+        name.append(self.persona_nomo)
+        if self.shildnomo:
+            name.append(u"«" + self.shildnomo + u"»")
+        name.append(self.familia_nomo)
+        result.append(name)
+
+        result.append([])
+
+        aghlinio = []
+        naskighdato = self.naskighdato.isoformat()
+        aghlinio.extend((u'Naskiĝdato:', naskighdato))
+        aghlinio.extend((u'Aĝo je {}:'.format(KOMENCA_DATO.isoformat()),
+                         unicode(self.agho_je_komenco)))
+        aghlinio.extend((u'Aĝkategorio:', unicode(self.aghkategorio)))
+        result.append(aghlinio)
+
+        result.append([])
+
+        lando = [u'Lando:', unicode(self.loghlando)]
+        result.append(lando)
+
+        result.append([])
+
+        alighinformoj = []
+        alighperiodo = AlighKategorio.liveri_kategorion(
+            self.efektiva_alighdato)
+        alighinformoj.extend((u"Aliĝperiodo:", unicode(alighperiodo)))
+        ppdatoj = (u'plentempe'
+                   if self.chu_plentempa
+                   else u'{} - {} ({} tagoj)'.format(self.ekde.isoformat(),
+                                            self.ghis.isoformat(),
+                                            (self.ghis - self.ekde).days + 1))
+        alighinformoj.extend((u'Partoprendatoj:', ppdatoj))
+        result.append(alighinformoj)
+
+        result.append([])
+
+        kotizo = 0
+        result.append([u'Kotizoj:'])
+        programkotizo = self.programkotizo()
+        result.append([u'Programo:', programkotizo])
+        kotizo += programkotizo
+        uearabato = self.uearabato()
+        result.append([u'TEJO/UEA-rabato', -uearabato])
+        kotizo -= float(uearabato)
+        loghado = self.loghkosto
+        result.append([u'Loĝado ({})'.format(self.loghkategorio), loghado])
+        kotizo += float(loghado)
+        manghado, manghdesc = self.manghoj
+        result.append([u'Manĝado ({})'.format(manghdesc), manghado])
+        kotizo += float(manghado)
+        viando = KrompagTipo.viando() if self.manghotipo.chu_viande else 0
+        result.append([u'Vianda kromkosto', viando])
+        kotizo += float(viando)
+        ekskurso = KrompagTipo.ekskurso() if self.chu_tuttaga_ekskurso else 0
+        result.append([u'Taga ekskurso', ekskurso])
+        kotizo += float(ekskurso)
+        antaupostkongreso = (u'Jes' if self.interesighas_pri_antaukongreso or
+                                      self.interesighas_pri_postkongreso
+                                   else u'Ne')
+        result.append([u'Antaŭ/Post-kongreso', antaupostkongreso])
+        # kotizo += antaupostkongreso
+        invitletero = (KrompagTipo.invitletero()
+                            if self.chu_bezonas_invitleteron
+                            else 0)
+        result.append([u'Invitletero', invitletero])
+        kotizo += float(invitletero)
+
+        result.append([])
+
+        result.append([u'Pagoj:'])
+        pagoj = self.pago_set.order_by(u'dato')
+        for pago in pagoj:
+            result.append([pago.dato.isoformat(), pago.pagtipo, -pago.sumo])
+            kotizo -= float(pago.sumo)
+
+        result.append([])
+
+        result.append([u'Sume:', '', kotizo])
+
+        for row in result:
+            for i, val in enumerate(row):
+                encoder = ((lambda u: u.encode(encoding))
+                           if encoding is not None else lambda u: u)
+                row[i] = encoder(unicode(val))
+
+        return result
+
 
     def kotizo(self):
         '''Liveri la bazan kotizon de tiu ĉi partoprenanto
