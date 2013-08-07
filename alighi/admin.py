@@ -141,8 +141,9 @@ class LandoKategorioAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
         return actions
 
 class LoghKategorioAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
-    list_display = ('nomo', 'priskribo', 'plena_kosto', 'unutaga_kosto')
-    list_editable = list_display[1:]
+    list_display = ('nomo', 'priskribo', 'plena_kosto', 'unutaga_kosto',
+                    'chu_havebla')
+    list_editable = list_display[1:-1]
     search_fields = ('nomo', 'priskribo')
     inlines = (ChambroInline,)
     def get_actions(self, request):
