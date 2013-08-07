@@ -433,7 +433,9 @@ class PartoprenantoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
         'deziras_loghi_kun__persona_nomo',
         'deziras_loghi_kun__familia_nomo',
         'pagmaniera_komento', 'uea_kodo',)
-    actions = ('sendi_amasan_retposhtajhon', export_as_csv)
+    actions = ('sendi_amasan_retposhtajhon',
+               export_as_csv,
+               'export_invoices_as_csv')
 
     def get_actions(self, request):
         actions = super(PartoprenantoAdmin, self).get_actions(request)
@@ -468,6 +470,19 @@ class PartoprenantoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
         dest = reverse('admin:sendi') + '?' + urllib.urlencode(querydict)
         return HttpResponseRedirect(dest)
     sendi_amasan_retposhtajhon.short_description = u'Sendi amasan retpoŝtaĵon'
+
+    def export_invoices_as_csv(self, request, queryset):
+        response = HttpResponse(mimetype="text/csv")
+        response.write(u'\uFEFF')
+        name = 'fakturoj'
+        response['Content-Disposition'] = ('attachment; '
+                                           'filename="ijk-{}.csv"'.format(name))
+        writer = csv.writer(response)
+        for partoprenanto in queryset:
+            writer.writerows(partoprenanto.interna_fakturo(encoding='utf-8'))
+            writer.writerows([[], ['-' * 80]])
+        return response
+    export_invoices_as_csv.short_description = 'Eksporti fakturojn kiel CSV'
 
 
     def get_urls(self):
