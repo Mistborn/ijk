@@ -958,6 +958,8 @@ class Partoprenanto(models.Model):
                 u'Rajtas ŝanĝi "ĉu uea-membro" de partoprenanto'),
             (u'change_partoprenanto_uea_kodo',
                 u'Rajtas ŝanĝi UEA-kodon de partoprenanto'),
+            (u'export_partoprenanto_as_csv',
+                u'Rajtas eksporti partoprenanton kiel CSV'),
         )
 
 # class ManghoMendo(models.Model):
@@ -1055,7 +1057,9 @@ class Pago(models.Model):
     class Meta:
         verbose_name_plural = eo('Pagoj')
         ordering = ('partoprenanto',)
-        permissions = ((u"view_pago", u"Rajtas vidi pagojn"),)
+        permissions = ((u"view_pago", u"Rajtas vidi pagojn"),
+                       (u'export_pago_as_csv',
+                        u'Rajtas eksporti pagojn kiel CSV'))
 
 class Nomshildo(models.Model):
     '''Specialaj nomŝildoj por nepartoprenantoj'''

@@ -270,6 +270,9 @@ class PagoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
         if 'delete_selected' in actions and not request.user.has_perm(
                         'alighi.delete_pago'):
             del actions['delete_selected']
+        if 'export_as_csv' in actions and not request.user.has_perm(
+                    'alighi.export_pago_as_csv'):
+            del actions['export_as_csv']
         return actions
 class PagoInline(SpecialPermissionsAdmin, admin.TabularInline):
     model = Pago
@@ -446,6 +449,9 @@ class PartoprenantoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
         if 'delete_selected' in actions and not request.user.has_perm(
                     'alighi.delete_user'):
             del actions['delete_selected']
+        if 'export_as_csv' in actions and not request.user.has_perm(
+                    'alighi.export_partoprenanto_as_csv'):
+            del actions['export_as_csv']
         return actions
 
     def save_formset(self, request, form, formset, change):
