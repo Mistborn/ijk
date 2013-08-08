@@ -847,6 +847,19 @@ class Partoprenanto(models.Model):
 
         result.append([])
 
+        paglisto = []
+        pagoj = self.pago_set.order_by(u'dato')
+        krompagoj = 0
+        for pago in pagoj:
+            euroj = pago.eura_sumo
+            if euroj >= 0:
+                paglisto.append([pago.dato.isoformat(), pago.pagtipo, -euroj])
+                kotizo -= float(euroj)
+            else:
+#                if pago.pagtipo.chu_antaupostkongreso:
+#                    antaupostkongreso += -euroj
+                krompagoj += -euroj
+
         kotizo = 0
         result.append([u'Kotizoj:'])
         programkotizo = self.programkotizo()
@@ -867,6 +880,8 @@ class Partoprenanto(models.Model):
         ekskurso = KrompagTipo.ekskurso() if self.chu_tuttaga_ekskurso else 0
         result.append([u'Taga ekskurso', ekskurso])
         kotizo += float(ekskurso)
+        if krompagoj:
+            result.append(['Krompagoj:', krompagoj])
         antaupostkongreso = (u'Jes' if self.interesighas_pri_antaukongreso or
                                       self.interesighas_pri_postkongreso
                                    else u'Ne')
@@ -881,11 +896,7 @@ class Partoprenanto(models.Model):
         result.append([])
 
         result.append([u'Pagoj:'])
-        pagoj = self.pago_set.order_by(u'dato')
-        for pago in pagoj:
-            euroj = pago.eura_sumo
-            result.append([pago.dato.isoformat(), pago.pagtipo, -euroj])
-            kotizo -= float(euroj)
+        result.extend(paglisto)
 
         result.append([])
 
