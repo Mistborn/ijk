@@ -883,8 +883,9 @@ class Partoprenanto(models.Model):
         result.append([u'Pagoj:'])
         pagoj = self.pago_set.order_by(u'dato')
         for pago in pagoj:
-            result.append([pago.dato.isoformat(), pago.pagtipo, -pago.sumo])
-            kotizo -= float(pago.sumo)
+            euroj = pago.eura_sumo
+            result.append([pago.dato.isoformat(), pago.pagtipo, -euroj])
+            kotizo -= float(euroj)
 
         result.append([])
 
