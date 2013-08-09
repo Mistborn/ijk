@@ -798,15 +798,6 @@ class Partoprenanto(models.Model):
     def aghkategorio(self):
         return AghKategorio.liveri_kategorion(self.agho_je_komenco)
 
-    @property
-    def manghoj(self):
-        kosto = 0
-        desc = []
-        for mangho in self.manghomendoj.all():
-            kosto += mangho.kosto
-            desc.append(unicode(mangho))
-        return kosto, u', '.join(desc)
-
     def interna_fakturo(self, encoding=None):
         result = []
 
@@ -855,7 +846,8 @@ class Partoprenanto(models.Model):
         for pago in pagoj:
             euroj = pago.eura_sumo
             if euroj >= 0:
-                paglisto.append([pago.dato.isoformat(), pago.pagtipo, -euroj])
+                paglisto.append([pago.dato.isoformat(), pago.pagtipo,
+                                 - euroj, pago.rimarko])
                 pagsumo += float(euroj)
             else:
                 krompagoj[unicode(pago.pagtipo)] += -euroj
@@ -866,20 +858,22 @@ class Partoprenanto(models.Model):
         result.append([u'Programo:', '', programkotizo])
         kotizo += programkotizo
         uearabato = self.uearabato()
-        result.append([u'TEJO/UEA-rabato:', '', -uearabato])
+        result.append(['', u'     TEJO/UEA-rabato:', -uearabato])
         kotizo -= float(uearabato)
         loghado = self.loghkosto
-        result.append([u'Loĝado ({}):'.format(self.loghkategorio), '', loghado])
+        result.append(['', u'Loĝado ({}):'.format(self.loghkategorio), loghado])
         kotizo += float(loghado)
-        manghado, manghdesc = self.manghoj
-        result.append([u'Manĝado ({}):'.format(manghdesc), '', manghado])
+        manghado = sum(mangho.kosto for mangho in self.manghomendoj.all())
+        result.append(['', u'Manĝado ({}):'.format(self.manghomendolisto), manghado])
         kotizo += float(manghado)
         if self.manghotipo.chu_viande:
             viando = KrompagTipo.viando()
-            result.append([u'Vianda kromkosto:', '', viando])
+            result.append(['', u'     Vianda kromkosto:', viando])
             kotizo += float(viando)
+        if self.chu_tuttaga_ekskurso and krompagoj['taga ekskurso'] == 0:
+            krompagoj['taga ekskurso'] = KrompagTipo.ekskurso()
         for krompago, sumo in krompagoj.iteritems():
-            result.append([krompago + ':', '', sumo])
+            result.append(['', krompago + ':', sumo])
             kotizo += float(sumo)
         result.append([])
 
