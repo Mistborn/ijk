@@ -9,6 +9,7 @@ import smtplib
 import traceback
 import ast
 import re
+from collections import defaultdict
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -847,45 +848,44 @@ class Partoprenanto(models.Model):
 
         result.append([])
 
+        paglisto = []
+        pagoj = self.pago_set.order_by(u'dato')
+        krompagoj = defaultdict(int)
+        pagsumo = 0
+        for pago in pagoj:
+            euroj = pago.eura_sumo
+            if euroj >= 0:
+                paglisto.append([pago.dato.isoformat(), pago.pagtipo, -euroj])
+                pagsumo += float(euroj)
+            else:
+                krompagoj[unicode(pago.pagtipo)] += -euroj
+
         kotizo = 0
         result.append([u'Kotizoj:'])
         programkotizo = self.programkotizo()
-        result.append([u'Programo:', programkotizo])
+        result.append([u'Programo:', '', programkotizo])
         kotizo += programkotizo
         uearabato = self.uearabato()
-        result.append([u'TEJO/UEA-rabato', -uearabato])
+        result.append([u'TEJO/UEA-rabato:', '', -uearabato])
         kotizo -= float(uearabato)
         loghado = self.loghkosto
-        result.append([u'Loĝado ({})'.format(self.loghkategorio), loghado])
+        result.append([u'Loĝado ({}):'.format(self.loghkategorio), '', loghado])
         kotizo += float(loghado)
         manghado, manghdesc = self.manghoj
-        result.append([u'Manĝado ({})'.format(manghdesc), manghado])
+        result.append([u'Manĝado ({}):'.format(manghdesc), '', manghado])
         kotizo += float(manghado)
-        viando = KrompagTipo.viando() if self.manghotipo.chu_viande else 0
-        result.append([u'Vianda kromkosto', viando])
-        kotizo += float(viando)
-        ekskurso = KrompagTipo.ekskurso() if self.chu_tuttaga_ekskurso else 0
-        result.append([u'Taga ekskurso', ekskurso])
-        kotizo += float(ekskurso)
-        antaupostkongreso = (u'Jes' if self.interesighas_pri_antaukongreso or
-                                      self.interesighas_pri_postkongreso
-                                   else u'Ne')
-        result.append([u'Antaŭ/Post-kongreso', antaupostkongreso])
-        # kotizo += antaupostkongreso
-        invitletero = (KrompagTipo.invitletero()
-                            if self.chu_bezonas_invitleteron
-                            else 0)
-        result.append([u'Invitletero', invitletero])
-        kotizo += float(invitletero)
-
+        if self.manghotipo.chu_viande:
+            viando = KrompagTipo.viando()
+            result.append([u'Vianda kromkosto:', '', viando])
+            kotizo += float(viando)
+        for krompago, sumo in krompagoj.iteritems():
+            result.append([krompago + ':', '', sumo])
+            kotizo += float(sumo)
         result.append([])
 
         result.append([u'Pagoj:'])
-        pagoj = self.pago_set.order_by(u'dato')
-        for pago in pagoj:
-            euroj = pago.eura_sumo
-            result.append([pago.dato.isoformat(), pago.pagtipo, -euroj])
-            kotizo -= float(euroj)
+        result.extend(paglisto)
+        kotizo -= pagsumo
 
         result.append([])
 
