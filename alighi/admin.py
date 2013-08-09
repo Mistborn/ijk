@@ -16,6 +16,21 @@ import reversion
 from alighi.models import *
 from alighi.permissions import *
 
+def export_as_csv(modeladmin, request, queryset):
+    response = HttpResponse(mimetype="text/csv")
+    response.write(u'\uFEFF')
+    name = modeladmin.model._meta.verbose_name_plural.lower().replace(' ', '-')
+    response['Content-Disposition'] = ('attachment; '
+                                       'filename="ijk-{}.csv"'.format(name))
+    writer = csv.writer(response)
+    fields = [f.name for f in modeladmin.model._meta.fields]
+    writer.writerow(fields)
+    serialize = lambda obj: [unicode(getattr(obj, f)).encode('utf-8')
+                             for f in fields]
+    writer.writerows(serialize(obj) for obj in queryset)
+    return response
+export_as_csv.short_description = 'Eksporti kiel CSV'
+
 class ChambroInline(SpecialPermissionsAdmin, admin.TabularInline):
     model = Chambro
     extra = 0
@@ -244,6 +259,7 @@ class PagoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
     list_filter = ('partoprenanto', 'respondeculo', 'kreinto', 'lasta_redaktanto', 'pagmaniero',
                    'pagtipo', 'valuto', 'dato',)
     search_fields = ('rimarko',)
+    actions = (export_as_csv,)
     def save_model(self, request, obj, form, change):
         if not change and not obj.kreinto:
             obj.kreinto = request.user
@@ -254,6 +270,9 @@ class PagoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
         if 'delete_selected' in actions and not request.user.has_perm(
                         'alighi.delete_pago'):
             del actions['delete_selected']
+        if 'export_as_csv' in actions and not request.user.has_perm(
+                    'alighi.export_pago_as_csv'):
+            del actions['export_as_csv']
         return actions
 class PagoInline(SpecialPermissionsAdmin, admin.TabularInline):
     model = Pago
@@ -419,6 +438,7 @@ class PartoprenantoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
         'deziras_loghi_kun__familia_nomo',
         'pagmaniera_komento', 'uea_kodo',)
     actions = ('sendi_amasan_retposhtajhon',
+               export_as_csv,
                'export_invoices_as_csv')
 
     def get_actions(self, request):
@@ -429,6 +449,9 @@ class PartoprenantoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
         if 'delete_selected' in actions and not request.user.has_perm(
                     'alighi.delete_user'):
             del actions['delete_selected']
+        if 'export_as_csv' in actions and not request.user.has_perm(
+                    'alighi.export_partoprenanto_as_csv'):
+            del actions['export_as_csv']
         return actions
 
     def save_formset(self, request, form, formset, change):
