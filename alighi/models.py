@@ -158,7 +158,8 @@ class AlighKategorio(models.Model):
 
     def __unicode__(self):
         # return self.limdato
-        return eo(u'Aligxkategorio {} gxis {}'.format(self.nomo, self.limdato))
+        return eo(u'Aligxkategorio {} gxis {}'.format(self.nomo,
+                                                      self.limdato))
 
     class Meta:
         verbose_name = eo('Aligxkategorio')
@@ -243,6 +244,13 @@ class LoghKategorio(models.Model):
         r.append(u'Plentempaj kostoj: <ul>{}</ul>'.format(plentempaj))
         r.append(u'Unutagaj kostoj: <ul>{}</ul>'.format(unutagaj))
         return mark_safe('\n'.join(r))
+
+    def chambrolisto(self):
+        result = [[unicode(self)], ['-' * 80]]
+        chambroj = self.chambro_set.all()
+        for chambro in chambroj:
+            result.extend(chambro.loghantolisto())
+        return result
 
     def __unicode__(self):
         return self.nomo
@@ -479,9 +487,27 @@ class Chambro(models.Model):
         verbose_name=eo('Logxkategorio'))
         # al kiu loghkategorio ghi taugas?
     rimarko = models.CharField(blank=True, max_length=255)
+
+    def loghantolisto(self):
+        result = [[unicode(self)]]
+        loghantoj = self.partoprenanto_set.all()
+        result.append(['', 'sekso', 'loĝkategorio',
+                       'deziras loĝi kun',
+                       'ĉu preferas unuseksan ĉambron',
+                       'ĉu malnoktemulo'])
+        for loghanto in loghantoj:
+            result.append([loghanto.plena_nomo,
+                           loghanto.sekso,
+                           unicode(loghanto.loghkategorio),
+                           loghanto.deziras_loghi_kun_nomo,
+                           loghanto.chu_preferas_unuseksan_chambron,
+                           loghanto.chu_malnoktemulo])
+        return result
+    
     def __unicode__(self):
         return u'{} ({}), litoj: {}'.format(
             self.nomo, self.loghkategorio, self.litonombro)
+            
     class Meta:
         verbose_name = eo('Cxambro')
         verbose_name_plural = eo('Cxambroj')
@@ -889,11 +915,11 @@ class Partoprenanto(models.Model):
 
         result.append([u'Sume:', '', kotizo])
 
-        for row in result:
-            for i, val in enumerate(row):
-                encoder = ((lambda u: u.encode(encoding))
-                           if encoding is not None else lambda u: u)
-                row[i] = encoder(unicode(val))
+        #for row in result:
+            #for i, val in enumerate(row):
+                #encoder = ((lambda u: u.encode(encoding))
+                           #if encoding is not None else lambda u: u)
+                #row[i] = encoder(unicode(val))
 
         return result
 

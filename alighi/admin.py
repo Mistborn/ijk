@@ -16,19 +16,30 @@ import reversion
 from alighi.models import *
 from alighi.permissions import *
 
+class CSVResponse:
+    def __init__(self, filename, encoding='utf-8'):
+        self.encoding = encoding
+        self.response = HttpResponse(mimetype="text/csv")
+        self.response.write(u'\uFEFF')
+        self.response['Content-Disposition'] = ('attachment; '
+                                                'filename="{}.csv"'.format(
+                                                    filename))
+        self.writer = csv.writer(self.response)
+    def serialize(self, row):
+        return [unicode(cell).encode(self.encoding) for cell in row]
+    def writerow(self, row):
+        self.writer.writerow(self.serialize(row))
+    def writerows(self, rows):
+        self.writer.writerows([self.serialize(row) for row in rows])
+
 def export_as_csv(modeladmin, request, queryset):
-    response = HttpResponse(mimetype="text/csv")
-    response.write(u'\uFEFF')
-    name = modeladmin.model._meta.verbose_name_plural.lower().replace(' ', '-')
-    response['Content-Disposition'] = ('attachment; '
-                                       'filename="ijk-{}.csv"'.format(name))
-    writer = csv.writer(response)
+    name = modeladmin.model._meta.verbose_name_plural.lower().replace(' ',
+                                                                      '-')
+    writer = CSVResponse('ijk-'+name)
     fields = [f.name for f in modeladmin.model._meta.fields]
     writer.writerow(fields)
-    serialize = lambda obj: [unicode(getattr(obj, f)).encode('utf-8')
-                             for f in fields]
-    writer.writerows(serialize(obj) for obj in queryset)
-    return response
+    writer.writerows([getattr(obj, f) for f in fields] for obj in queryset)
+    return writer.response
 export_as_csv.short_description = 'Eksporti kiel CSV'
 
 class ChambroInline(SpecialPermissionsAdmin, admin.TabularInline):
@@ -164,12 +175,21 @@ class LoghKategorioAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
     list_editable = list_display[1:-1]
     search_fields = ('nomo', 'priskribo')
     inlines = (ChambroInline,)
+    actions = ('export_room_list',)
     def get_actions(self, request):
         actions = super(LoghKategorioAdmin, self).get_actions(request)
         if 'delete_selected' in actions and not request.user.has_perm(
                         'alighi.delete_loghkategorio'):
             del actions['delete_selected']
         return actions
+
+    def export_room_list(self, request, qset):
+        writer = CSVResponse('chambrolisto')
+        for kat in qset:
+            writer.writerows(kat.chambrolisto())
+            writer.writerow([])
+        return writer.response
+    export_room_list.short_description = 'Eksporti ĉambroliston'
 
 class ManghoMendoTipoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
     list_display = ('nomo', 'priskribo', 'kosto')
@@ -482,18 +502,12 @@ class PartoprenantoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
     sendi_amasan_retposhtajhon.short_description = u'Sendi amasan retpoŝtaĵon'
 
     def export_invoices_as_csv(self, request, queryset):
-        response = HttpResponse(mimetype="text/csv")
-        response.write(u'\uFEFF')
-        name = 'fakturoj'
-        response['Content-Disposition'] = ('attachment; '
-                                           'filename="ijk-{}.csv"'.format(name))
-        writer = csv.writer(response)
+        writer = CSVResponse('fakturoj')
         for partoprenanto in queryset:
             writer.writerows(partoprenanto.interna_fakturo(encoding='utf-8'))
             writer.writerows([[], ['-' * 80]])
-        return response
+        return writer.response
     export_invoices_as_csv.short_description = 'Eksporti fakturojn kiel CSV'
-
 
     def get_urls(self):
         urls = super(PartoprenantoAdmin, self).get_urls()
