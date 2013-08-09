@@ -105,7 +105,7 @@ class AghKategorio(models.Model):
         if not self.aldona_kotizo:
             return 0
         if isinstance(agho, (datetime.date, basestring)):
-            agho = self.liveri_aghon_lau_naskighdato(agho)
+            agho = int(self.liveri_aghon_lau_naskighdato(agho))
         cls = self.__class__
         lt = cls.objects.filter(limagho__lt=self.limagho).order_by('-limagho')
         minimuma = lt[0].limagho if lt else 1
@@ -855,11 +855,12 @@ class Partoprenanto(models.Model):
         kotizo = 0
         result.append([u'Kotizoj:'])
         programkotizo = self.programkotizo()
-        result.append([u'Programo:', '', programkotizo])
+        result.append(['', u'Programo:', programkotizo])
         kotizo += programkotizo
         uearabato = self.uearabato()
-        result.append(['', u'     TEJO/UEA-rabato:', -uearabato])
-        kotizo -= float(uearabato)
+        if uearabato:
+            result.append(['', u'     TEJO/UEA-rabato:', -uearabato])
+            kotizo -= float(uearabato)
         loghado = self.loghkosto
         result.append(['', u'Loĝado ({}):'.format(self.loghkategorio), loghado])
         kotizo += float(loghado)
