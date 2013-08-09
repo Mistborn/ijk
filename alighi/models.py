@@ -663,6 +663,10 @@ class Partoprenanto(models.Model):
         return None
 
     @property
+    def efektiva_alighkategorio(self):
+        return AlighKategorio.liveri_kategorion(self.efektiva_alighdato)
+
+    @property
     def loghkosto(self):
         if self.chu_plentempa:
             return self.loghkategorio.plena_kosto
@@ -752,8 +756,7 @@ class Partoprenanto(models.Model):
     def programkotizo(self):
         aghkategorio = AghKategorio.liveri_kategorion(self.naskighdato)
         landokategorio = self.loghlando.kategorio
-        alighkategorio = AlighKategorio.liveri_kategorion(self.alighdato)
-            # XXX vershajne devas esti la dato de la antaupago
+        alighkategorio = self.efektiva_alighkategorio
         programkotizo = ProgramKotizo.objects.get(
             aghkategorio=aghkategorio,
             landokategorio=landokategorio,
