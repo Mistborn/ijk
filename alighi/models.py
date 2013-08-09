@@ -250,6 +250,7 @@ class LoghKategorio(models.Model):
         chambroj = self.chambro_set.all()
         for chambro in chambroj:
             result.extend(chambro.loghantolisto())
+            result.append([])
         return result
 
     def __unicode__(self):
