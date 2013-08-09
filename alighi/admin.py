@@ -474,7 +474,7 @@ class PartoprenantoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
             del actions['export_as_csv']
         if 'export_invoices_as_csv' in actions and not request.user.has_perm(
                     'alighi.view_pago'):
-            del actions['export_invoicesS_as_csv']
+            del actions['export_invoices_as_csv']
         return actions
 
     def save_formset(self, request, form, formset, change):
