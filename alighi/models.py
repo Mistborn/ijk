@@ -567,7 +567,7 @@ class ManghoMendoTipo(models.Model):
 
     @property
     def is_tagmangho(self):
-        return 'tagmanĝo' in self.priskribo.lower()
+        return 'tagmanĝo' in self.nomo.lower()
 
     @classmethod
     def javascript(cls):
