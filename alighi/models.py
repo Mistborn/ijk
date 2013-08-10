@@ -565,6 +565,10 @@ class ManghoMendoTipo(models.Model):
     def minuskle_multnombre_akuzative(self):
         return self.nomo.lower() + 'jn'
 
+    @property
+    def is_tagmangho(self):
+        return 'tagmanĝo' in self.priskribo.lower()
+
     @classmethod
     def javascript(cls):
         d = {obj.id: obj.kosto for obj in cls.objects.all()}
@@ -898,7 +902,8 @@ class Partoprenanto(models.Model):
         desc = '({})'.format(desc) if desc else desc
         result.append(['', u'Manĝado {}'.format(desc), manghado])
         kotizo += float(manghado)
-        if self.manghotipo.chu_viande:
+        if (self.manghotipo.chu_viande and
+            any(mendo.is_tagmangho for mendo in self.manghomendoj.all())):
             viando = KrompagTipo.viando()
             result.append(['', u'     Vianda kromkosto', viando])
             kotizo += float(viando)
