@@ -728,6 +728,16 @@ class Partoprenanto(models.Model):
     chu_antaupagis_disp.boolean = True
     chu_antaupagis_disp.short_description = u'Ĉu antaŭpagis'
 
+    def aktuala_kotizo(self):
+        return self.kotizo_pagsumo[0]
+
+    def pagsumo(self):
+        return self.kotizo_pagsumo[1]
+
+    def restas_por_pagi(self):
+        kotizo, pagsumo = self.kotizo_pagsumo
+        return kotizo - pagsumo
+
     @property
     def chu_plentempa(self):
         return self.ekde <= KOMENCA_DATO and self.ghis >= FINIGHA_DATO
@@ -832,7 +842,7 @@ class Partoprenanto(models.Model):
     def aghkategorio(self):
         return AghKategorio.liveri_kategorion(self.agho_je_komenco)
 
-    def interna_fakturo(self, encoding=None):
+    def fakturaj_kalkuloj(self):
         result = []
 
         name = [u'Nomo:']
@@ -916,6 +926,7 @@ class Partoprenanto(models.Model):
 
         result.append([u'Pagoj'])
         result.extend(paglisto)
+        aktuala_kotizo = kotizo
         kotizo -= pagsumo
 
         result.append([])
@@ -928,8 +939,16 @@ class Partoprenanto(models.Model):
                            #if encoding is not None else lambda u: u)
                 #row[i] = encoder(unicode(val))
 
-        return result
+        return aktuala_kotizo, pagsumo, result
 
+    def interna_fakturo(self):
+        aktuala_kotizo, pagsumo, fakturo = self.fakturaj_kalkuloj()
+        return fakturo
+
+    @property
+    def kotizo_pagsumo(self):
+        aktuala_kotizo, pagsumo, fakturo = self.fakturaj_kalkuloj()
+        return aktuala_kotizo, pagsumo
 
     def kotizo(self):
         '''Liveri la bazan kotizon de tiu ĉi partoprenanto

@@ -427,10 +427,12 @@ class PartoprenantoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
         'chu_kontrolita',
         ('unua_konfirmilo_sendita', 'dua_konfirmilo_sendita'),
         ('alighdato', 'malalighdato'),
+        ('aktuala_kotizo', 'pagsumo', 'restas_por_pagi'),
         ('chu_alvenis', 'chu_havasmanghkuponon', 'chu_havasnomshildon',)
     )
     readonly_fields = ('id', 'alighdato', 'alighila_kotizo',
-                       'chu_antaupagis_disp', 'antaupaga_sumo_disp')
+                       'chu_antaupagis_disp', 'antaupaga_sumo_disp',
+                       'aktuala_kotizo', 'pagsumo', 'restas_por_pagi')
     list_display = ('persona_nomo', 'familia_nomo', 'sekso',
                     'loghlando', 'chu_kontrolita', 'chambro')
     list_editable = ('loghlando', 'chambro')
