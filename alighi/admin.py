@@ -506,7 +506,7 @@ class PartoprenantoAdmin(SpecialPermissionsAdmin, reversion.VersionAdmin):
     def export_invoices_as_csv(self, request, queryset):
         writer = CSVResponse('fakturoj')
         for partoprenanto in queryset:
-            writer.writerows(partoprenanto.interna_fakturo(encoding='utf-8'))
+            writer.writerows(partoprenanto.interna_fakturo())
             writer.writerows([[], ['-' * 80]])
         return writer.response
     export_invoices_as_csv.short_description = 'Eksporti fakturojn kiel CSV'
