@@ -897,11 +897,11 @@ class Partoprenanto(models.Model):
                 krompagoj[unicode(pago.pagtipo)] += -euroj
 
         kotizo = 0
-        partoprentagoj = self.tagoj() + 1.0
+        partoprentagoj = float(self.tagoj()) + 1.0
         manghorelativeco = 1 if self.chu_plentempa else partoprentagoj / 6.0
         relativa_partopreno = 1 if self.chu_plentempa else partoprentagoj / 5.0
         result.append([u'Kotizoj'])
-        programkotizo = self.programkotizo() * relativa_partopreno
+        programkotizo = float(self.programkotizo()) * relativa_partopreno
         result.append(['', u'Programo', programkotizo])
         kotizo += programkotizo
         uearabato = self.uearabato()
@@ -910,15 +910,15 @@ class Partoprenanto(models.Model):
         loghado = self.loghkosto
         result.append(['', u'Loĝado ({})'.format(self.loghkategorio), loghado])
         kotizo += float(loghado)
-        manghado = manghorelativeco * sum(mangho.kosto
-                                          for mangho in self.manghomendoj.all())
+        manghado = manghorelativeco * float(sum(mangho.kosto
+                                                for mangho in self.manghomendoj.all()))
         desc = self.manghomendolisto
         desc = '({})'.format(desc) if desc else desc
         result.append(['', u'Manĝado {}'.format(desc), manghado])
         kotizo += float(manghado)
         if (self.manghotipo.chu_viande and
             any(mendo.is_tagmangho for mendo in self.manghomendoj.all())):
-            viando = KrompagTipo.viando() * manghorelativeco
+            viando = float(KrompagTipo.viando()) * manghorelativeco
             result.append(['', u'     Vianda kromkosto', viando])
             kotizo += float(viando)
         if self.chu_tuttaga_ekskurso and krompagoj['taga ekskurso'] == 0:
