@@ -897,9 +897,9 @@ class Partoprenanto(models.Model):
                 krompagoj[unicode(pago.pagtipo)] += -euroj
 
         kotizo = 0
-        partoprentagoj = self.tagoj() + 1
-        manghorelativeco = 1 if self.chu_plentempa else partoprentagoj / 6
-        relativa_partopreno = 1 if self.chu_plentempa else partoprentagoj / 5
+        partoprentagoj = self.tagoj() + 1.0
+        manghorelativeco = 1 if self.chu_plentempa else partoprentagoj / 6.0
+        relativa_partopreno = 1 if self.chu_plentempa else partoprentagoj / 5.0
         result.append([u'Kotizoj'])
         programkotizo = self.programkotizo() * relativa_partopreno
         result.append(['', u'Programo', programkotizo])
