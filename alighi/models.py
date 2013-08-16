@@ -802,8 +802,9 @@ class Partoprenanto(models.Model):
             aghkategorio=aghkategorio,
             landokategorio=landokategorio,
             alighkategorio=alighkategorio)
-        return (programkotizo.kotizo,
-                programkotizo.aghkategorio.kalkuli_aldonan_kotizon(self.naskighdato))
+        return (float(programkotizo.kotizo),
+                float(programkotizo.aghkategorio.kalkuli_aldonan_kotizon(
+                        self.naskighdato)))
 
     def uearabato(self):
         if not self.chu_ueamembro:
@@ -902,9 +903,8 @@ class Partoprenanto(models.Model):
         manghorelativeco = 1 if self.chu_plentempa else partoprentagoj / 6.0
         relativa_partopreno = 1 if self.chu_plentempa else partoprentagoj / 5.0
         result.append([u'Kotizoj'])
-        kotizo, aghaldono = self.programkotizo()
-        kotizo = float(kotizo)
-        programkotizo = kotizo * relativa_partopreno + aghaldono
+        baza_kotizo, aghaldono = self.programkotizo()
+        programkotizo = baza_kotizo * relativa_partopreno + aghaldono
         result.append(['', u'Programo', programkotizo])
         kotizo += programkotizo
         uearabato = float(self.uearabato()) * (relativa_partopreno
