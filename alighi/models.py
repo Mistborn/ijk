@@ -903,11 +903,13 @@ class Partoprenanto(models.Model):
         relativa_partopreno = 1 if self.chu_plentempa else partoprentagoj / 5.0
         result.append([u'Kotizoj'])
         kotizo, aghaldono = self.programkotizo()
-        programkotizo = float(kotizo) * relativa_partopreno + aghaldono
+        kotizo = float(kotizo)
+        programkotizo = kotizo * relativa_partopreno + aghaldono
         result.append(['', u'Programo', programkotizo])
         kotizo += programkotizo
-        uearabato = self.uearabato() * (relativa_partopreno
-                                        if relativa_partopreno < 1 else 1)
+        uearabato = float(self.uearabato()) * (relativa_partopreno
+                                               if relativa_partopreno < 1
+                                               else 1)
         result.append(['', u'     TEJO/UEA-rabato', -uearabato])
         kotizo -= float(uearabato)
         loghado = self.loghkosto
