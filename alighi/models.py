@@ -938,6 +938,10 @@ class Partoprenanto(models.Model):
 
         result.append([])
 
+        result.append(['Aliĝila kotizo:', self.alighila_kotizo])
+
+        result.append([])
+
         result.append([u'Sume:', '', kotizo])
 
         #for row in result:
